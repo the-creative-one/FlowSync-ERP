@@ -1,0 +1,40 @@
+express() - creates Backend App
+cors() - Allows frontend-backend connection
+express.json() - allows json data in requests
+morgan("dev") - shows API logs in terminal
+app.get() - cerates GET API route
+app.listen() - starts server
+express.Router() - Creates separate route module
+bcrypt.compare() - Checks entered password vs hased password
+jwt.sign() - Creates tokens (Token Contains - user id, role)
+jwt.verify() - Checks token valid? secret valid? expried?
+next() - moves request to next function/controller (without next() request stops there)
+Order.find() - Fetches all orders
+.populate() - Fetches related user data automatically (Almost like SQL JOIN)
+countDocuments() - Counts matching records
+.reduce() - Array method used for calculations
+
+
+
+
+API Concepts:
+PATCH - used for partial updates 
+
+
+
+Schema - Blueprint/structure of data
+Model - Used to intereact with MongoDB collection 
+      - Defines database structure
+Route - Defines API endpoint
+      - Why Routes? Keeps code moduler and clean
+Controller - Contains Backend Logic
+Hashing - Converts password into unreadable encrypted format
+      - Why Hash Passwords? If DB leaks, real password stays protected
+bcryptjs - Library for password Hashing
+JWT Secret - Used to sign & verify tokens
+      - Why JWT? Frontend sends token with requests and Backend verifies token before giving protected data.
+Middleware - Runs Before route/Controller
+      Used for: auth, validation, logging, permissions
+Authentication - Checks : Who are you?
+Authorization - Checks: What are you allowed to do?
+
