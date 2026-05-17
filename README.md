@@ -2,16 +2,19 @@
 
 A modern full-stack ERP (Enterprise Resource Planning) system built using the MERN stack.
 
-## 🚀 Tech Stack
+---
 
-### Frontend
+# 🚀 Tech Stack
+
+## Frontend
 - React
 - React Router DOM
 - Axios
 - Tailwind CSS
 - Vite
+- Lucide React
 
-### Backend
+## Backend
 - Node.js
 - Express.js
 - MongoDB
@@ -36,6 +39,7 @@ A modern full-stack ERP (Enterprise Resource Planning) system built using the ME
 - Update Order Status
 - Delete Orders
 - Admin-Only Delete Access
+- Custom Status Dropdown Workflow
 
 ## Dashboard
 - Total Orders
@@ -47,14 +51,30 @@ A modern full-stack ERP (Enterprise Resource Planning) system built using the ME
 - Login UI
 - Protected Dashboard
 - Dashboard Layout
-- Sidebar Navigation
+- Responsive Sidebar Navigation
+- Mobile Drawer Sidebar
+- Responsive Orders Cards
+- Interactive UI Animations
+- Dynamic Dashboard Layout
 - API Integration with Axios
+
+---
+
+# 📱 Responsive Design
+
+- Mobile Responsive Layout
+- Tablet Responsive UI
+- Desktop Optimized Dashboard
+- Adaptive Orders View
+- Collapsible Sidebar
+- Mobile Overlay Navigation
 
 ---
 
 # 📁 Project Structure
 
 ## Client
+
 ```bash
 client/
 ├── src/
@@ -65,6 +85,7 @@ client/
 ```
 
 ## Server
+
 ```bash
 server/
 ├── config/
@@ -112,10 +133,11 @@ npm run dev
 
 - Inventory Management
 - Vendor Management
-- Charts & Analytics
+- Advanced Charts & Analytics
 - AI Assistant Integration
 - Dark / Light Theme
 - Notifications
+- WebSocket Real-Time Updates
 - CI/CD Pipeline
 - Deployment
 
