@@ -4,6 +4,7 @@ import DashboardLayout from "../layouts/DashboardLayout";
 
 function Dashboard() {
   const [stats, setStats] = useState({});
+  
 
   const fetchDashboardStats = async () => {
     try {
@@ -26,11 +27,8 @@ function Dashboard() {
   }, []);
 
  return (
-  <DashboardLayout>
+  <DashboardLayout title="Dashboard Overview">
     <div>
-      <h1 className="text-3xl font-bold text-[#0C2B4E] mb-6">
-        Dashboard Overview
-      </h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-white p-6 rounded-2xl shadow">

@@ -3,6 +3,9 @@ navigate() - Programmatic route change (Equivalent to redirect)
 <Navigate /> - Redirect component
 useEffect() - Runs code with component loads
 useState() - stores component data/state
+NavLink - Special React Router component (automatically detects active route)
+isActive - Helps highlight current page
+.map() - Loops through array 
 
 BrowserRouter - Enables routing
 Routes - Conatiner for Routes

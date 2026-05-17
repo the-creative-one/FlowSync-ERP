@@ -1,3 +1,8 @@
+server.js - main backend entry point (creates express app, connects middleware, connects routes, starts server)
+
+mongoose - ODM (Object Data Modeling) library for MongoDB and Node.js
+      - acts as a bridge between application's code and database
+
 express() - creates Backend App
 cors() - Allows frontend-backend connection
 express.json() - allows json data in requests
@@ -24,7 +29,7 @@ PATCH - used for partial updates
 
 Schema - Blueprint/structure of data
 Model - Used to intereact with MongoDB collection 
-      - Defines database structure
+      - Usable object created from schema
 Route - Defines API endpoint
       - Why Routes? Keeps code moduler and clean
 Controller - Contains Backend Logic

@@ -1,42 +1,60 @@
-function DashboardLayout({ children }) {
+import { useState } from "react";
+import Sidebar from "../components/Sidebar";
+import { Menu } from "lucide-react";
+
+function DashboardLayout({ children, title }) {
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   return (
     <div className="flex min-h-screen bg-[#F4F4F4]">
       {/* Sidebar */}
-      <div className="w-64 bg-[#0C2B4E] text-white p-5">
-        <h1 className="text-2xl font-bold mb-10">
-          FlowSync ERP
-        </h1>
+      <>
+        {/* Desktop Sidebar */}
+        <div className="hidden md:block">
+          <Sidebar
+            collapsed={collapsed}
+            setCollapsed={setCollapsed}
+            mobileOpen={mobileOpen}
+            setMobileOpen={setMobileOpen}
+          />
+        </div>
 
-        <ul className="space-y-4">
-          <li className="cursor-pointer hover:text-gray-300">
-            Dashboard
-          </li>
-
-          <li className="cursor-pointer hover:text-gray-300">
-            Orders
-          </li>
-
-          <li className="cursor-pointer hover:text-gray-300">
-            Inventory
-          </li>
-
-          <li className="cursor-pointer hover:text-gray-300">
-            Vendors
-          </li>
-        </ul>
-      </div>
+        {/* Mobile Sidebar */}
+        <div
+          className={`fixed inset-0 z-50 md:hidden transition-all duration-300 ${
+            mobileOpen ? "visible bg-black/40" : "invisible"
+          }`}
+          onClick={() => setMobileOpen(false)}
+        >
+          <div
+            className={`h-full transition-transform duration-300 ${
+              mobileOpen ? "translate-x-0" : "-translate-x-full"
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Sidebar
+              collapsed={false}
+              setCollapsed={setCollapsed}
+              mobileOpen={mobileOpen}
+              setMobileOpen={setMobileOpen}
+            />
+          </div>
+        </div>
+      </>
 
       {/* Main Content */}
-      <div className="flex-1 p-6">
-        {/* Navbar */}
-        <div className="bg-white rounded-xl shadow p-4 mb-6 flex justify-between items-center">
-          <h2 className="text-xl font-semibold text-[#0C2B4E]">
-            Dashboard
-          </h2>
-
-          <button className="bg-[#1D546C] text-white px-4 py-2 rounded-lg">
-            Logout
+      <div className="flex-1 p-4 md:p-6 overflow-x-hidden">
+        <div className="md:hidden flex items-center justify-between mb-4">
+          <button
+            onClick={() => setMobileOpen(true)}
+            className="bg-[#0C2B4E] text-white p-3 rounded-xl"
+          >
+            <Menu size={20} />
           </button>
+        </div>
+        <div className=" px-6 py-5 mb-6">
+          <h1 className="text-3xl font-bold text-[#0C2B4E] mb-6">{title}</h1>
         </div>
 
         {/* Page Content */}
