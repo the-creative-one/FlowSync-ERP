@@ -6,6 +6,7 @@ useState() - stores component data/state
 NavLink - Special React Router component (automatically detects active route)
 isActive - Helps highlight current page
 .map() - Loops through array 
+ref - real DOM node
 
 BrowserRouter - Enables routing
 Routes - Conatiner for Routes

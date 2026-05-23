@@ -2,16 +2,17 @@ import { useState } from "react";
 import Sidebar from "../components/Sidebar";
 import { Menu } from "lucide-react";
 
-function DashboardLayout({ children, title }) {
+function DashboardLayout({ children, title, subtitle }) {
   const [collapsed, setCollapsed] = useState(false);
+
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-[#F4F4F4]">
-      {/* Sidebar */}
+    <div className="h-screen flex bg-[#F4F4F4] overflow-hidden">
+      {/* SIDEBAR */}
       <>
-        {/* Desktop Sidebar */}
-        <div className="hidden md:block">
+        {/* DESKTOP SIDEBAR */}
+        <div className="hidden md:flex h-screen sticky top-0">
           <Sidebar
             collapsed={collapsed}
             setCollapsed={setCollapsed}
@@ -20,7 +21,7 @@ function DashboardLayout({ children, title }) {
           />
         </div>
 
-        {/* Mobile Sidebar */}
+        {/* MOBILE SIDEBAR */}
         <div
           className={`fixed inset-0 z-50 md:hidden transition-all duration-300 ${
             mobileOpen ? "visible bg-black/40" : "invisible"
@@ -42,23 +43,36 @@ function DashboardLayout({ children, title }) {
           </div>
         </div>
       </>
-
-      {/* Main Content */}
-      <div className="flex-1 p-4 md:p-6 overflow-x-hidden">
-        <div className="md:hidden flex items-center justify-between mb-4">
+      {/* MAIN CONTENT */}
+      <div className="flex-1 overflow-y-auto overflow-x-hidden">
+        {/* MOBILE HEADER */}
+        <div className="md:hidden p-4 pb-0">
           <button
             onClick={() => setMobileOpen(true)}
-            className="bg-[#0C2B4E] text-white p-3 rounded-xl"
+            className="bg-[#0C2B4E] text-white p-3 rounded-xl shadow-md"
           >
             <Menu size={20} />
           </button>
         </div>
-        <div className=" px-6 py-5 mb-6">
-          <h1 className="text-3xl font-bold text-[#0C2B4E] mb-6">{title}</h1>
-        </div>
 
-        {/* Page Content */}
-        <div>{children}</div>
+        {/* PAGE WRAPPER */}
+        <div className="p-4 md:p-6 mt-2">
+          {/* PAGE HEADER */}
+          <div className="mb-8">
+            <h1 className="text-3xl md:text-4xl font-bold text-[#0C2B4E]">
+              {title}
+            </h1>
+
+            {subtitle && (
+              <p className="text-gray-500 mt-2 text-base md:text-lg">
+                {subtitle}
+              </p>
+            )}
+          </div>
+
+          {/* PAGE CONTENT */}
+          <div>{children}</div>
+        </div>
       </div>
     </div>
   );

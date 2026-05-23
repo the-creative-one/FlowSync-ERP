@@ -1,13 +1,26 @@
 const express = require("express");
-
 const router = express.Router();
+const {
+  createOrder,
+  getOrders,
+  updateOrderStatus,
+  deleteOrder,
+} = require("../controllers/orderController");
+const { protect } = require("../middleware/authMiddleware");
+const { checkPermission } = require("../middleware/permissionMiddleware");
 
-const { createOrder, getOrders, updateOrderStatus, deleteOrder } = require("../controllers/orderController");
-const { protect, adminOnly } = require("../middleware/authMiddleware");
-
-router.post("/", protect, createOrder);
+// GET ORDERS
 router.get("/", protect, getOrders);
-router.patch("/:id", protect, updateOrderStatus);
-router.delete("/:id", protect, adminOnly, deleteOrder);
+// CREATE ORDER
+router.post("/", protect, checkPermission("canCreateOrders"), createOrder);
+// UPDATE ORDER STATUS
+router.patch(
+  "/:id",
+  protect,
+  checkPermission("canUpdateOrders"),
+  updateOrderStatus,
+);
+// DELETE ORDER
+router.delete("/:id", protect, checkPermission("canDeleteOrders"), deleteOrder);
 
 module.exports = router;
