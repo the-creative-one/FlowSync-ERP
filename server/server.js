@@ -7,6 +7,7 @@ const authRoutes = require("./routes/authRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const employeeRoutes = require("./routes/employeeRoutes");
+const analyticsRoutes = require("./routes/analyticsRoutes");
 
 const connectDB = require("./config/db");
 
@@ -26,6 +27,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/employees", employeeRoutes);
+app.use("/api/analytics", analyticsRoutes);
 
 
 const PORT = process.env.PORT || 5000;

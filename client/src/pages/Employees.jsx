@@ -201,7 +201,7 @@ function Employees() {
   return (
     <DashboardLayout
       title="Employee Management"
-      subtitle="Manage employee roles and permissions."
+      subtitle="Manage employee roles and permissions"
     >
       <div className="p-1 md:pt-6" onClick={() => setActiveRoleDropdown(null)}>
         {loading ? (
