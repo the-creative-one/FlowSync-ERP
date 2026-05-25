@@ -1,39 +1,57 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { AuthProvider } from "./context/AuthContext";
 import { Toaster } from "react-hot-toast";
+
+import { AuthProvider } from "./context/AuthContext";
+
+import ThemeProvider from "./providers/ThemeProvider";
+
 import "./index.css";
 import App from "./App.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <AuthProvider>
-      <Toaster
-        position="top-center"
-        toastOptions={{
-          duration: 3000,
-          style: {
-            background: "#0C2B4E",
-            color: "#fff",
-            borderRadius: "12px",
-            padding: "14px 16px",
-            fontSize: "14px",
-          },
-          success: {
-            iconTheme: {
-              primary: "#22c55e",
-              secondary: "#fff",
+    <ThemeProvider>
+      <AuthProvider>
+        <Toaster
+          position="top-center"
+          toastOptions={{
+            duration: 3000,
+
+            style: {
+              borderRadius: "14px",
+              padding: "14px 16px",
+              fontSize: "14px",
             },
-          },
-          error: {
-            iconTheme: {
-              primary: "#ef4444",
-              secondary: "#fff",
+
+            success: {
+              style: {
+                background: "#16A34A",
+                color: "#ffffff",
+              },
+
+              iconTheme: {
+                primary: "#ffffff",
+                secondary: "#16A34A",
+              },
             },
-          },
-        }}
-      />
-      <App />
-    </AuthProvider>
+
+            error: {
+              style: {
+                background: "#DC2626",
+                color: "#ffffff",
+              },
+
+              iconTheme: {
+                primary: "#ffffff",
+                secondary: "#DC2626",
+              },
+            },
+          }}
+        />
+
+        <App />
+      </AuthProvider>
+    </ThemeProvider>
   </StrictMode>,
 );

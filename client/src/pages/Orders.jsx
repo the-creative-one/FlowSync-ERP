@@ -1,16 +1,61 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/axios";
 import DashboardLayout from "../layouts/DashboardLayout";
-import { Trash2, Plus, X, ChevronDown } from "lucide-react";
 import toast from "react-hot-toast";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+
+import OrdersToolbar from "../components/orders/OrdersToolbar";
+import OrdersTable from "../components/orders/OrdersTable";
+import OrdersCards from "../components/orders/OrdersCards";
+import CreateOrderModal from "../components/orders/CreateOrderModal";
+import DeleteConfirmModal from "../components/orders/DeleteConfirmModal";
+import EmptyOrdersState from "../components/orders/EmptyOrdersState";
+import OrdersPagination from "../components/orders/OrdersPagination";
 
 function Orders() {
+  const { user } = useAuth();
+
   const [orders, setOrders] = useState([]);
+
+  const [loading, setLoading] = useState(true);
+
   const [showModal, setShowModal] = useState(false);
+
+  const [deleteModal, setDeleteModal] = useState(false);
+
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
+
+  const [search, setSearch] = useState("");
+
+  const [statusFilter, setStatusFilter] = useState("all");
+
+  const [currentPage, setCurrentPage] = useState(1);
+
   const [activeDropdown, setActiveDropdown] = useState(null);
 
-  const { user } = useAuth();
+  //
+  // SORTING
+  //
+
+  const [sortConfig, setSortConfig] = useState({
+    key: null,
+    direction: null,
+  });
+
+  const ORDERS_PER_PAGE = 10;
+
+  const [formData, setFormData] = useState({
+    customerName: "",
+    product: "",
+    quantity: "",
+    amount: "",
+  });
+
+  //
+  // PERMISSIONS
+  //
 
   const canCreateOrders =
     user?.permissions?.canCreateOrders ||
@@ -27,26 +72,66 @@ function Orders() {
     user?.role === "admin" ||
     user?.role === "manager";
 
-  const [formData, setFormData] = useState({
-    customerName: "",
-    product: "",
-    quantity: "",
-    amount: "",
-  });
+  //
+  // STATUS FLOW
+  //
 
-  const statusFlow = [
-    "pending",
-    "processing",
-    "shipped",
-    "delivered",
-  ];
+  const statusFlow = ["pending", "processing", "shipped", "delivered"];
 
   //
-  // OPEN UPWARD FOR LAST ROWS
+  // OPEN UPWARD
   //
 
   const shouldOpenUpward = (index, total) => {
     return index >= total - 2;
+  };
+
+  //
+  // STATUS COLORS
+  //
+
+  const getStatusStyles = (status) => {
+    switch (status) {
+      case "pending":
+        return `
+          bg-yellow-100
+          text-yellow-700
+          dark:bg-yellow-500/15
+          dark:text-yellow-300
+        `;
+
+      case "processing":
+        return `
+          bg-blue-100
+          text-blue-700
+          dark:bg-blue-500/15
+          dark:text-blue-300
+        `;
+
+      case "shipped":
+        return `
+          bg-purple-100
+          text-purple-700
+          dark:bg-purple-500/15
+          dark:text-purple-300
+        `;
+
+      case "delivered":
+        return `
+          bg-green-100
+          text-green-700
+          dark:bg-green-500/15
+          dark:text-green-300
+        `;
+
+      default:
+        return `
+          bg-gray-100
+          text-gray-700
+          dark:bg-gray-700
+          dark:text-gray-300
+        `;
+    }
   };
 
   //
@@ -55,6 +140,8 @@ function Orders() {
 
   const fetchOrders = async () => {
     try {
+      setLoading(true);
+
       const token = localStorage.getItem("token");
 
       const response = await api.get("/orders", {
@@ -66,8 +153,16 @@ function Orders() {
       setOrders(response.data);
     } catch (error) {
       console.log(error.response?.data);
+
+      toast.error("Failed to fetch orders");
+    } finally {
+      setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
 
   //
   // CREATE ORDER
@@ -77,20 +172,13 @@ function Orders() {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await api.post(
-        "/orders",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      const response = await api.post("/orders", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+      });
 
-      setOrders((prev) => [
-        response.data,
-        ...prev,
-      ]);
+      setOrders((prev) => [response.data, ...prev]);
 
       setShowModal(false);
 
@@ -113,10 +201,7 @@ function Orders() {
   // UPDATE STATUS
   //
 
-  const updateOrderStatus = async (
-    orderId,
-    newStatus,
-  ) => {
+  const updateOrderStatus = async (orderId, newStatus) => {
     try {
       const token = localStorage.getItem("token");
 
@@ -157,19 +242,23 @@ function Orders() {
   // DELETE ORDER
   //
 
-  const deleteOrder = async (id) => {
+  const deleteOrder = async () => {
     try {
       const token = localStorage.getItem("token");
 
-      await api.delete(`/orders/${id}`, {
+      await api.delete(`/orders/${selectedOrderId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
       setOrders((prev) =>
-        prev.filter((order) => order._id !== id),
+        prev.filter((order) => order._id !== selectedOrderId),
       );
+
+      setDeleteModal(false);
+
+      setSelectedOrderId(null);
 
       toast.success("Order deleted");
     } catch (error) {
@@ -179,31 +268,197 @@ function Orders() {
     }
   };
 
-  useEffect(() => {
-    fetchOrders();
-  }, []);
-
   //
-  // STATUS COLORS
+  // SORT FUNCTION
   //
 
-  const getStatusStyles = (status) => {
-    switch (status) {
-      case "pending":
-        return "bg-yellow-100 text-yellow-700";
+  const handleSort = (key) => {
+  setSortConfig((prev) => {
+    //
+    // NEW SORT
+    //
 
-      case "processing":
-        return "bg-blue-100 text-blue-700";
-
-      case "shipped":
-        return "bg-purple-100 text-purple-700";
-
-      case "delivered":
-        return "bg-green-100 text-green-700";
-
-      default:
-        return "bg-gray-100 text-gray-700";
+    if (prev.key !== key) {
+      return {
+        key,
+        direction: "asc",
+      };
     }
+
+    //
+    // ASC -> DESC
+    //
+
+    if (prev.direction === "asc") {
+      return {
+        key,
+        direction: "desc",
+      };
+    }
+
+    //
+    // DESC -> RESET
+    //
+
+    return {
+      key: null,
+      direction: null,
+    };
+  });
+};
+  //
+  // FILTERED ORDERS
+  //
+
+  const filteredOrders = useMemo(() => {
+    let filtered = [...orders];
+
+    //
+    // SEARCH
+    //
+
+    if (search.trim()) {
+      filtered = filtered.filter((order) =>
+        [order.customerName, order.product, order.status]
+          .join(" ")
+          .toLowerCase()
+          .includes(search.toLowerCase()),
+      );
+    }
+
+    //
+    // STATUS FILTER
+    //
+
+    if (statusFilter !== "all") {
+      filtered = filtered.filter(
+        (order) => order.status === statusFilter,
+      );
+    }
+
+    //
+    // DEFAULT SORT
+    //
+
+    filtered.sort(
+      (a, b) =>
+        new Date(b.createdAt) - new Date(a.createdAt),
+    );
+
+    //
+    // CUSTOM SORT
+    //
+
+    if (sortConfig.key && sortConfig.direction) {
+      filtered.sort((a, b) => {
+        let aValue;
+        let bValue;
+
+        switch (sortConfig.key) {
+          case "quantity":
+            aValue = a.quantity;
+            bValue = b.quantity;
+            break;
+
+          case "amount":
+            aValue = a.amount;
+            bValue = b.amount;
+            break;
+
+          case "createdAt":
+            aValue = new Date(a.createdAt);
+            bValue = new Date(b.createdAt);
+            break;
+
+          case "updatedAt":
+            aValue = new Date(
+              a.updatedAt || a.createdAt,
+            );
+
+            bValue = new Date(
+              b.updatedAt || b.createdAt,
+            );
+
+            break;
+
+          default:
+            return 0;
+        }
+
+        if (sortConfig.direction === "asc") {
+          return aValue > bValue ? 1 : -1;
+        }
+
+        return aValue < bValue ? 1 : -1;
+      });
+    }
+
+    return filtered;
+  }, [
+    orders,
+    search,
+    statusFilter,
+    sortConfig,
+  ]);
+
+  //
+  // PAGINATION
+  //
+
+  const totalPages = Math.ceil(filteredOrders.length / ORDERS_PER_PAGE);
+
+  const startIndex = (currentPage - 1) * ORDERS_PER_PAGE;
+
+  const paginatedOrders = filteredOrders.slice(
+    startIndex,
+    startIndex + ORDERS_PER_PAGE,
+  );
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, statusFilter]);
+
+  //
+  // EXPORT
+  //
+
+  const exportOrders = () => {
+    if (!filteredOrders.length) {
+      toast.error("No orders available to export");
+
+      return;
+    }
+
+    const exportData = filteredOrders.map((order) => ({
+      Customer: order.customerName,
+
+      Product: order.product,
+
+      Quantity: order.quantity,
+
+      Amount: order.amount,
+
+      Status: order.status,
+
+      CreatedAt: new Date(order.createdAt).toLocaleDateString(),
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+
+    const data = new Blob([excelBuffer], {
+      type: "application/octet-stream",
+    });
+
+    saveAs(data, "orders.xlsx");
   };
 
   return (
@@ -211,372 +466,97 @@ function Orders() {
       title="Orders Management"
       subtitle="Manage and track all customer orders"
     >
-      <div
-        className="p-1 md:pt-6"
-        onClick={() => setActiveDropdown(null)}
-      >
-        {/* CREATE BUTTON */}
-        <div className="flex justify-end mb-5">
-          {canCreateOrders && (
-            <button
-              onClick={() => setShowModal(true)}
-              className="bg-[#1D546C] text-white px-4 md:px-5 py-3 rounded-xl hover:bg-[#16485c] active:scale-95 transition duration-200 flex items-center justify-center gap-2"
-            >
-              <Plus size={20} />
+      <div className="space-y-6" onClick={() => setActiveDropdown(null)}>
+        <OrdersToolbar
+          search={search}
+          setSearch={setSearch}
+          statusFilter={statusFilter}
+          setStatusFilter={setStatusFilter}
+          exportOrders={exportOrders}
+          canCreateOrders={canCreateOrders}
+          setShowModal={setShowModal}
+          totalOrders={filteredOrders.length}
+        />
 
-              <span className="hidden min-[550px]:inline">
-                Create Order
-              </span>
-            </button>
-          )}
-        </div>
-        {/* MOBILE + TABLET */}
-        <div className="lg:hidden space-y-4">
-          {orders.map((order, index) => (
-            <div
-              key={order._id}
-              className="bg-white rounded-3xl shadow p-5"
-            >
-              <div className="space-y-4">
-                <div>
-                  <p className="text-sm text-gray-500">
-                    Customer
-                  </p>
-
-                  <p className="mt-1 font-medium">
-                    {order.customerName}
-                  </p>
-                </div>
-
-                <div>
-                  <p className="text-sm text-gray-500">
-                    Product
-                  </p>
-
-                  <p className="mt-1">
-                    {order.product}
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-gray-500">
-                      Quantity
-                    </p>
-
-                    <p className="mt-1">
-                      {order.quantity}
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="text-sm text-gray-500">
-                      Amount
-                    </p>
-
-                    <p className="mt-1">
-                      ₹{order.amount}
-                    </p>
-                  </div>
-                </div>
-                {/* STATUS */}
-                <div>
-                  <p className="text-sm text-gray-500 mb-3">
-                    Status
-                  </p>
-                  {canUpdateOrders ? (
-                    <div className="relative inline-block">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-
-                          setActiveDropdown(
-                            activeDropdown === order._id
-                              ? null
-                              : order._id,
-                          );
-                        }}
-                        className={`px-4 py-2 rounded-full text-sm font-medium capitalize flex items-center gap-3 min-w-[150px] justify-between transition ${getStatusStyles(
-                          order.status,
-                        )}`}
-                      >
-                        {order.status}
-
-                        <ChevronDown size={18} />
-                      </button>
-
-                      {activeDropdown === order._id && (
-                        <div
-                          className={`absolute left-0 z-50 min-w-[180px] bg-white border border-gray-200 rounded-3xl shadow-2xl py-2 ${
-                            shouldOpenUpward(
-                              index,
-                              orders.length,
-                            )
-                              ? "bottom-16"
-                              : "top-16"
-                          }`}
-                        >
-                          {statusFlow.map((status) => (
-                            <button
-                              key={status}
-                              onClick={(e) => {
-                                e.stopPropagation();
-
-                                updateOrderStatus(
-                                  order._id,
-                                  status,
-                                );
-                              }}
-                              className="w-full text-left px-5 py-3 hover:bg-[#F4F7FA] capitalize transition"
-                            >
-                              {status}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <div
-                      className={`inline-flex px-4 py-2 rounded-full text-sm font-medium capitalize ${getStatusStyles(
-                        order.status,
-                      )}`}
-                    >
-                      {order.status}
-                    </div>
-                  )}
-                </div>
-                {/* DELETE */}
-                {canDeleteOrders && (
-                  <div className="flex justify-end">
-                    <button
-                      onClick={() =>
-                        deleteOrder(order._id)
-                      }
-                      className="hover:text-red-600 hover:scale-110 active:scale-95 text-red-500 p-2 transition duration-200"
-                    >
-                      <Trash2 size={22} />
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-        {/* DESKTOP */}
-        <div className="hidden lg:block bg-white rounded-3xl shadow overflow-visible">
-          <table className="w-full">
-            <thead className="bg-[#0C2B4E] text-white">
-              <tr>
-                <th className="p-5 text-left">
-                  Customer
-                </th>
-
-                <th className="p-5 text-left">
-                  Product
-                </th>
-
-                <th className="p-5 text-left">
-                  Quantity
-                </th>
-
-                <th className="p-5 text-left">
-                  Amount
-                </th>
-
-                <th className="p-5 text-left">
-                  Status
-                </th>
-
-                <th className="p-5 text-left">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {orders.map((order, index) => (
-                <tr
-                  key={order._id}
-                  className="border-b border-gray-200"
-                >
-                  <td className="p-5 whitespace-nowrap">
-                    {order.customerName}
-                  </td>
-
-                  <td className="p-5">
-                    {order.product}
-                  </td>
-
-                  <td className="p-5">
-                    {order.quantity}
-                  </td>
-
-                  <td className="p-5">
-                    ₹{order.amount}
-                  </td>
-                  {/* STATUS */}
-                  <td className="p-5">
-                    {canUpdateOrders ? (
-                      <div className="relative inline-block">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-
-                            setActiveDropdown(
-                              activeDropdown === order._id
-                                ? null
-                                : order._id,
-                            );
-                          }}
-                          className={`px-4 py-2 rounded-full text-sm font-medium capitalize flex items-center gap-3 min-w-[150px] justify-between transition ${getStatusStyles(
-                            order.status,
-                          )}`}
-                        >
-                          {order.status}
-
-                          <ChevronDown size={18} />
-                        </button>
-
-                        {activeDropdown === order._id && (
-                          <div
-                            className={`absolute left-0 z-50 min-w-[180px] bg-white border border-gray-200 rounded-3xl shadow-2xl py-2 ${
-                              shouldOpenUpward(
-                                index,
-                                orders.length,
-                              )
-                                ? "bottom-14"
-                                : "top-14"
-                            }`}
-                          >
-                            {statusFlow.map((status) => (
-                              <button
-                                key={status}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-
-                                  updateOrderStatus(
-                                    order._id,
-                                    status,
-                                  );
-                                }}
-                                className="w-full text-left px-5 py-3 hover:bg-[#F4F7FA] capitalize transition"
-                              >
-                                {status}
-                              </button>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <div
-                        className={`inline-flex px-4 py-2 rounded-full text-sm font-medium capitalize ${getStatusStyles(
-                          order.status,
-                        )}`}
-                      >
-                        {order.status}
-                      </div>
-                    )}
-                  </td>
-                  {/* DELETE */}
-                  <td className="p-5">
-                    {canDeleteOrders && (
-                      <button
-                        onClick={() =>
-                          deleteOrder(order._id)
-                        }
-                        className="hover:text-red-600 hover:scale-110 active:scale-95 text-red-500 p-2 transition duration-200"
-                      >
-                        <Trash2 size={22} />
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-      {/* CREATE MODAL */}
-      {showModal && canCreateOrders && (
-        <div className="fixed inset-0 bg-black/40 flex justify-center items-center p-4 z-50">
-          <div className="bg-white p-6 md:p-8 rounded-3xl w-full max-w-md relative">
-            <button
-              onClick={() => setShowModal(false)}
-              className="absolute top-4 right-4 text-gray-500 hover:text-[#0C2B4E] transition"
-            >
-              <X size={22} />
-            </button>
-
-            <h2 className="text-2xl font-bold mb-6 text-[#0C2B4E]">
-              Create Order
-            </h2>
-
-            <div className="space-y-4">
-              <input
-                type="text"
-                placeholder="Customer Name"
-                className="w-full border border-gray-300 p-3 rounded-xl outline-none focus:border-[#1D546C]"
-                value={formData.customerName}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    customerName:
-                      e.target.value,
-                  })
-                }
-              />
-
-              <input
-                type="text"
-                placeholder="Product"
-                className="w-full border border-gray-300 p-3 rounded-xl outline-none focus:border-[#1D546C]"
-                value={formData.product}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    product: e.target.value,
-                  })
-                }
-              />
-
-              <input
-                type="number"
-                placeholder="Quantity"
-                className="w-full border border-gray-300 p-3 rounded-xl outline-none focus:border-[#1D546C]"
-                value={formData.quantity}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    quantity: e.target.value,
-                  })
-                }
-              />
-
-              <input
-                type="number"
-                placeholder="Amount"
-                className="w-full border border-gray-300 p-3 rounded-xl outline-none focus:border-[#1D546C]"
-                value={formData.amount}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    amount: e.target.value,
-                  })
-                }
-              />
-
-              <div className="flex justify-end pt-4">
-                <button
-                  onClick={createOrder}
-                  className="bg-[#1D546C] hover:bg-[#16485c] text-white px-5 py-3 rounded-xl transition"
-                >
-                  Create Order
-                </button>
-              </div>
-            </div>
+        {loading ? (
+          <div
+            className="
+              bg-white
+              dark:bg-[#111827]
+              rounded-3xl
+              p-10
+              text-center
+              border
+              border-gray-100
+              dark:border-gray-800
+            "
+          >
+            <p className="text-gray-500 dark:text-gray-400">
+              Loading orders...
+            </p>
           </div>
-        </div>
-      )}
+        ) : filteredOrders.length === 0 ? (
+          <EmptyOrdersState />
+        ) : (
+          <>
+            <OrdersTable
+              orders={paginatedOrders}
+              canUpdateOrders={canUpdateOrders}
+              canDeleteOrders={canDeleteOrders}
+              activeDropdown={activeDropdown}
+              setActiveDropdown={setActiveDropdown}
+              updateOrderStatus={updateOrderStatus}
+              deleteOrder={(id) => {
+                setSelectedOrderId(id);
+                setDeleteModal(true);
+              }}
+              statusFlow={statusFlow}
+              shouldOpenUpward={shouldOpenUpward}
+              getStatusStyles={getStatusStyles}
+              sortConfig={sortConfig}
+              handleSort={handleSort}
+            />
+
+            <OrdersCards
+              orders={paginatedOrders}
+              canUpdateOrders={canUpdateOrders}
+              canDeleteOrders={canDeleteOrders}
+              activeDropdown={activeDropdown}
+              setActiveDropdown={setActiveDropdown}
+              updateOrderStatus={updateOrderStatus}
+              deleteOrder={(id) => {
+                setSelectedOrderId(id);
+                setDeleteModal(true);
+              }}
+              statusFlow={statusFlow}
+              shouldOpenUpward={shouldOpenUpward}
+              getStatusStyles={getStatusStyles}
+            />
+
+            {totalPages > 1 && (
+              <OrdersPagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                setCurrentPage={setCurrentPage}
+              />
+            )}
+          </>
+        )}
+
+        <CreateOrderModal
+          showModal={showModal}
+          setShowModal={setShowModal}
+          formData={formData}
+          setFormData={setFormData}
+          createOrder={createOrder}
+        />
+
+        <DeleteConfirmModal
+          deleteModal={deleteModal}
+          setDeleteModal={setDeleteModal}
+          deleteOrder={deleteOrder}
+        />
+      </div>
     </DashboardLayout>
   );
 }

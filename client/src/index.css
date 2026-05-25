@@ -1,5 +1,21 @@
 @import "tailwindcss";
 
+/* TAILWIND V4 DARK MODE CONFIG */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* REMOVE RECHARTS OUTLINES */
+
+.recharts-wrapper *:focus {
+  outline: none;
+}
+
+.recharts-wrapper *:focus-visible {
+  outline: none;
+}
+
+/* SHAKE ANIMATION */
+
 @keyframes shake {
   0% {
     transform: translateX(0);
@@ -26,6 +42,8 @@
   animation: shake 0.3s ease-in-out;
 }
 
+/* FADE IN */
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -41,6 +59,8 @@
 .animate-fadeIn {
   animation: fadeIn 0.5s ease;
 }
+
+/* WAVE ANIMATION */
 
 @keyframes wave {
   0% {
@@ -79,4 +99,14 @@
 .animate-wave {
   animation: wave 3s ease-in-out infinite;
   transform-origin: 70% 70%;
+}
+
+/* GLOBAL BODY COLORS */
+
+body {
+  @apply bg-[#F4F7FA] text-gray-900 transition-colors duration-300;
+}
+
+.dark body {
+  @apply bg-[#0B1120] text-white;
 }
