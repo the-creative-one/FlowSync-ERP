@@ -144,11 +144,13 @@ function Register() {
           {/* LOGO */}
 
           <div className="flex justify-center lg:justify-start mb-8">
-            <img
-              src="/FS Logo-transparent.png"
-              alt="FlowSync Logo"
-              className="h-20 object-contain"
-            />
+            <Link to="/">
+              <img
+                src="/White-Logo.png"
+                alt="FlowSync Logo"
+                className="h-20 object-contain"
+              />
+            </Link>
           </div>
 
           {/* TEXT */}
@@ -235,11 +237,13 @@ function Register() {
         {/* MOBILE LOGO */}
 
         <div className="lg:hidden fixed top-5 left-5 z-20">
-          <img
-            src="/Favicon.png"
-            alt="FlowSync"
-            className="w-10 h-10 object-contain opacity-90"
-          />
+          <Link to="/">
+            <img
+              src="/White-Logo.png"
+              alt="FlowSync"
+              className="w-10 h-10 object-contain opacity-90"
+            />
+          </Link>
         </div>
 
         {/* REGISTER CARD */}
@@ -595,7 +599,7 @@ function Register() {
           >
             Already have an account?{" "}
             <Link
-              to="/"
+              to="/login"
               className="
                 text-[#1D546C]
                 dark:text-blue-400

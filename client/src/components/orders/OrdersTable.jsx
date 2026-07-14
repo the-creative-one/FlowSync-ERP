@@ -1,8 +1,4 @@
-import {
-  Trash2,
-  ChevronUp,
-  ChevronDown,
-} from "lucide-react";
+import { Trash2, Pencil, ChevronUp, ChevronDown } from "lucide-react";
 
 import OrderStatusDropdown from "./OrderStatusDropdown";
 
@@ -13,20 +9,21 @@ function OrdersTable({
   activeDropdown,
   setActiveDropdown,
   updateOrderStatus,
+  openEditModal,
   deleteOrder,
   statusFlow,
   getStatusStyles,
   shouldOpenUpward,
   sortConfig,
   handleSort,
+  currencySymbol,
 }) {
   //
   // SORT ICON
   //
 
   const renderSortIcon = (key) => {
-    const active =
-      sortConfig?.key === key;
+    const active = sortConfig?.key === key;
 
     //
     // NO SORT
@@ -77,10 +74,7 @@ function OrdersTable({
   // SORT HEADER
   //
 
-  const SortableHeader = ({
-    label,
-    sortKey,
-  }) => (
+  const SortableHeader = ({ label, sortKey }) => (
     <button
       onClick={() => handleSort(sortKey)}
       className="
@@ -128,57 +122,40 @@ function OrdersTable({
             "
           >
             <tr>
-              <th className="p-5 text-left">
-                Customer
-              </th>
+              <th className="p-5 text-left">Order ID</th>
+              <th className="p-5 text-left">Customer</th>
 
-              <th className="p-5 text-left">
-                Product
-              </th>
+              <th className="p-5 text-left">Product</th>
 
               {/* QUANTITY */}
 
               <th className="p-5 text-left">
-                <SortableHeader
-                  label="Quantity"
-                  sortKey="quantity"
-                />
+                <SortableHeader label="Quantity" sortKey="quantity" />
               </th>
 
               {/* AMOUNT */}
 
               <th className="p-5 text-left">
-                <SortableHeader
-                  label="Amount"
-                  sortKey="amount"
-                />
+                <SortableHeader label="Amount" sortKey="amount" />
               </th>
 
               {/* CREATED */}
 
               <th className="p-5 text-left">
-                <SortableHeader
-                  label="Created"
-                  sortKey="createdAt"
-                />
+                <SortableHeader label="Created" sortKey="createdAt" />
               </th>
 
               {/* UPDATED */}
 
               <th className="p-5 text-left">
-                <SortableHeader
-                  label="Updated"
-                  sortKey="updatedAt"
-                />
+                <SortableHeader label="Updated" sortKey="updatedAt" />
               </th>
 
-              <th className="p-5 text-left">
-                Status
-              </th>
+              <th className="p-5 text-left">Status</th>
 
-              <th className="p-5 text-left">
-                Actions
-              </th>
+              {(canUpdateOrders || canDeleteOrders) && (
+                <th className="p-5 text-left">Actions</th>
+              )}
             </tr>
           </thead>
 
@@ -197,6 +174,17 @@ function OrdersTable({
                   transition
                 "
               >
+                <td
+                  className="
+                    p-5
+                    whitespace-nowrap
+                    font-semibold
+                    text-[#1D546C]
+                    dark:text-blue-400
+                  "
+                >
+                  {order.orderNumber}
+                </td>
                 {/* CUSTOMER */}
 
                 <td
@@ -243,7 +231,8 @@ function OrdersTable({
                     dark:text-blue-400
                   "
                 >
-                  ₹{order.amount}
+                  {currencySymbol}
+                  {order.amount}
                 </td>
 
                 {/* CREATED */}
@@ -257,10 +246,7 @@ function OrdersTable({
                 {/* UPDATED */}
 
                 <td className="p-5 whitespace-nowrap">
-                  {new Date(
-                    order.updatedAt ||
-                      order.createdAt,
-                  )
+                  {new Date(order.updatedAt || order.createdAt)
                     .toLocaleDateString("en-GB")
                     .replace(/\//g, "-")}
                 </td>
@@ -272,19 +258,11 @@ function OrdersTable({
                     <OrderStatusDropdown
                       order={order}
                       activeDropdown={activeDropdown}
-                      setActiveDropdown={
-                        setActiveDropdown
-                      }
-                      updateOrderStatus={
-                        updateOrderStatus
-                      }
+                      setActiveDropdown={setActiveDropdown}
+                      updateOrderStatus={updateOrderStatus}
                       statusFlow={statusFlow}
-                      getStatusStyles={
-                        getStatusStyles
-                      }
-                      shouldOpenUpward={
-                        shouldOpenUpward
-                      }
+                      getStatusStyles={getStatusStyles}
+                      shouldOpenUpward={shouldOpenUpward}
                       index={index}
                       totalOrders={orders.length}
                     />
@@ -299,9 +277,7 @@ function OrdersTable({
                         font-medium
                         capitalize
 
-                        ${getStatusStyles(
-                          order.status,
-                        )}
+                        ${getStatusStyles(order.status)}
                       `}
                     >
                       {order.status}
@@ -309,27 +285,45 @@ function OrdersTable({
                   )}
                 </td>
 
-                {/* DELETE */}
+                {/* ACTIONS */}
 
-                <td className="p-5">
-                  {canDeleteOrders && (
-                    <button
-                      onClick={() =>
-                        deleteOrder(order._id)
-                      }
-                      className="
-                        text-red-500
-                        hover:text-red-600
-                        hover:scale-110
-                        active:scale-95
-                        p-2
-                        transition
-                      "
-                    >
-                      <Trash2 size={22} />
-                    </button>
-                  )}
-                </td>
+                {(canUpdateOrders || canDeleteOrders) && (
+                  <td className="p-5">
+                    <div className="flex items-center gap-2">
+                      {canUpdateOrders && (
+                        <button
+                          onClick={() => openEditModal(order)}
+                          className="
+                              text-blue-500
+                              hover:text-blue-600
+                              hover:scale-110
+                              active:scale-95
+                              p-2
+                              transition
+                            "
+                        >
+                          <Pencil size={20} />
+                        </button>
+                      )}
+
+                      {canDeleteOrders && (
+                        <button
+                          onClick={() => deleteOrder(order._id)}
+                          className="
+                            text-red-500
+                            hover:text-red-600
+                            hover:scale-110
+                            active:scale-95
+                            p-2
+                            transition
+                          "
+                        >
+                          <Trash2 size={22} />
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>

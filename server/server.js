@@ -8,6 +8,11 @@ const orderRoutes = require("./routes/orderRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const employeeRoutes = require("./routes/employeeRoutes");
 const analyticsRoutes = require("./routes/analyticsRoutes");
+const profileRoutes = require("./routes/profileRoutes");
+const settingsRoutes = require("./routes/settingsRoutes");
+const activityLogRoutes = require("./routes/activityLogRoutes");
+
+const path = require("path");
 
 const connectDB = require("./config/db");
 
@@ -15,7 +20,12 @@ const app = express();
 
 connectDB();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+  }),
+);
 app.use(express.json());
 app.use(morgan("dev"));
 
@@ -28,7 +38,11 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/employees", employeeRoutes);
 app.use("/api/analytics", analyticsRoutes);
+app.use("/api/profile", profileRoutes);
+app.use("/api/settings", settingsRoutes);
+app.use("/api/activity-logs", activityLogRoutes);
 
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 const PORT = process.env.PORT || 5000;
 

@@ -9,6 +9,7 @@ function OrdersToolbar({
   setStatusFilter,
   exportOrders,
   canCreateOrders,
+  canExportReports,
   setShowModal,
   totalOrders,
 }) {
@@ -32,14 +33,14 @@ function OrdersToolbar({
 
         <div
           className="
-    flex
-    flex-col
-    gap-5
+            flex
+            flex-col
+            gap-5
 
-    min-[450px]:flex-row
-    min-[450px]:items-start
-    min-[450px]:justify-between
-  "
+            min-[450px]:flex-row
+            min-[450px]:items-start
+            min-[450px]:justify-between
+          "
         >
           {/* LEFT */}
 
@@ -79,10 +80,10 @@ function OrdersToolbar({
             "
           >
             {/* EXPORT */}
-
-            <button
-              onClick={exportOrders}
-              className="
+            {canExportReports && (
+              <button
+                onClick={exportOrders}
+                className="
                 h-14
                 w-14
                 rounded-2xl
@@ -100,10 +101,10 @@ function OrdersToolbar({
                 hover:scale-[1.03]
                 hover:border-[#2563EB]
               "
-            >
-              <Download size={20} />
-            </button>
-
+              >
+                <Download size={20} />
+              </button>
+            )}
             {/* CREATE */}
 
             {canCreateOrders && (

@@ -1,5 +1,9 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import Home from "./pages/Home";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import FeaturesPage from "./pages/FeaturesPage";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
@@ -7,13 +11,23 @@ import Orders from "./pages/Orders";
 import Analytics from "./pages/Analytics";
 import Employees from "./pages/Employees";
 import Settings from "./pages/Settings";
+import Profile from "./pages/Profile";
+import ActivityLogs from "./pages/ActivityLogs";
+import ResetPassword from "./pages/ResetPassword";
+import ForgotPassword from "./pages/ForgotPassword";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsConditions from "./pages/TermsConditions";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         {/* Public Routes */}
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/features" element={<FeaturesPage />} /> 
+        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         {/* Dashboard */}
         <Route
@@ -37,9 +51,7 @@ function App() {
         <Route
           path="/analytics"
           element={
-            <ProtectedRoute
-              permission="canViewAdvancedAnalytics"
-            >
+            <ProtectedRoute permission="canViewAdvancedAnalytics">
               <Analytics />
             </ProtectedRoute>
           }
@@ -48,9 +60,7 @@ function App() {
         <Route
           path="/employees"
           element={
-            <ProtectedRoute
-              permission="canManageEmployees"
-            >
+            <ProtectedRoute permission="canManageEmployees">
               <Employees />
             </ProtectedRoute>
           }
@@ -59,13 +69,35 @@ function App() {
         <Route
           path="/settings"
           element={
-            <ProtectedRoute
-              permission="canAccessSettings"
-            >
+            <ProtectedRoute permission="canAccessSettings">
               <Settings />
             </ProtectedRoute>
           }
         />
+        {/* Activity Logs */}
+        <Route
+          path="/activity-logs"
+          element={
+            <ProtectedRoute>
+              <ActivityLogs />
+            </ProtectedRoute>
+          }
+        />
+        {/* Profile */}
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        {/* Reset Password */}
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
+        {/* Forgot Password */}
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms-&-conditions" element={<TermsConditions />} />
       </Routes>
     </BrowserRouter>
   );

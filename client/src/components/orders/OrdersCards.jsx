@@ -1,5 +1,4 @@
-import { Trash2 } from "lucide-react";
-
+import { Trash2, Pencil } from "lucide-react";
 import OrderStatusDropdown from "./OrderStatusDropdown";
 
 function OrdersCards({
@@ -9,10 +8,12 @@ function OrdersCards({
   activeDropdown,
   setActiveDropdown,
   updateOrderStatus,
+  openEditModal,
   deleteOrder,
   statusFlow,
   getStatusStyles,
   shouldOpenUpward,
+  currencySymbol,
 }) {
   return (
     <div className="lg:hidden space-y-4">
@@ -32,28 +33,51 @@ function OrdersCards({
             transition-colors
           "
         >
-          {/* DELETE BUTTON */}
+          {/* ACTION BUTTONS */}
 
-          {canDeleteOrders && (
-            <button
-              onClick={() => deleteOrder(order._id)}
-              className="
-                absolute
-                top-5
-                right-5
-                text-red-500
-                hover:text-red-600
-                hover:scale-110
-                active:scale-95
-                p-2
-                transition
-              "
-            >
-              <Trash2 size={22} />
-            </button>
-          )}
+          <div className="  absolute  top-5  right-5  flex  items-center  gap-1">
+            {/* EDIT */}
+
+            {canUpdateOrders && (
+              <button
+                onClick={() => openEditModal(order)}
+                className="  text-blue-500  hover:text-blue-600  hover:scale-110  active:scale-95  p-2  transition"
+              >
+                <Pencil size={20} />
+              </button>
+            )}
+
+            {/* DELETE */}
+
+            {canDeleteOrders && (
+              <button
+                onClick={() => deleteOrder(order._id)}
+                className="  text-red-500  hover:text-red-600  hover:scale-110  active:scale-95  p-2  transition"
+              >
+                <Trash2 size={22} />
+              </button>
+            )}
+          </div>
 
           <div className="space-y-5">
+            <div
+              className="
+                inline-flex
+                items-center
+                px-3
+                py-1
+                rounded-full
+                bg-blue-50
+                dark:bg-blue-900/20
+                text-[#1D546C]
+                dark:text-blue-400
+                text-xs
+                font-semibold
+                tracking-wide
+              "
+            >
+              {order.orderNumber}
+            </div>
             {/* CUSTOMER */}
 
             <div>
@@ -146,7 +170,8 @@ function OrdersCards({
                     dark:text-blue-400
                   "
                 >
-                  ₹{order.amount}
+                  {currencySymbol}
+                  {order.amount}
                 </p>
               </div>
             </div>

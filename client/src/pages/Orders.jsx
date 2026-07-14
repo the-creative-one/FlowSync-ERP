@@ -10,6 +10,7 @@ import OrdersToolbar from "../components/orders/OrdersToolbar";
 import OrdersTable from "../components/orders/OrdersTable";
 import OrdersCards from "../components/orders/OrdersCards";
 import CreateOrderModal from "../components/orders/CreateOrderModal";
+import EditOrderModal from "../components/orders/EditOrderModal";
 import DeleteConfirmModal from "../components/orders/DeleteConfirmModal";
 import EmptyOrdersState from "../components/orders/EmptyOrdersState";
 import OrdersPagination from "../components/orders/OrdersPagination";
@@ -22,6 +23,16 @@ function Orders() {
   const [loading, setLoading] = useState(true);
 
   const [showModal, setShowModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+
+  const [editFormData, setEditFormData] = useState({
+    customerName: "",
+    product: "",
+    quantity: "",
+    amount: "",
+  });
+
+  const [editingOrderId, setEditingOrderId] = useState(null);
 
   const [deleteModal, setDeleteModal] = useState(false);
 
@@ -34,6 +45,7 @@ function Orders() {
   const [currentPage, setCurrentPage] = useState(1);
 
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const [currency, setCurrency] = useState("INR");
 
   //
   // SORTING
@@ -69,6 +81,11 @@ function Orders() {
 
   const canDeleteOrders =
     user?.permissions?.canDeleteOrders ||
+    user?.role === "admin" ||
+    user?.role === "manager";
+
+  const canExportReports =
+    user?.permissions?.canExportReports ||
     user?.role === "admin" ||
     user?.role === "manager";
 
@@ -151,6 +168,13 @@ function Orders() {
       });
 
       setOrders(response.data);
+      const settingsResponse = await api.get("/settings", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setCurrency(settingsResponse.data.currency || "INR");
     } catch (error) {
       console.log(error.response?.data);
 
@@ -178,7 +202,7 @@ function Orders() {
         },
       });
 
-      setOrders((prev) => [response.data, ...prev]);
+      await fetchOrders();
 
       setShowModal(false);
 
@@ -239,6 +263,59 @@ function Orders() {
   };
 
   //
+  // OPEN EDIT MODAL
+  //
+
+  const openEditModal = (order) => {
+    setEditingOrderId(order._id);
+
+    setEditFormData({
+      customerName: order.customerName,
+      product: order.product,
+      quantity: order.quantity,
+      amount: order.amount,
+    });
+
+    setShowEditModal(true);
+  };
+
+  //
+  // UPDATE ORDER
+  //
+
+  const updateOrder = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await api.patch(
+        `/orders/${editingOrderId}`,
+        editFormData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      setOrders((prev) =>
+        prev.map((order) =>
+          order._id === editingOrderId ? response.data.order : order,
+        ),
+      );
+
+      setShowEditModal(false);
+
+      setEditingOrderId(null);
+
+      toast.success("Order updated successfully");
+    } catch (error) {
+      console.log(error.response?.data);
+
+      toast.error("Failed to update order");
+    }
+  };
+
+  //
   // DELETE ORDER
   //
 
@@ -273,39 +350,39 @@ function Orders() {
   //
 
   const handleSort = (key) => {
-  setSortConfig((prev) => {
-    //
-    // NEW SORT
-    //
+    setSortConfig((prev) => {
+      //
+      // NEW SORT
+      //
 
-    if (prev.key !== key) {
+      if (prev.key !== key) {
+        return {
+          key,
+          direction: "asc",
+        };
+      }
+
+      //
+      // ASC -> DESC
+      //
+
+      if (prev.direction === "asc") {
+        return {
+          key,
+          direction: "desc",
+        };
+      }
+
+      //
+      // DESC -> RESET
+      //
+
       return {
-        key,
-        direction: "asc",
+        key: null,
+        direction: null,
       };
-    }
-
-    //
-    // ASC -> DESC
-    //
-
-    if (prev.direction === "asc") {
-      return {
-        key,
-        direction: "desc",
-      };
-    }
-
-    //
-    // DESC -> RESET
-    //
-
-    return {
-      key: null,
-      direction: null,
-    };
-  });
-};
+    });
+  };
   //
   // FILTERED ORDERS
   //
@@ -331,19 +408,14 @@ function Orders() {
     //
 
     if (statusFilter !== "all") {
-      filtered = filtered.filter(
-        (order) => order.status === statusFilter,
-      );
+      filtered = filtered.filter((order) => order.status === statusFilter);
     }
 
     //
     // DEFAULT SORT
     //
 
-    filtered.sort(
-      (a, b) =>
-        new Date(b.createdAt) - new Date(a.createdAt),
-    );
+    filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     //
     // CUSTOM SORT
@@ -371,13 +443,9 @@ function Orders() {
             break;
 
           case "updatedAt":
-            aValue = new Date(
-              a.updatedAt || a.createdAt,
-            );
+            aValue = new Date(a.updatedAt || a.createdAt);
 
-            bValue = new Date(
-              b.updatedAt || b.createdAt,
-            );
+            bValue = new Date(b.updatedAt || b.createdAt);
 
             break;
 
@@ -394,12 +462,7 @@ function Orders() {
     }
 
     return filtered;
-  }, [
-    orders,
-    search,
-    statusFilter,
-    sortConfig,
-  ]);
+  }, [orders, search, statusFilter, sortConfig]);
 
   //
   // PAGINATION
@@ -413,6 +476,22 @@ function Orders() {
     startIndex,
     startIndex + ORDERS_PER_PAGE,
   );
+
+  const getCurrencySymbol = () => {
+    switch (currency) {
+      case "USD":
+        return "$";
+
+      case "EUR":
+        return "€";
+
+      case "GBP":
+        return "£";
+
+      default:
+        return "₹";
+    }
+  };
 
   useEffect(() => {
     setCurrentPage(1);
@@ -430,6 +509,8 @@ function Orders() {
     }
 
     const exportData = filteredOrders.map((order) => ({
+      "Order ID": order.orderNumber,
+
       Customer: order.customerName,
 
       Product: order.product,
@@ -440,7 +521,12 @@ function Orders() {
 
       Status: order.status,
 
-      CreatedAt: new Date(order.createdAt).toLocaleDateString(),
+      CreatedAt: new Date(order.createdAt)
+        .toLocaleDateString("en-GB")
+        .replace(/\//g, "-"),
+      UpdatedAt: new Date(order.updatedAt)
+        .toLocaleDateString("en-GB")
+        .replace(/\//g, "-"),
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);
@@ -474,6 +560,7 @@ function Orders() {
           setStatusFilter={setStatusFilter}
           exportOrders={exportOrders}
           canCreateOrders={canCreateOrders}
+          canExportReports={canExportReports}
           setShowModal={setShowModal}
           totalOrders={filteredOrders.length}
         />
@@ -502,10 +589,12 @@ function Orders() {
             <OrdersTable
               orders={paginatedOrders}
               canUpdateOrders={canUpdateOrders}
+              currencySymbol={getCurrencySymbol()}
               canDeleteOrders={canDeleteOrders}
               activeDropdown={activeDropdown}
               setActiveDropdown={setActiveDropdown}
               updateOrderStatus={updateOrderStatus}
+              openEditModal={openEditModal}
               deleteOrder={(id) => {
                 setSelectedOrderId(id);
                 setDeleteModal(true);
@@ -519,11 +608,13 @@ function Orders() {
 
             <OrdersCards
               orders={paginatedOrders}
+              currencySymbol={getCurrencySymbol()}
               canUpdateOrders={canUpdateOrders}
               canDeleteOrders={canDeleteOrders}
               activeDropdown={activeDropdown}
               setActiveDropdown={setActiveDropdown}
               updateOrderStatus={updateOrderStatus}
+              openEditModal={openEditModal}
               deleteOrder={(id) => {
                 setSelectedOrderId(id);
                 setDeleteModal(true);
@@ -549,6 +640,14 @@ function Orders() {
           formData={formData}
           setFormData={setFormData}
           createOrder={createOrder}
+        />
+
+        <EditOrderModal
+          showEditModal={showEditModal}
+          setShowEditModal={setShowEditModal}
+          editFormData={editFormData}
+          setEditFormData={setEditFormData}
+          updateOrder={updateOrder}
         />
 
         <DeleteConfirmModal

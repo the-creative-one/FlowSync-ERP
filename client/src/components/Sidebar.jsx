@@ -4,14 +4,15 @@ import {
   ChevronLeft,
   ChevronRight,
   LogOut,
-  User,
   BarChart3,
   Users,
   Settings,
+  ClipboardList,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { NavLink, useNavigate } from "react-router-dom";
 import { hasPermission, isAdmin, isManager } from "../utils/permissions";
+import UserAvatar from "../components/common/UserAvatar";
 
 function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
   const navigate = useNavigate();
@@ -29,9 +30,9 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
       }`}
     >
       {/* Logo Section */}
-      <div className="flex items-center justify-between p-5 border-b border-[#1D546C]">
+      <div className="flex items-center justify-between p-5 pb-2.5 border-b border-[#1D546C]">
         {!collapsed && (
-          <img src="/FS Logo-transparent.png" alt="FlowSync" className="h-10" />
+          <img src="/White-Logo.png" alt="FlowSync" className="h-12" />
         )}
 
         <button
@@ -42,9 +43,16 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
               setCollapsed(!collapsed);
             }
           }}
-          className="p-2 hover:bg-[#1D546C] rounded-lg transition"
+          className="px-2 py-3 transition"
         >
-          {collapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+          {collapsed ? (
+            <ChevronRight className="hover:text-[#668a9b]" size={20} />
+          ) : (
+            <ChevronLeft
+              className="text-white hover:text-[#668a9b]"
+              size={20}
+            />
+          )}
         </button>
       </div>
 
@@ -104,7 +112,7 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
             >
               <Users size={20} />
 
-              {!collapsed && <span>Employees</span>}
+              {!collapsed && <span>User Management</span>}
             </NavLink>
           )}
           {/* Settings */}
@@ -122,22 +130,29 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
               {!collapsed && <span>Settings</span>}
             </NavLink>
           )}
+          {(isAdmin(user) || isManager(user)) && (
+            <NavLink
+              to="/activity-logs"
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-4 py-3 rounded-xl transition ${
+                  isActive ? "bg-[#1D546C]" : "hover:bg-[#1A3D64]"
+                }`
+              }
+            >
+              <ClipboardList size={20} />
+
+              {!collapsed && <span>Activity Logs</span>}
+            </NavLink>
+          )}
         </div>
         <div className="border-t border-[#1D546C] pt-4">
           <button
-            className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl transition ${
-              collapsed ? "justify-center hover:scale-94" : "hover:bg-[#1A3D64]"
+            onClick={() => navigate("/profile")}
+            className={`flex items-center gap-3 w-full py-3 rounded-xl transition cursor-pointer ${
+              collapsed ? "justify-center hover:scale-94" : "hover:scale-98"
             }`}
           >
-            <div className="min-w-10 min-h-10 w-10 h-10 rounded-full bg-[#1D546C] flex items-center justify-center font-bold uppercase">
-              {loading ? (
-                <User size={18} />
-              ) : user?.name ? (
-                user.name.charAt(0)
-              ) : (
-                <User size={18} />
-              )}
-            </div>
+            <UserAvatar user={user} size="md" />
 
             {!collapsed && (
               <div className="text-left">

@@ -60,6 +60,14 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
 
+    resetPasswordToken: {
+      type: String,
+    },
+
+    resetPasswordExpire: {
+      type: Date,
+    },
+
     role: {
       type: String,
       enum: ["admin", "manager", "employee", "operations", "analyst"],
@@ -78,6 +86,20 @@ const userSchema = new mongoose.Schema(
         canExportReports: false,
         canAccessSettings: false,
       }),
+    },
+
+    avatar: {
+      type: String,
+      default: "",
+    },
+    avatarType: {
+      type: String,
+      default: "",
+    },
+
+    avatarSeed: {
+      type: String,
+      default: "",
     },
   },
   {

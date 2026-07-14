@@ -3,7 +3,10 @@ import toast from "react-hot-toast";
 import DashboardLayout from "../layouts/DashboardLayout";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Bell } from "lucide-react";
+import CreateUserModal from "../components/employees/CreateUserModal";
+import PermissionRequests from "../components/employees/PermissionRequests";
+import UserAvatar from "../components/common/UserAvatar";
 
 function Employees() {
   const { user } = useAuth();
@@ -12,6 +15,12 @@ function Employees() {
   const [loading, setLoading] = useState(true);
 
   const [activeRoleDropdown, setActiveRoleDropdown] = useState(null);
+  const [requests, setRequests] = useState([]);
+  const [showCreateUserModal, setShowCreateUserModal] = useState(false);
+  const [showRequestsDrawer, setShowRequestsDrawer] = useState(false);
+  const pendingRequests = requests.filter(
+    (request) => request.status === "pending",
+  );
 
   //
   // AVAILABLE ROLES
@@ -194,25 +203,162 @@ function Employees() {
     }
   };
 
+  //
+  // FETCH REQUESTS
+  //
+
+  const fetchRequests = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await api.get("/employees/requests", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setRequests(response.data);
+    } catch (error) {
+      console.log(error.response?.data);
+    }
+  };
+
+  //
+  // APPROVE REQUEST
+  //
+
+  const approveRequest = async (requestId) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      await api.put(
+        `/employees/requests/${requestId}/approve`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      toast.success("Request approved");
+
+      fetchRequests();
+      fetchEmployees();
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to approve request");
+    }
+  };
+
+  //
+  // REJECT REQUEST
+  //
+
+  const rejectRequest = async (requestId) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      await api.put(
+        `/employees/requests/${requestId}/reject`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      toast.success("Request rejected");
+
+      fetchRequests();
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to reject request");
+    }
+  };
+
   useEffect(() => {
     fetchEmployees();
+
+    if (user?.role === "admin" || user?.role === "manager") {
+      fetchRequests();
+    }
   }, []);
 
   return (
     <DashboardLayout
-      title="Employee Management"
+      title="User & Access Management"
       subtitle="Manage employee roles and permissions"
     >
       <div className="p-1 md:pt-6" onClick={() => setActiveRoleDropdown(null)}>
+        <div className="flex justify-end items-center gap-4 mb-6">
+          <button
+            onClick={() => setShowRequestsDrawer(true)}
+            className="
+                bg-white
+                relative
+                dark:bg-[#111827]
+                border
+                border-gray-200
+                dark:border-gray-700
+                px-4
+                py-3
+                rounded-xl
+                flex
+                items-center
+                gap-2
+                hover:scale-[1.02]
+                transition
+              "
+          >
+            <Bell size={18} />
+
+            <span className="font-medium">Pending Requests</span>
+
+            {pendingRequests.length > 0 && (
+              <span
+                className="
+                    bg-red-500
+                    text-white
+                    text-xs
+                    px-2
+                    py-1
+                    rounded-full
+                    min-w-[24px]
+                  "
+              >
+                {pendingRequests.length}
+              </span>
+            )}
+          </button>
+
+          {(user?.role === "admin" || user?.role === "manager") && (
+            <button
+              onClick={() => setShowCreateUserModal(true)}
+              className="
+                bg-[#1D546C]
+                hover:bg-[#16485c]
+                text-white
+                px-5
+                py-3
+                rounded-xl
+                font-medium
+                transition
+              "
+            >
+              + Create User
+            </button>
+          )}
+        </div>
         {loading ? (
-          <div className="bg-white rounded-2xl shadow p-8 text-center">
-            <p className="text-gray-500">Loading employees...</p>
+          <div className="bg-white  dark:bg-[#111827]  rounded-2xl  shadow  p-8  text-center  border  border-gray-100  dark:border-gray-800">
+            <p className="text-gray-500 dark:text-gray-400">
+              Loading employees...
+            </p>
           </div>
         ) : (
           <>
             {/* DESKTOP */}
-
-            <div className="hidden xl:block bg-white rounded-3xl shadow overflow-visible">
+            <div className=" hidden xl:block bg-white dark:bg-[#111827] shadow overflow-visible border border-gray-100 dark:border-gray-800">
               <table className="w-full">
                 <thead className="bg-[#0C2B4E] text-white">
                   <tr>
@@ -228,10 +374,23 @@ function Employees() {
 
                 <tbody>
                   {employees.map((employee, index) => (
-                    <tr key={employee._id} className="border-b border-gray-200">
-                      <td className="p-5 whitespace-nowrap">{employee.name}</td>
+                    <tr
+                      key={employee._id}
+                      className=" border-b border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-[#1A2438] transition"
+                    >
+                      <td className="p-5 whitespace-nowrap">
+                        <div className="flex items-center gap-3">
+                          <UserAvatar user={employee} size="sm" />
 
-                      <td className="p-5">{employee.email}</td>
+                          <span className="text-[#0C2B4E] dark:text-white">
+                            {employee.name}
+                          </span>
+                        </div>
+                      </td>
+
+                      <td className="p-5 text-gray-700 dark:text-gray-300">
+                        {employee.email}
+                      </td>
 
                       <td className="p-5">
                         {canManageUser(employee) ? (
@@ -246,9 +405,9 @@ function Employees() {
                                     : employee._id,
                                 );
                               }}
-                              className="bg-[#EAF2FF] hover:bg-[#DCE8FF] text-[#1D4ED8] rounded-full px-4 py-1.5 flex items-center gap-3 min-w-[130px] justify-between transition"
+                              className=" bg-[#EAF2FF] hover:bg-[#DCE8FF] text-[#1D4ED8] dark:bg-[#1E3A5F] dark:hover:bg-[#27496D] dark:text-white rounded-full px-4 py-1.5 flex items-center gap-3 min-w-[130px] justify-between transition "
                             >
-                              <span className="capitalize">
+                              <span className="capitalize text-[#0C2B4E] dark:text-white">
                                 {employee.role}
                               </span>
 
@@ -257,7 +416,7 @@ function Employees() {
 
                             {activeRoleDropdown === employee._id && (
                               <div
-                                className={`absolute left-0 z-50 min-w-[180px] bg-white border border-gray-200 rounded-3xl shadow-2xl py-2
+                                className={`absolute left-0 z-50 min-w-[180px] bg-white dark:bg-[#1A2438] border overflow-hidden border-gray-200 dark:border-[#2A3A52] rounded-3xl shadow-2xl 
                                 ${
                                   shouldOpenUpward(index, employees.length)
                                     ? "bottom-12"
@@ -272,7 +431,7 @@ function Employees() {
 
                                       updateRole(employee._id, role);
                                     }}
-                                    className="w-full text-left px-5 py-3 hover:bg-[#F4F7FA] transition capitalize"
+                                    className="w-full text-left px-5 py-3 hover:bg-[#F4F7FA] dark:hover:bg-[#222e44d1] text-gray-700 dark:text-gray-300 transition capitalize"
                                   >
                                     {role}
                                   </button>
@@ -281,7 +440,9 @@ function Employees() {
                             )}
                           </div>
                         ) : (
-                          <span className="capitalize">{employee.role}</span>
+                          <span className="capitalize text-[#0C2B4E] dark:text-white">
+                            {employee.role}
+                          </span>
                         )}
                       </td>
 
@@ -290,7 +451,15 @@ function Employees() {
                           {permissionList.map((permission) => (
                             <label
                               key={permission.key}
-                              className="flex items-center gap-2 text-sm whitespace-nowrap"
+                              className="
+                                flex
+                                items-center
+                                gap-2
+                                text-sm
+                                whitespace-nowrap
+                                text-gray-700
+                                dark:text-gray-300
+                              "
                             >
                               <input
                                 type="checkbox"
@@ -326,23 +495,37 @@ function Employees() {
               {employees.map((employee, index) => (
                 <div
                   key={employee._id}
-                  className="bg-white rounded-3xl shadow p-5"
+                  className="  bg-white  dark:bg-[#111827]  rounded-3xl  shadow  p-5  border  border-gray-100  dark:border-gray-800"
                 >
                   <div className="space-y-5">
                     <div>
-                      <p className="text-sm text-gray-500">Name</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Name
+                      </p>
 
-                      <p className="mt-1">{employee.name}</p>
+                      <div className="flex items-center gap-3 mt-2">
+                        <UserAvatar user={employee} size="sm" />
+
+                        <p className="text-[#0C2B4E] dark:text-white">
+                          {employee.name}
+                        </p>
+                      </div>
                     </div>
 
                     <div>
-                      <p className="text-sm text-gray-500">Email</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Email
+                      </p>
 
-                      <p className="mt-1">{employee.email}</p>
+                      <p className="mt-1 text-[#0C2B4E] dark:text-white">
+                        {employee.email}
+                      </p>
                     </div>
 
                     <div>
-                      <p className="text-sm text-gray-500 mb-3">Role</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
+                        Role
+                      </p>
 
                       {canManageUser(employee) ? (
                         <div className="relative inline-block">
@@ -356,16 +539,18 @@ function Employees() {
                                   : employee._id,
                               );
                             }}
-                            className="bg-[#EAF2FF] hover:bg-[#DCE8FF] text-[#1D4ED8] rounded-full px-4 py-2 flex items-center gap-3 min-w-[140px] justify-between transition"
+                            className=" bg-[#EAF2FF] hover:bg-[#DCE8FF] text-[#1D4ED8] dark:bg-[#1E3A5F] dark:hover:bg-[#27496D] dark:text-white rounded-full px-4 py-1.5 flex items-center gap-3 min-w-[130px] justify-between transition "
                           >
-                            <span className="capitalize">{employee.role}</span>
+                            <span className="capitalize text-[#0C2B4E] dark:text-white">
+                              {employee.role}
+                            </span>
 
                             <ChevronDown size={18} />
                           </button>
 
                           {activeRoleDropdown === employee._id && (
                             <div
-                              className={`absolute left-0 z-50 min-w-[180px] bg-white border border-gray-200 rounded-3xl shadow-2xl py-2
+                              className={`absolute left-0 z-50 min-w-[180px] bg-white dark:bg-[#1A2438] border border-gray-200 dark:border-[#2A3A52] rounded-3xl shadow-2xl py-2
                               ${
                                 shouldOpenUpward(index, employees.length)
                                   ? "bottom-16"
@@ -380,7 +565,10 @@ function Employees() {
 
                                     updateRole(employee._id, role);
                                   }}
-                                  className="w-full text-left px-5 py-3 hover:bg-[#F4F7FA] transition capitalize"
+                                  className="w-full text-left px-5 py-3 hover:bg-[#F4F7FA]
+dark:hover:bg-[#222e44d1]
+text-gray-700
+dark:text-gray-300 transition capitalize"
                                 >
                                   {role}
                                 </button>
@@ -389,14 +577,16 @@ function Employees() {
                           )}
                         </div>
                       ) : (
-                        <p className="capitalize">
+                        <p className="capitalize text-[#0C2B4E] dark:text-white">
                           {employee.role}
                         </p>
                       )}
                     </div>
 
                     <div>
-                      <p className="text-sm text-gray-500 mb-4">Permissions</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                        Permissions
+                      </p>
 
                       <div className="space-y-4">
                         {permissionList.map((permission) => (
@@ -404,7 +594,9 @@ function Employees() {
                             key={permission.key}
                             className="flex items-center justify-between gap-4"
                           >
-                            <span className="text-sm">{permission.label}</span>
+                            <span className="text-sm text-gray-700 dark:text-gray-300">
+                              {permission.label}
+                            </span>
 
                             <input
                               type="checkbox"
@@ -432,6 +624,20 @@ function Employees() {
           </>
         )}
       </div>
+      <CreateUserModal
+        isOpen={showCreateUserModal}
+        onClose={() => setShowCreateUserModal(false)}
+        currentUserRole={user?.role}
+        onUserCreated={() => {
+          fetchEmployees();
+        }}
+      />
+      <PermissionRequests
+        isOpen={showRequestsDrawer}
+        onClose={() => setShowRequestsDrawer(false)}
+        requests={requests}
+        fetchRequests={fetchRequests}
+      />
     </DashboardLayout>
   );
 }

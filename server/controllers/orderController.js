@@ -1,16 +1,43 @@
 const Order = require("../models/Order");
+const logActivity = require("../utils/logActivity");
+const Settings = require("../models/Settings");
 
 const createOrder = async (req, res) => {
   try {
     const { customerName, product, quantity, amount, status } = req.body;
 
+    const settings = await Settings.findOne();
+
+    const prefix = settings?.orderPrefix || "ORD";
+
+    const lastOrder = await Order.findOne().sort({ createdAt: -1 });
+
+    let nextNumber = 1001;
+
+    if (lastOrder?.orderNumber) {
+      const numericPart = parseInt(lastOrder.orderNumber.split("-")[1]);
+
+      nextNumber = numericPart + 1;
+    }
+
+    const orderNumber = `${prefix}-${nextNumber}`;
+
     const order = await Order.create({
+      orderNumber,
       customerName,
       product,
       quantity,
       amount,
       status,
       createdBy: req.user.id,
+    });
+
+    await logActivity({
+      userId: req.user.id,
+      userName: req.user.name,
+      action: "Created Order",
+      module: "Orders",
+      details: order.orderNumber,
     });
 
     res.status(201).json({
@@ -38,23 +65,61 @@ const getOrders = async (req, res) => {
   }
 };
 
-const updateOrderStatus = async (req, res) => {
+const updateOrder = async (req, res) => {
   try {
-    const { status } = req.body;
+    const { status, customerName, product, quantity, amount } = req.body;
 
     const order = await Order.findById(req.params.id);
+    const oldStatus = order.status;
 
     if (!order) {
       return res.status(404).json({
         message: "Order not found",
       });
     }
-    order.status = status;
+    // UPDATE FIELDS
+    if (status !== undefined) {
+      order.status = status;
+    }
+
+    if (customerName !== undefined) {
+      order.customerName = customerName;
+    }
+
+    if (product !== undefined) {
+      order.product = product;
+    }
+
+    if (quantity !== undefined) {
+      order.quantity = quantity;
+    }
+
+    if (amount !== undefined) {
+      order.amount = amount;
+    }
 
     await order.save();
 
+    if (status !== undefined && status !== oldStatus) {
+      await logActivity({
+        userId: req.user.id,
+        userName: req.user.name,
+        action: "Updated Order Status",
+        module: "Orders",
+        details: `${order.orderNumber} → ${status}`,
+      });
+    } else {
+      await logActivity({
+        userId: req.user.id,
+        userName: req.user.name,
+        action: "Updated Order",
+        module: "Orders",
+        details: order.orderNumber,
+      });
+    }
+
     res.status(200).json({
-      message: "Order status updated successfully",
+      message: "Order updated successfully",
       order,
     });
   } catch (error) {
@@ -74,6 +139,14 @@ const deleteOrder = async (req, res) => {
       });
     }
 
+    await logActivity({
+      userId: req.user.id,
+      userName: req.user.name,
+      action: "Deleted Order",
+      module: "Orders",
+      details: order.orderNumber,
+    });
+
     await order.deleteOne();
 
     res.status(200).json({
@@ -89,6 +162,6 @@ const deleteOrder = async (req, res) => {
 module.exports = {
   createOrder,
   getOrders,
-  updateOrderStatus,
+  updateOrder,
   deleteOrder,
 };

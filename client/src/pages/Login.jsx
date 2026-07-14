@@ -1,14 +1,9 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-
 import api from "../api/axios";
-
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
-
 import { useAuth } from "../context/AuthContext";
-
 import toast from "react-hot-toast";
-
 import ThemeToggle from "../components/ThemeToggle";
 
 function Login() {
@@ -116,12 +111,14 @@ function Login() {
         <div className="relative z-10">
           {/* LOGO */}
 
-          <div className="flex justify-center lg:justify-start mb-8">
-            <img
-              src="/FS Logo-transparent.png"
-              alt="FlowSync Logo"
-              className="h-20 object-contain"
-            />
+          <div className="flex justify-center lg:justify-start mb-4">
+            <Link to="/">
+              <img
+                src="/White-Logo.png"
+                alt="FlowSync Logo"
+                className="h-25 object-contain"
+              />
+            </Link>
           </div>
 
           {/* TEXT */}
@@ -208,11 +205,13 @@ function Login() {
         {/* MOBILE LOGO */}
 
         <div className="lg:hidden fixed top-5 left-5 z-20">
-          <img
-            src="/Favicon.png"
-            alt="FlowSync"
-            className="w-10 h-10 object-contain opacity-90"
-          />
+          <Link to="/">
+            <img
+              src="/White-Logo.png"
+              alt="FlowSync"
+              className="w-10 h-10 object-contain opacity-90"
+            />
+          </Link>
         </div>
 
         {/* LOGIN CARD */}
@@ -409,9 +408,8 @@ function Login() {
             {/* FORGOT PASSWORD */}
 
             <div className="flex justify-end">
-              <button
-                type="button"
-                onClick={() => alert("Forgot Password feature coming soon.")}
+              <Link
+                to="/forgot-password"
                 className="
                   text-sm
                   text-[#1D546C]
@@ -420,7 +418,7 @@ function Login() {
                 "
               >
                 Forgot Password?
-              </button>
+              </Link>
             </div>
 
             {/* LOGIN BUTTON */}

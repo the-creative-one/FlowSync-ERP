@@ -1,171 +1,491 @@
 const express = require("express");
+const bcrypt = require("bcryptjs");
 
 const router = express.Router();
 
 const User = require("../models/User");
+const PermissionRequest = require("../models/PermissionRequest");
+const AuditLog = require("../models/AuditLog");
 
-const {
-  protect,
-  managerOrAdmin,
-} = require("../middleware/authMiddleware");
+const { protect, managerOrAdmin } = require("../middleware/authMiddleware");
 
 //
 // GET ALL EMPLOYEES
 //
 
-router.get(
-  "/",
-  protect,
-  managerOrAdmin,
-  async (req, res) => {
-    try {
-      const users = await User.find().select(
-        "-password"
-      );
+router.get("/", protect, managerOrAdmin, async (req, res) => {
+  try {
+    const users = await User.find().select("-password");
 
-      res.json(users);
-    } catch (error) {
-      res.status(500).json({
-        message: "Failed to fetch employees",
-      });
-    }
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to fetch employees",
+    });
   }
-);
+});
 
 //
 // UPDATE USER ROLE
 //
 
-router.put(
-  "/:id/role",
-  protect,
-  managerOrAdmin,
-  async (req, res) => {
-    try {
-      const { role } = req.body;
+router.put("/:id/role", protect, managerOrAdmin, async (req, res) => {
+  try {
+    const { role } = req.body;
 
-      const targetUser = await User.findById(
-        req.params.id
-      );
+    const targetUser = await User.findById(req.params.id);
 
-      if (!targetUser) {
-        return res.status(404).json({
-          message: "User not found",
-        });
-      }
-
-      //
-      // CANNOT MODIFY YOURSELF
-      //
-
-      if (
-        targetUser._id.toString() ===
-        req.user._id.toString()
-      ) {
-        return res.status(403).json({
-          message:
-            "You cannot modify your own role",
-        });
-      }
-
-      //
-      // MANAGER RESTRICTIONS
-      //
-
-      if (req.user.role === "manager") {
-        //
-        // MANAGER CANNOT MODIFY ADMIN/MANAGER
-        //
-
-        if (
-          targetUser.role === "admin" ||
-          targetUser.role === "manager"
-        ) {
-          return res.status(403).json({
-            message:
-              "Managers cannot modify Admin or Manager accounts",
-          });
-        }
-
-        //
-        // MANAGER CAN ASSIGN ONLY THESE ROLES
-        //
-
-        const allowedRoles = [
-          "operations",
-          "analyst",
-          "employee",
-        ];
-
-        if (!allowedRoles.includes(role)) {
-          return res.status(403).json({
-            message:
-              "Managers can only assign Operations, Analyst, or Employee roles",
-          });
-        }
-      }
-
-      //
-      // UPDATE ROLE
-      //
-
-      targetUser.role = role;
-
-      await targetUser.save();
-
-      const updatedUser =
-        await User.findById(
-          req.params.id
-        ).select("-password");
-
-      res.json({
-        message: "Role updated successfully",
-        user: updatedUser,
-      });
-    } catch (error) {
-      console.log(error);
-
-      res.status(500).json({
-        message: "Failed to update role",
-        error: error.message,
+    if (!targetUser) {
+      return res.status(404).json({
+        message: "User not found",
       });
     }
+
+    //
+    // CANNOT MODIFY YOURSELF
+    //
+
+    if (targetUser._id.toString() === req.user._id.toString()) {
+      return res.status(403).json({
+        message: "You cannot modify your own role",
+      });
+    }
+
+    //
+    // MANAGER RESTRICTIONS
+    //
+
+    if (req.user.role === "manager") {
+      //
+      // MANAGER CANNOT MODIFY ADMIN/MANAGER
+      //
+
+      if (targetUser.role === "admin" || targetUser.role === "manager") {
+        return res.status(403).json({
+          message: "Managers cannot modify Admin or Manager accounts",
+        });
+      }
+
+      //
+      // MANAGER CAN ASSIGN ONLY THESE ROLES
+      //
+
+      const allowedRoles = ["operations", "analyst", "employee"];
+
+      if (!allowedRoles.includes(role)) {
+        return res.status(403).json({
+          message:
+            "Managers can only assign Operations, Analyst, or Employee roles",
+        });
+      }
+    }
+
+    //
+    // UPDATE ROLE
+    //
+
+    targetUser.role = role;
+
+    await targetUser.save();
+    await AuditLog.create({
+      userId: req.user._id,
+      action: "ROLE_UPDATED",
+      details: `${targetUser.name} role changed to ${role}`,
+    });
+
+    const updatedUser = await User.findById(req.params.id).select("-password");
+
+    res.json({
+      message: "Role updated successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      message: "Failed to update role",
+      error: error.message,
+    });
   }
-);
+});
 
 //
 // UPDATE USER PERMISSIONS
 //
 
-router.put(
-  "/:id/permissions",
-  protect,
-  managerOrAdmin,
-  async (req, res) => {
-    try {
-      const permissions = req.body;
+router.put("/:id/permissions", protect, managerOrAdmin, async (req, res) => {
+  try {
+    const permissions = req.body;
 
-      const targetUser = await User.findById(
-        req.params.id
-      );
+    const targetUser = await User.findById(req.params.id);
 
-      if (!targetUser) {
-        return res.status(404).json({
-          message: "User not found",
+    if (!targetUser) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    //
+    // CANNOT MODIFY YOURSELF
+    //
+
+    if (targetUser._id.toString() === req.user._id.toString()) {
+      return res.status(403).json({
+        message: "You cannot modify your own permissions",
+      });
+    }
+
+    //
+    // MANAGER RESTRICTIONS
+    //
+
+    if (req.user.role === "manager") {
+      //
+      // MANAGER CANNOT MODIFY ADMIN/MANAGER
+      //
+
+      if (targetUser.role === "admin" || targetUser.role === "manager") {
+        return res.status(403).json({
+          message: "Managers cannot modify Admin or Manager accounts",
         });
       }
 
       //
-      // CANNOT MODIFY YOURSELF
+      // MANAGER CANNOT GIVE SETTINGS ACCESS
       //
 
-      if (
-        targetUser._id.toString() ===
-        req.user._id.toString()
-      ) {
+      if (permissions.canAccessSettings !== undefined) {
+        return res.status(403).json({
+          message: "Managers cannot assign Settings access",
+        });
+      }
+    }
+
+    //
+    // UPDATE PERMISSIONS
+    //
+
+    Object.keys(permissions).forEach((key) => {
+      targetUser.permissions[key] = permissions[key];
+    });
+
+    //
+    // IMPORTANT
+    //
+
+    targetUser.markModified("permissions");
+
+    await targetUser.save();
+    await AuditLog.create({
+      userId: req.user._id,
+      action: "PERMISSIONS_UPDATED",
+      details: `Updated permissions for ${targetUser.name}`,
+    });
+
+    const updatedUser = await User.findById(req.params.id).select("-password");
+
+    res.json({
+      message: "Permissions updated successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      message: "Failed to update permissions",
+      error: error.message,
+    });
+  }
+});
+
+//
+// CREATE USER
+//
+
+router.post("/create", protect, managerOrAdmin, async (req, res) => {
+  try {
+    const { name, email, role } = req.body;
+    //
+    // VALIDATION
+    //
+
+    if (!name || !email || !role) {
+      return res.status(400).json({
+        message: "All fields are required",
+      });
+    }
+
+    //
+    // EXISTING USER
+    //
+
+    const existingUser = await User.findOne({
+      email,
+    });
+
+    if (existingUser) {
+      return res.status(400).json({
+        message: "User already exists",
+      });
+    }
+
+    //
+    // ROLE RESTRICTIONS
+    //
+
+    if (req.user.role === "manager") {
+      const allowedRoles = ["operations", "analyst", "employee"];
+
+      if (!allowedRoles.includes(role)) {
         return res.status(403).json({
           message:
-            "You cannot modify your own permissions",
+            "Managers can only create Operations, Analyst or Employee accounts",
+        });
+      }
+    }
+
+    //
+    // PASSWORD
+    //
+    const temporaryPassword = Math.random().toString(36).slice(-8);
+
+    const hashedPassword = await bcrypt.hash(temporaryPassword, 10);
+    //
+    // ROLE DEFAULT PERMISSIONS
+    //
+
+    let permissions = {
+      canCreateOrders: false,
+      canUpdateOrders: false,
+      canDeleteOrders: false,
+      canManageEmployees: false,
+      canViewAdvancedAnalytics: false,
+      canExportReports: false,
+      canAccessSettings: false,
+    };
+
+    if (role === "employee") {
+      permissions = {
+        canCreateOrders: false,
+        canUpdateOrders: false,
+        canDeleteOrders: false,
+        canManageEmployees: false,
+        canViewAdvancedAnalytics: false,
+        canExportReports: false,
+        canAccessSettings: false,
+      };
+    }
+
+    if (role === "operations") {
+      permissions = {
+        canCreateOrders: true,
+        canUpdateOrders: true,
+        canDeleteOrders: false,
+        canManageEmployees: false,
+        canViewAdvancedAnalytics: false,
+        canExportReports: false,
+        canAccessSettings: false,
+      };
+    }
+
+    if (role === "analyst") {
+      permissions = {
+        canCreateOrders: false,
+        canUpdateOrders: false,
+        canDeleteOrders: false,
+        canManageEmployees: false,
+        canViewAdvancedAnalytics: true,
+        canExportReports: true,
+        canAccessSettings: false,
+      };
+    }
+
+    if (role === "manager") {
+      permissions = {
+        canCreateOrders: true,
+        canUpdateOrders: true,
+        canDeleteOrders: true,
+        canManageEmployees: true,
+        canViewAdvancedAnalytics: true,
+        canExportReports: true,
+        canAccessSettings: true,
+      };
+    }
+
+    if (role === "admin") {
+      permissions = {
+        canCreateOrders: true,
+        canUpdateOrders: true,
+        canDeleteOrders: true,
+        canManageEmployees: true,
+        canViewAdvancedAnalytics: true,
+        canExportReports: true,
+        canAccessSettings: true,
+      };
+    }
+    //
+    // CREATE USER
+    //
+
+    const user = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+      role,
+      permissions,
+    });
+
+    console.log("Creating audit log...");
+
+    await AuditLog.create({
+      userId: req.user._id,
+      action: "USER_CREATED",
+      details: `Created user ${user.name} (${user.role})`,
+    });
+
+    res.status(201).json({
+      message: "User created successfully",
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        permissions: user.permissions,
+        temporaryPassword,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      message: "Failed to create user",
+    });
+  }
+});
+
+//
+// REQUEST PERMISSION
+//
+
+router.post("/requests", protect, async (req, res) => {
+  try {
+    const { permissionKey } = req.body;
+
+    if (!permissionKey) {
+      return res.status(400).json({
+        message: "Permission is required",
+      });
+    }
+
+    //
+    // SETTINGS ACCESS CAN ONLY BE GRANTED BY ADMIN
+    //
+
+    if (permissionKey === "canAccessSettings") {
+      return res.status(403).json({
+        message: "Settings access cannot be requested",
+      });
+    }
+
+    //
+    // EXISTING PENDING REQUEST
+    //
+
+    const existingRequest = await PermissionRequest.findOne({
+      employeeId: req.user._id,
+      permissionKey,
+      status: "pending",
+    });
+
+    if (existingRequest) {
+      return res.status(400).json({
+        message: "Request already pending",
+      });
+    }
+
+    const request = await PermissionRequest.create({
+      employeeId: req.user._id,
+      permissionKey,
+    });
+
+    res.status(201).json({
+      message: "Permission request submitted",
+      request,
+    });
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      message: "Failed to create request",
+    });
+  }
+});
+
+//
+// GET PERMISSION REQUESTS
+//
+
+router.get("/requests", protect, async (req, res) => {
+  try {
+    let query = {};
+
+    //
+    // EMPLOYEE
+    //
+
+    if (req.user.role !== "admin" && req.user.role !== "manager") {
+      query.employeeId = req.user._id;
+    }
+
+    const requests = await PermissionRequest.find(query)
+      .populate("employeeId", "name email role avatar avatarType avatarSeed")
+      .sort({
+        createdAt: -1,
+      });
+
+    res.json(requests);
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      message: "Failed to fetch requests",
+    });
+  }
+});
+
+//
+// APPROVE REQUEST
+//
+
+router.put(
+  "/requests/:id/approve",
+  protect,
+  managerOrAdmin,
+  async (req, res) => {
+    try {
+      const request = await PermissionRequest.findById(req.params.id);
+
+      if (!request) {
+        return res.status(404).json({
+          message: "Request not found",
+        });
+      }
+
+      if (request.status !== "pending") {
+        return res.status(400).json({
+          message: "Request already processed",
+        });
+      }
+
+      //
+      // FIND USER
+      //
+
+      const user = await User.findById(request.employeeId);
+
+      if (!user) {
+        return res.status(404).json({
+          message: "User not found",
         });
       }
 
@@ -174,74 +494,129 @@ router.put(
       //
 
       if (req.user.role === "manager") {
-        //
-        // MANAGER CANNOT MODIFY ADMIN/MANAGER
-        //
-
         if (
-          targetUser.role === "admin" ||
-          targetUser.role === "manager"
+          request.permissionKey === "canAccessSettings" ||
+          request.permissionKey === "canManageEmployees"
         ) {
           return res.status(403).json({
-            message:
-              "Managers cannot modify Admin or Manager accounts",
-          });
-        }
-
-        //
-        // MANAGER CANNOT GIVE SETTINGS ACCESS
-        //
-
-        if (
-          permissions.canAccessSettings !==
-          undefined
-        ) {
-          return res.status(403).json({
-            message:
-              "Managers cannot assign Settings access",
+            message: "Managers cannot approve this permission",
           });
         }
       }
 
       //
-      // UPDATE PERMISSIONS
+      // GRANT PERMISSION
       //
 
-      Object.keys(permissions).forEach(
-        (key) => {
-          targetUser.permissions[key] =
-            permissions[key];
-        }
-      );
+      user.permissions[request.permissionKey] = true;
+
+      user.markModified("permissions");
+
+      await user.save();
 
       //
-      // IMPORTANT
+      // UPDATE REQUEST
       //
 
-      targetUser.markModified("permissions");
+      request.status = "approved";
 
-      await targetUser.save();
+      request.reviewedBy = req.user._id;
 
-      const updatedUser =
-        await User.findById(
-          req.params.id
-        ).select("-password");
+      request.reviewedAt = new Date();
+
+      await request.save();
+
+      await AuditLog.create({
+        userId: req.user._id,
+        action: "PERMISSION_APPROVED",
+        details: `Approved ${request.permissionKey} for ${user.name}`,
+      });
 
       res.json({
-        message:
-          "Permissions updated successfully",
-        user: updatedUser,
+        message: "Permission approved successfully",
       });
     } catch (error) {
       console.log(error);
 
       res.status(500).json({
-        message:
-          "Failed to update permissions",
-        error: error.message,
+        message: "Failed to approve request",
       });
     }
-  }
+  },
 );
+
+//
+// REJECT REQUEST
+//
+
+router.put(
+  "/requests/:id/reject",
+  protect,
+  managerOrAdmin,
+  async (req, res) => {
+    try {
+      const request = await PermissionRequest.findById(req.params.id);
+
+      if (!request) {
+        return res.status(404).json({
+          message: "Request not found",
+        });
+      }
+
+      if (request.status !== "pending") {
+        return res.status(400).json({
+          message: "Request already processed",
+        });
+      }
+
+      request.status = "rejected";
+
+      request.reviewedBy = req.user._id;
+
+      request.reviewedAt = new Date();
+
+      await request.save();
+
+      const employee = await User.findById(request.employeeId);
+
+      await AuditLog.create({
+        userId: req.user._id,
+        action: "PERMISSION_REJECTED",
+        details: `Rejected ${request.permissionKey} for ${employee.name}`,
+      });
+
+      res.json({
+        message: "Request rejected successfully",
+      });
+    } catch (error) {
+      console.log(error);
+
+      res.status(500).json({
+        message: "Failed to reject request",
+      });
+    }
+  },
+);
+
+//
+// GET AUDIT LOGS
+//
+
+router.get("/audit-logs", protect, managerOrAdmin, async (req, res) => {
+  try {
+    const logs = await AuditLog.find()
+      .populate("userId", "name role")
+      .sort({ createdAt: -1 })
+      .limit(10);
+
+    res.json(logs);
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      message: "Failed to fetch audit logs",
+    });
+  }
+});
 
 module.exports = router;
