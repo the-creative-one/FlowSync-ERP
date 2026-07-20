@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, Links } from "react-router-dom";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { HiGlobeAlt } from "react-icons/hi";
 
@@ -62,7 +62,10 @@ function Footer({ hasCTA = false }) {
           {/* Brand */}
 
           <div>
-            <img src="/White-Logo.png" alt="FlowSync ERP" className="h-14" />
+            <Link to="/">
+             <img src="/White-Logo.png" alt="FlowSync ERP" className="h-14" />
+            </Link>
+            
 
             <p
               className="

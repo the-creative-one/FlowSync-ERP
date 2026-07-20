@@ -3,10 +3,11 @@ import toast from "react-hot-toast";
 import DashboardLayout from "../layouts/DashboardLayout";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
-import { ChevronDown, Bell } from "lucide-react";
+import { ChevronDown, Bell, Plus } from "lucide-react";
 import CreateUserModal from "../components/employees/CreateUserModal";
 import PermissionRequests from "../components/employees/PermissionRequests";
 import UserAvatar from "../components/common/UserAvatar";
+import SmartDropdown from "../components/common/SmartDropdown";
 
 function Employees() {
   const { user } = useAuth();
@@ -294,37 +295,69 @@ function Employees() {
           <button
             onClick={() => setShowRequestsDrawer(true)}
             className="
-                bg-white
-                relative
-                dark:bg-[#111827]
-                border
-                border-gray-200
-                dark:border-gray-700
-                px-4
-                py-3
-                rounded-xl
-                flex
-                items-center
-                gap-2
-                hover:scale-[1.02]
-                transition
-              "
+              relative
+              bg-white
+              dark:bg-[#111827]
+              border
+              border-gray-200
+              dark:border-gray-700
+              px-4
+              py-3
+              rounded-xl
+              flex
+              items-center
+              justify-center
+              gap-2
+              hover:scale-[1.02]
+              transition
+              max-[418px]:w-12
+              max-[418px]:h-12
+              max-[418px]:p-0
+            "
           >
-            <Bell size={18} />
+            <div className="relative">
+              <Bell size={18} />
 
-            <span className="font-medium">Pending Requests</span>
+              {pendingRequests.length > 0 && (
+                <span
+                  className="
+                    hidden
+                    max-[418px]:flex
+                    absolute
+                    -top-2
+                    -right-2
+                    w-5
+                    h-5
+                    items-center
+                    justify-center
+                    rounded-full
+                    bg-red-500
+                    text-white
+                    text-[10px]
+                    font-medium
+                  "
+                >
+                  {pendingRequests.length}
+                </span>
+              )}
+            </div>
+
+            <span className="font-medium max-[418px]:hidden">
+              Pending Requests
+            </span>
 
             {pendingRequests.length > 0 && (
               <span
                 className="
-                    bg-red-500
-                    text-white
-                    text-xs
-                    px-2
-                    py-1
-                    rounded-full
-                    min-w-[24px]
-                  "
+                  max-[418px]:hidden
+                  bg-red-500
+                  text-white
+                  text-xs
+                  px-2
+                  py-1
+                  rounded-full
+                  min-w-[24px]
+                "
               >
                 {pendingRequests.length}
               </span>
@@ -343,9 +376,18 @@ function Employees() {
                 rounded-xl
                 font-medium
                 transition
+                flex
+                items-center
+                justify-center
+                gap-2
+                max-[418px]:w-12
+                max-[418px]:h-12
+                max-[418px]:p-0
               "
             >
-              + Create User
+              <Plus size={20} className="hidden max-[418px]:block" />
+
+              <span className="max-[418px]:hidden">+ Create User</span>
             </button>
           )}
         </div>
@@ -394,51 +436,61 @@ function Employees() {
 
                       <td className="p-5">
                         {canManageUser(employee) ? (
-                          <div className="relative inline-block">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-
-                                setActiveRoleDropdown(
-                                  activeRoleDropdown === employee._id
-                                    ? null
-                                    : employee._id,
-                                );
-                              }}
-                              className=" bg-[#EAF2FF] hover:bg-[#DCE8FF] text-[#1D4ED8] dark:bg-[#1E3A5F] dark:hover:bg-[#27496D] dark:text-white rounded-full px-4 py-1.5 flex items-center gap-3 min-w-[130px] justify-between transition "
-                            >
-                              <span className="capitalize text-[#0C2B4E] dark:text-white">
-                                {employee.role}
-                              </span>
-
-                              <ChevronDown size={18} />
-                            </button>
-
-                            {activeRoleDropdown === employee._id && (
-                              <div
-                                className={`absolute left-0 z-50 min-w-[180px] bg-white dark:bg-[#1A2438] border overflow-hidden border-gray-200 dark:border-[#2A3A52] rounded-3xl shadow-2xl 
-                                ${
-                                  shouldOpenUpward(index, employees.length)
-                                    ? "bottom-12"
-                                    : "top-12"
-                                }`}
+                          <SmartDropdown
+                            width={180}
+                            trigger={
+                              <button
+                                className="
+      bg-[#EAF2FF]
+      hover:bg-[#DCE8FF]
+      text-[#1D4ED8]
+      dark:bg-[#1E3A5F]
+      dark:hover:bg-[#27496D]
+      dark:text-white
+      rounded-full
+      px-4
+      py-1.5
+      flex
+      items-center
+      gap-3
+      min-w-[130px]
+      justify-between
+      transition
+    "
                               >
-                                {getAvailableRoles().map((role) => (
-                                  <button
-                                    key={role}
-                                    onClick={(e) => {
-                                      e.stopPropagation();
+                                <span className="capitalize text-[#0C2B4E] dark:text-white">
+                                  {employee.role}
+                                </span>
 
-                                      updateRole(employee._id, role);
-                                    }}
-                                    className="w-full text-left px-5 py-3 hover:bg-[#F4F7FA] dark:hover:bg-[#222e44d1] text-gray-700 dark:text-gray-300 transition capitalize"
-                                  >
-                                    {role}
-                                  </button>
-                                ))}
-                              </div>
-                            )}
-                          </div>
+                                <ChevronDown size={18} />
+                              </button>
+                            }
+                          >
+                            {({ close }) =>
+                              getAvailableRoles().map((role) => (
+                                <button
+                                  key={role}
+                                  onClick={() => {
+                                    updateRole(employee._id, role);
+                                    close();
+                                  }}
+                                  className="
+          w-full
+          text-left
+          px-5
+          py-3
+          hover:bg-[#F4F7FA]
+          dark:hover:bg-[#222e44]
+          capitalize
+          text-gray-700
+          dark:text-gray-300
+        "
+                                >
+                                  {role}
+                                </button>
+                              ))
+                            }
+                          </SmartDropdown>
                         ) : (
                           <span className="capitalize text-[#0C2B4E] dark:text-white">
                             {employee.role}

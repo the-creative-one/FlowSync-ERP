@@ -108,7 +108,8 @@ function PermissionRequests({ isOpen, onClose, requests, fetchRequests }) {
           top-0
           right-0
           h-full
-          w-[420px]
+          w-full
+          max-w-[420px]
           bg-white
           dark:bg-[#111827]
           border-l
