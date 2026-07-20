@@ -10,7 +10,7 @@ import {
   ClipboardList,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { hasPermission, isAdmin, isManager } from "../utils/permissions";
 import UserAvatar from "../components/common/UserAvatar";
 
@@ -32,7 +32,9 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
       {/* Logo Section */}
       <div className="flex items-center justify-between p-5 pb-2.5 border-b border-[#1D546C]">
         {!collapsed && (
+          <Link to="/">
           <img src="/White-Logo.png" alt="FlowSync" className="h-12" />
+          </Link>
         )}
 
         <button

@@ -2,6 +2,8 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import UserAvatar from "../common/UserAvatar";
 import ThemeToggle from "../ThemeToggle";
 
 const MotionNavLink = motion(NavLink);
@@ -24,6 +26,8 @@ const underlineVariants = {
 
 function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const { user, loading } = useAuth();
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0C2B4E]/95 backdrop-blur-md border-b border-[#1D546C] dark:bg-[#020817]/95 dark:border-[#111827] transition-colors">
@@ -93,46 +97,64 @@ function Navbar() {
 
         <div className="hidden lg:flex items-center gap-3">
           <ThemeToggle />
-          <Link
-            to="/login"
-            className="
-                px-5
-                py-2
-                rounded-xl
-                border
-                border-white/30
-                text-white
-                hover:bg-white
-                hover:text-[#0C2B4E]
-                transition
-                "
-          >
-            Login
-          </Link>
 
-          <Link
-            to="/register"
-            className="
-                px-5
-                py-2
-                rounded-xl
-                bg-white
-                text-[#0C2B4E]
-                font-medium
-                hover:bg-[#0C2B4E]
-                hover:text-white
-                hover:border
-                hover:border-white/40
-                transition
-                dark:bg-white
-                dark:text-[#020817]
-                dark:hover:bg-[#020817]
-                dark:hover:text-white
-                dark:hover:border-white/40
-                "
-          >
-            Register
-          </Link>
+          {!loading &&
+            (user ? (
+              <Link
+                to="/dashboard"
+                title="Dashboard"
+                className="
+        hover:scale-105
+        transition-transform
+        duration-200
+      "
+              >
+                <UserAvatar user={user} size="sm" />
+              </Link>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="
+          px-5
+          py-2
+          rounded-xl
+          border
+          border-white/30
+          text-white
+          hover:bg-white
+          hover:text-[#0C2B4E]
+          transition
+        "
+                >
+                  Login
+                </Link>
+
+                <Link
+                  to="/register"
+                  className="
+          px-5
+          py-2
+          rounded-xl
+          bg-white
+          text-[#0C2B4E]
+          font-medium
+          hover:bg-[#0C2B4E]
+          hover:text-white
+          hover:border
+          hover:border-white/40
+          transition
+          dark:bg-white
+          dark:text-[#020817]
+          dark:hover:bg-[#020817]
+          dark:hover:text-white
+          dark:hover:border-white/40
+        "
+                >
+                  Register
+                </Link>
+              </>
+            ))}
         </div>
 
         {/* Mobile Button */}
@@ -214,40 +236,61 @@ function Navbar() {
             ))}
 
             <div className="pt-3 flex flex-col gap-3">
-              <Link
-                to="/login"
-                onClick={() => setMobileOpen(false)}
-                className="
-            text-center
-            border
-            border-white/30
-            text-white
-            py-3
-            rounded-xl
-            hover:bg-white
-            hover:text-[#0C2B4E]
-            transition
-          "
-              >
-                Login
-              </Link>
+              {!loading &&
+                (user ? (
+                  <Link
+                    to="/dashboard"
+                    onClick={() => setMobileOpen(false)}
+                    className="
+                      flex
+                      items-center
+                      gap-3
+                      py-2
+                      text-white
+                    "
+                  >
+                    <UserAvatar user={user} size="sm" />
 
-              <Link
-                to="/register"
-                onClick={() => setMobileOpen(false)}
-                className="
-            text-center
-            bg-white
-            text-[#0C2B4E]
-            py-3
-            rounded-xl
-            font-medium
-            hover:bg-gray-100
-            transition
-          "
-              >
-                Register
-              </Link>
+                    <span className="font-medium">Dashboard</span>
+                  </Link>
+                ) : (
+                  <>
+                    <Link
+                      to="/login"
+                      onClick={() => setMobileOpen(false)}
+                      className="
+                        text-center
+                        border
+                        border-white/30
+                        text-white
+                        py-3
+                        rounded-xl
+                        hover:bg-white
+                        hover:text-[#0C2B4E]
+                        transition
+                      "
+                    >
+                      Login
+                    </Link>
+
+                    <Link
+                      to="/register"
+                      onClick={() => setMobileOpen(false)}
+                      className="
+                        text-center
+                        bg-white
+                        text-[#0C2B4E]
+                        py-3
+                        rounded-xl
+                        font-medium
+                        hover:bg-gray-100
+                        transition
+                      "
+                    >
+                      Register
+                    </Link>
+                  </>
+                ))}
             </div>
           </div>
         </div>
