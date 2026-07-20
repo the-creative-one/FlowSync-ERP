@@ -13,7 +13,7 @@ function About() {
       <BuiltWithPurpose />
       <WhyFlowSync />
       <ContactCTA />
-      <Footer />
+      <Footer hasCTA />
     </>
   );
 }

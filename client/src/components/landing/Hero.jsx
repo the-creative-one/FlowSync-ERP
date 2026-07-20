@@ -49,8 +49,8 @@ function Hero() {
               Get Started
             </Link>
 
-            <a
-              href="#features"
+            <Link
+              to="/features"
               className="
                 px-6
                 py-3
@@ -67,7 +67,7 @@ function Hero() {
                 "
             >
               Explore Features
-            </a>
+            </Link>
           </div>
         </motion.div>
 

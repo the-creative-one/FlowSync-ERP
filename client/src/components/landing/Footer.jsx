@@ -2,18 +2,16 @@ import { Link } from "react-router-dom";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { HiGlobeAlt } from "react-icons/hi";
 
-function Footer() {
+function Footer({ hasCTA = false }) {
   return (
     <footer
-      className="
+      className={`
         bg-[#06152B]
         text-white
-        pt-[300px]
-        md:pt-48
-        pb-10
+         ${hasCTA ? "pt-75 md:pt-48" : "md:pt-16 pt-12"}
+        pb-5
         relative
-        overflow-hidden
-      "
+        overflow-hidden`}
     >
       {/* Background Glow */}
 
@@ -182,8 +180,8 @@ function Footer() {
 
         <div
           className="
-            mt-16
-            pt-6
+            mt-12
+            pt-5
             border-t
             border-white/10
             flex

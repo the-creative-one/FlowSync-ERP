@@ -56,14 +56,14 @@ const lastUpdated = new Date().toLocaleDateString("en-IN", {
 function PrivacyPolicyContent() {
   return (
     <section className="bg-slate-50 dark:bg-[#020817] pt-28 pb-20">
-      <div className="max-w-5xl mx-auto px-6">
+      <div className="px-16">
         {/* Hero */}
 
         <motion.div
           initial={{ opacity: 0, y: 25 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-center max-w-3xl mx-auto"
+          className="text-center mx-auto"
         >
           <span
             className="
@@ -127,7 +127,7 @@ function PrivacyPolicyContent() {
 
         {/* Sections */}
 
-        <div className="mt-6">
+        <div>
           {sections.map((section, index) => {
             const Icon = section.icon;
 
@@ -209,7 +209,7 @@ function PrivacyPolicyContent() {
           <p
             className="
               mt-4
-              max-w-2xl
+              max-w-3xl
               mx-auto
               leading-8
               text-slate-600

@@ -70,7 +70,7 @@ const lastUpdated = new Date().toLocaleDateString("en-IN", {
 function TermsConditionsContent() {
   return (
     <section className="bg-slate-50 dark:bg-[#020817] pt-28 pb-20">
-      <div className="max-w-5xl mx-auto px-6">
+      <div className="px-16">
 
         {/* Hero */}
 
@@ -78,7 +78,7 @@ function TermsConditionsContent() {
           initial={{ opacity: 0, y: 25 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-center max-w-3xl mx-auto"
+          className="text-center mx-auto"
         >
           <span
             className="
@@ -143,7 +143,7 @@ function TermsConditionsContent() {
 
         {/* Content */}
 
-        <div className="mt-6">
+        <div>
           {sections.map((section, index) => {
             const Icon = section.icon;
 
@@ -213,11 +213,7 @@ function TermsConditionsContent() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
           className="
-            mt-16
             pt-12
-            border-t
-            border-slate-200
-            dark:border-slate-800
             text-center
           "
         >

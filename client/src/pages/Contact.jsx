@@ -15,7 +15,7 @@ function Contact() {
       <ContactProcess />
       <ContactFAQ />
       <ContactCTA />
-      <Footer />
+      <Footer hasCTA />
     </>
   );
 }

@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import ScrollToTop from "./components/common/ScrollToTop";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import Home from "./pages/Home";
 import About from "./pages/About";
@@ -17,16 +18,18 @@ import ResetPassword from "./pages/ResetPassword";
 import ForgotPassword from "./pages/ForgotPassword";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsConditions from "./pages/TermsConditions";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/features" element={<FeaturesPage />} /> 
+        <Route path="/features" element={<FeaturesPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         {/* Dashboard */}
@@ -97,7 +100,8 @@ function App() {
         {/* Forgot Password */}
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-        <Route path="/terms-&-conditions" element={<TermsConditions />} />
+        <Route path="/terms-conditions" element={<TermsConditions />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );

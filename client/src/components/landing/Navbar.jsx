@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import ThemeToggle from "../ThemeToggle";
 
-const MotionLink = motion(Link);
+const MotionNavLink = motion(NavLink);
 
 const navItems = [
   { to: "/", label: "Home" },
@@ -38,22 +38,54 @@ function Navbar() {
 
         <div className="hidden lg:flex items-center gap-8 text-white/90">
           {navItems.map((item) => (
-            <MotionLink
-              to={item.to}
+            <MotionNavLink
               key={item.to}
-              className="relative overflow-hidden px-1 py-1"
+              to={item.to}
+              end={item.to === "/"}
               initial="rest"
               whileHover="hover"
               animate="rest"
+              className={({ isActive }) =>
+                `relative overflow-hidden px-1 py-1 transition-colors duration-200 ${
+                  isActive
+                    ? "text-white font-medium"
+                    : "text-white/90 hover:text-white"
+                }`
+              }
             >
-              <span className="relative z-10 transition-colors duration-200 group-hover:text-white">
-                {item.label}
-              </span>
-              <motion.span
-                className="absolute left-0 bottom-0 h-[2px] w-full origin-left bg-white"
-                variants={underlineVariants}
-              />
-            </MotionLink>
+              {({ isActive }) => (
+                <>
+                  <span className="relative z-10">{item.label}</span>
+
+                  {isActive ? (
+                    <span
+                      className="
+                absolute
+                left-0
+                bottom-0
+                h-[3px]
+                w-full
+                rounded-full
+                bg-white
+              "
+                    />
+                  ) : (
+                    <motion.span
+                      className="
+                absolute
+                left-0
+                bottom-0
+                h-[2px]
+                w-full
+                origin-left
+                bg-white
+              "
+                      variants={underlineVariants}
+                    />
+                  )}
+                </>
+              )}
+            </MotionNavLink>
           ))}
         </div>
 
@@ -132,26 +164,59 @@ function Navbar() {
           <div className="absolute top-5 right-5">
             <ThemeToggle />
           </div>
-          <div className="flex flex-col p-6 gap-4">
-            <Link to="/" className="text-white font-medium">
-              Home
-            </Link>
 
-            <Link to="/features" className="text-white">
-              Features
-            </Link>
+          <div className="flex flex-col p-6 gap-2">
+            {navItems.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.to === "/"}
+                onClick={() => setMobileOpen(false)}
+                className={({ isActive }) =>
+                  `
+              group
+              flex
+              items-center
+              gap-2
+              py-2
+              transition-all
+              duration-300
+              ${
+                isActive
+                  ? "text-white font-medium"
+                  : "text-white/80 hover:text-white"
+              }
+            `
+                }
+              >
+                {({ isActive }) => (
+                  <>
+                    {/* Active Indicator */}
 
-            <Link to="/about" className="text-white">
-              About
-            </Link>
+                    <div className="w-[3px] h-7 flex items-center justify-center">
+                      {isActive && (
+                        <motion.span
+                          layoutId="mobile-active-nav"
+                          className="w-[3px] h-7 rounded-full bg-white"
+                          transition={{
+                            type: "spring",
+                            stiffness: 400,
+                            damping: 30,
+                          }}
+                        />
+                      )}
+                    </div>
 
-            <Link to="/contact" className="text-white">
-              Contact
-            </Link>
+                    <span className="text-lg">{item.label}</span>
+                  </>
+                )}
+              </NavLink>
+            ))}
 
-            <div className=" pt-2 flex flex-col gap-3">
+            <div className="pt-3 flex flex-col gap-3">
               <Link
                 to="/login"
+                onClick={() => setMobileOpen(false)}
                 className="
             text-center
             border
@@ -159,6 +224,9 @@ function Navbar() {
             text-white
             py-3
             rounded-xl
+            hover:bg-white
+            hover:text-[#0C2B4E]
+            transition
           "
               >
                 Login
@@ -166,6 +234,7 @@ function Navbar() {
 
               <Link
                 to="/register"
+                onClick={() => setMobileOpen(false)}
                 className="
             text-center
             bg-white
@@ -173,6 +242,8 @@ function Navbar() {
             py-3
             rounded-xl
             font-medium
+            hover:bg-gray-100
+            transition
           "
               >
                 Register

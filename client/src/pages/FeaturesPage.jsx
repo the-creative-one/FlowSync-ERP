@@ -15,7 +15,7 @@ function FeaturesPage() {
       <OperationalWorkflow />
       <SecurityAccess />
       <ContactCTA />
-      <Footer />
+      <Footer hasCTA />
     </>
   );
 }

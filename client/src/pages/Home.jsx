@@ -15,7 +15,7 @@ function Home() {
       <Workflow />
       <AnalyticsShowcase />
       <ContactCTA />
-      <Footer />
+      <Footer hasCTA />
     </>
   );
 }
