@@ -12,12 +12,11 @@ function OrdersCards({
   deleteOrder,
   statusFlow,
   getStatusStyles,
-  shouldOpenUpward,
   currencySymbol,
 }) {
   return (
     <div className="lg:hidden space-y-4">
-      {orders.map((order, index) => (
+      {orders.map((order) => (
         <div
           key={order._id}
           className="
@@ -250,9 +249,6 @@ function OrdersCards({
                   updateOrderStatus={updateOrderStatus}
                   statusFlow={statusFlow}
                   getStatusStyles={getStatusStyles}
-                  shouldOpenUpward={shouldOpenUpward}
-                  index={index}
-                  totalOrders={orders.length}
                 />
               ) : (
                 <div

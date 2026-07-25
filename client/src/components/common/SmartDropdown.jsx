@@ -6,12 +6,33 @@ import {
   useState,
 } from "react";
 
-function SmartDropdown({ trigger, children, width = 180, offset = 8 }) {
+function SmartDropdown({
+  trigger,
+  children,
+  width = 180,
+  placement = "auto",
+  align = "left",
+  open,
+  onOpenChange,
+}) {
   const triggerRef = useRef(null);
   const dropdownRef = useRef(null);
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [placement, setPlacement] = useState("bottom");
+  const [internalOpen, setInternalOpen] = useState(false);
+  const isControlled = open !== undefined;
+  const isOpen = isControlled ? open : internalOpen;
+  const setOpen = (value) => {
+    if (isControlled) {
+      onOpenChange?.(value);
+    } else {
+      setInternalOpen(value);
+    }
+  };
+
+  const [position, setPosition] = useState({
+    vertical: "bottom",
+    horizontal: "left",
+  });
 
   useLayoutEffect(() => {
     if (!isOpen) return;
@@ -23,18 +44,38 @@ function SmartDropdown({ trigger, children, width = 180, offset = 8 }) {
 
       const dropdownRect = dropdownRef.current.getBoundingClientRect();
 
-      const spaceBelow = window.innerHeight - triggerRect.bottom;
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
 
+      const spaceBelow = viewportHeight - triggerRect.bottom;
       const spaceAbove = triggerRect.top;
 
+      const spaceRight = viewportWidth - triggerRect.right;
+      const spaceLeft = triggerRect.left;
+
+      let vertical = "bottom";
+      let horizontal = align;
+
       if (
+        placement === "auto" &&
         spaceBelow < dropdownRect.height &&
         spaceAbove > dropdownRect.height
       ) {
-        setPlacement("top");
-      } else {
-        setPlacement("bottom");
+        vertical = "top";
       }
+
+      if (align === "left" && spaceRight < dropdownRect.width) {
+        horizontal = "right";
+      }
+
+      if (align === "right" && spaceLeft < dropdownRect.width) {
+        horizontal = "left";
+      }
+
+      setPosition({
+        vertical,
+        horizontal,
+      });
     };
 
     calculatePosition();
@@ -56,27 +97,34 @@ function SmartDropdown({ trigger, children, width = 180, offset = 8 }) {
       )
         return;
 
-      setIsOpen(false);
+      setOpen(false);
     };
 
     const esc = (e) => {
       if (e.key === "Escape") {
-        setIsOpen(false);
+        setOpen(false);
       }
     };
 
-    document.addEventListener("mousedown", close);
+    document.addEventListener("click", close);
     document.addEventListener("keydown", esc);
 
     return () => {
-      document.removeEventListener("mousedown", close);
+      document.removeEventListener("click", close);
       document.removeEventListener("keydown", esc);
     };
   }, []);
 
   return (
     <div className="relative inline-block">
-      <div ref={triggerRef} onClick={() => setIsOpen((prev) => !prev)}>
+      <div
+        ref={triggerRef}
+        onClick={(e) => {
+          e.stopPropagation();
+          setOpen(!isOpen);
+        }}
+      >
+        {" "}
         {cloneElement(trigger, {
           className: `${trigger.props.className ?? ""} ${
             isOpen ? "dropdown-open" : ""
@@ -90,7 +138,7 @@ function SmartDropdown({ trigger, children, width = 180, offset = 8 }) {
           style={{
             width,
             transformOrigin:
-              placement === "top" ? "bottom center" : "top center",
+              position.vertical === "top" ? "bottom center" : "top center",
           }}
           className={`
             absolute
@@ -106,10 +154,13 @@ function SmartDropdown({ trigger, children, width = 180, offset = 8 }) {
             dark:bg-[#1A2438]
             shadow-2xl
             animate-dropdown
-            ${placement === "top" ? "bottom-full mb-2" : "top-full mt-2"}
+            ${
+              position.vertical === "top" ? "bottom-full mb-2" : "top-full mt-2"
+            }
+            ${position.horizontal === "left" ? "left-0" : "right-0"}
           `}
         >
-          {children({ close: () => setIsOpen(false) })}
+          {children({ close: () => setOpen(false) })}
         </div>
       )}
     </div>

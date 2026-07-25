@@ -13,7 +13,6 @@ function OrdersTable({
   deleteOrder,
   statusFlow,
   getStatusStyles,
-  shouldOpenUpward,
   sortConfig,
   handleSort,
   currencySymbol,
@@ -162,7 +161,7 @@ function OrdersTable({
           {/* BODY */}
 
           <tbody>
-            {orders.map((order, index) => (
+            {orders.map((order) => (
               <tr
                 key={order._id}
                 className="
@@ -262,9 +261,6 @@ function OrdersTable({
                       updateOrderStatus={updateOrderStatus}
                       statusFlow={statusFlow}
                       getStatusStyles={getStatusStyles}
-                      shouldOpenUpward={shouldOpenUpward}
-                      index={index}
-                      totalOrders={orders.length}
                     />
                   ) : (
                     <div
