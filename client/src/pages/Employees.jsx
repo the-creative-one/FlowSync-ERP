@@ -437,26 +437,25 @@ function Employees() {
                       <td className="p-5">
                         {canManageUser(employee) ? (
                           <SmartDropdown
-                            width={180}
                             trigger={
                               <button
                                 className="
-      bg-[#EAF2FF]
-      hover:bg-[#DCE8FF]
-      text-[#1D4ED8]
-      dark:bg-[#1E3A5F]
-      dark:hover:bg-[#27496D]
-      dark:text-white
-      rounded-full
-      px-4
-      py-1.5
-      flex
-      items-center
-      gap-3
-      min-w-[130px]
-      justify-between
-      transition
-    "
+                                  bg-[#EAF2FF]
+                                  hover:bg-[#DCE8FF]
+                                  text-[#1D4ED8]
+                                  dark:bg-[#1E3A5F]
+                                  dark:hover:bg-[#27496D]
+                                  dark:text-white
+                                  rounded-full
+                                  px-4
+                                  py-1.5
+                                  flex
+                                  items-center
+                                  gap-3
+                                  min-w-[130px]
+                                  justify-between
+                                  transition
+                                "
                               >
                                 <span className="capitalize text-[#0C2B4E] dark:text-white">
                                   {employee.role}
@@ -475,16 +474,16 @@ function Employees() {
                                     close();
                                   }}
                                   className="
-          w-full
-          text-left
-          px-5
-          py-3
-          hover:bg-[#F4F7FA]
-          dark:hover:bg-[#222e44]
-          capitalize
-          text-gray-700
-          dark:text-gray-300
-        "
+                                    w-full
+                                    text-left
+                                    px-5
+                                    py-3
+                                    hover:bg-[#F4F7FA]
+                                    dark:hover:bg-[#222e44]
+                                    capitalize
+                                    text-gray-700
+                                    dark:text-gray-300
+                                  "
                                 >
                                   {role}
                                 </button>
@@ -580,54 +579,60 @@ function Employees() {
                       </p>
 
                       {canManageUser(employee) ? (
-                        <div className="relative inline-block">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-
-                              setActiveRoleDropdown(
-                                activeRoleDropdown === employee._id
-                                  ? null
-                                  : employee._id,
-                              );
-                            }}
-                            className=" bg-[#EAF2FF] hover:bg-[#DCE8FF] text-[#1D4ED8] dark:bg-[#1E3A5F] dark:hover:bg-[#27496D] dark:text-white rounded-full px-4 py-1.5 flex items-center gap-3 min-w-[130px] justify-between transition "
-                          >
-                            <span className="capitalize text-[#0C2B4E] dark:text-white">
-                              {employee.role}
-                            </span>
-
-                            <ChevronDown size={18} />
-                          </button>
-
-                          {activeRoleDropdown === employee._id && (
-                            <div
-                              className={`absolute left-0 z-50 min-w-[180px] bg-white dark:bg-[#1A2438] border border-gray-200 dark:border-[#2A3A52] rounded-3xl shadow-2xl py-2
-                              ${
-                                shouldOpenUpward(index, employees.length)
-                                  ? "bottom-16"
-                                  : "top-16"
-                              }`}
+                        <SmartDropdown
+                          trigger={
+                            <button
+                              className="
+                                bg-[#EAF2FF]
+                                hover:bg-[#DCE8FF]
+                                text-[#1D4ED8]
+                                dark:bg-[#1E3A5F]
+                                dark:hover:bg-[#27496D]
+                                dark:text-white
+                                rounded-full
+                                px-4
+                                py-1.5
+                                flex
+                                items-center
+                                gap-3
+                                min-w-[130px]
+                                justify-between
+                                transition
+                              "
                             >
-                              {getAvailableRoles().map((role) => (
-                                <button
-                                  key={role}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
+                              <span className="capitalize text-[#0C2B4E] dark:text-white">
+                                {employee.role}
+                              </span>
 
-                                    updateRole(employee._id, role);
-                                  }}
-                                  className="w-full text-left px-5 py-3 hover:bg-[#F4F7FA]
-dark:hover:bg-[#222e44d1]
-text-gray-700
-dark:text-gray-300 transition capitalize"
-                                >
-                                  {role}
-                                </button>
-                              ))}
-                            </div>
-                          )}
-                        </div>
+                              <ChevronDown size={18} />
+                            </button>
+                          }
+                        >
+                          {({ close }) =>
+                            getAvailableRoles().map((role) => (
+                              <button
+                                key={role}
+                                onClick={() => {
+                                  updateRole(employee._id, role);
+                                  close();
+                                }}
+                                className="
+                                  w-full
+                                  text-left
+                                  px-5
+                                  py-3
+                                  hover:bg-[#F4F7FA]
+                                  dark:hover:bg-[#222e44]
+                                  capitalize
+                                  text-gray-700
+                                  dark:text-gray-300
+                                "
+                              >
+                                {role}
+                              </button>
+                            ))
+                          }
+                        </SmartDropdown>
                       ) : (
                         <p className="capitalize text-[#0C2B4E] dark:text-white">
                           {employee.role}

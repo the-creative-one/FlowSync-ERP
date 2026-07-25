@@ -1,11 +1,12 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import {
+  cloneElement,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 
-function SmartDropdown({
-  trigger,
-  children,
-  width = 180,
-  offset = 8,
-}) {
+function SmartDropdown({ trigger, children, width = 180, offset = 8 }) {
   const triggerRef = useRef(null);
   const dropdownRef = useRef(null);
 
@@ -18,17 +19,13 @@ function SmartDropdown({
     const calculatePosition = () => {
       if (!triggerRef.current || !dropdownRef.current) return;
 
-      const triggerRect =
-        triggerRef.current.getBoundingClientRect();
+      const triggerRect = triggerRef.current.getBoundingClientRect();
 
-      const dropdownRect =
-        dropdownRef.current.getBoundingClientRect();
+      const dropdownRect = dropdownRef.current.getBoundingClientRect();
 
-      const spaceBelow =
-        window.innerHeight - triggerRect.bottom;
+      const spaceBelow = window.innerHeight - triggerRect.bottom;
 
-      const spaceAbove =
-        triggerRect.top;
+      const spaceAbove = triggerRect.top;
 
       if (
         spaceBelow < dropdownRect.height &&
@@ -79,22 +76,28 @@ function SmartDropdown({
 
   return (
     <div className="relative inline-block">
-      <div
-        ref={triggerRef}
-        onClick={() => setIsOpen((prev) => !prev)}
-      >
-        {trigger}
+      <div ref={triggerRef} onClick={() => setIsOpen((prev) => !prev)}>
+        {cloneElement(trigger, {
+          className: `${trigger.props.className ?? ""} ${
+            isOpen ? "dropdown-open" : ""
+          }`,
+        })}
       </div>
 
       {isOpen && (
         <div
           ref={dropdownRef}
-          style={{ width }}
+          style={{
+            width,
+            transformOrigin:
+              placement === "top" ? "bottom center" : "top center",
+          }}
           className={`
             absolute
             left-0
             z-50
-            overflow-hidden
+           overflow-auto
+            max-h-72
             rounded-3xl
             border
             border-gray-200
@@ -102,11 +105,8 @@ function SmartDropdown({
             bg-white
             dark:bg-[#1A2438]
             shadow-2xl
-            ${
-              placement === "top"
-                ? "bottom-full mb-2"
-                : "top-full mt-2"
-            }
+            animate-dropdown
+            ${placement === "top" ? "bottom-full mb-2" : "top-full mt-2"}
           `}
         >
           {children({ close: () => setIsOpen(false) })}
