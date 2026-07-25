@@ -1,9 +1,0 @@
-[add -> commit -> push] - core Logic
-
-Git WorkFlow
-git status
-git add .
-git commit -m "message"
-git push
-
-git add . - moves changes into staging area 
