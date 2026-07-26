@@ -12,6 +12,7 @@ function SmartDropdown({
   width = 180,
   placement = "auto",
   align = "left",
+  fullWidth = false,
   open,
   onOpenChange,
 }) {
@@ -116,7 +117,7 @@ function SmartDropdown({
   }, []);
 
   return (
-    <div className="relative inline-block">
+    <div className={`relative ${fullWidth ? "block w-full" : "inline-block"}`}>
       <div
         ref={triggerRef}
         onClick={(e) => {

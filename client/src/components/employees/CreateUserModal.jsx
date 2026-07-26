@@ -2,12 +2,12 @@ import { useState } from "react";
 import { X, ChevronDown } from "lucide-react";
 import toast from "react-hot-toast";
 import api from "../../api/axios";
+import SmartDropdown from "../common/SmartDropdown";
 
 function CreateUserModal({ isOpen, onClose, onUserCreated, currentUserRole }) {
   const [loading, setLoading] = useState(false);
 
   const [createdUser, setCreatedUser] = useState(null);
-  const [showRoleDropdown, setShowRoleDropdown] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -158,79 +158,66 @@ function CreateUserModal({ isOpen, onClose, onUserCreated, currentUserRole }) {
               <div>
                 <label className="block mb-2 font-medium">Role</label>
 
-                <div className="relative">
-                  <button
-                    type="button"
-                    onClick={() => setShowRoleDropdown(!showRoleDropdown)}
-                    className="
-                      w-full
-                      border
-                      border-gray-300
-                      dark:border-gray-700
-                      dark:border-gray-700
-                      dark:text-white
-                      dark:placeholder:text-gray-400
-                      rounded-xl
-                      px-4
-                      py-3
-                      flex
-                      items-center
-                      justify-between
-                      transition
-                    "
-                  >
-                    <span className="capitalize">{formData.role}</span>
-
-                    <ChevronDown size={18} />
-                  </button>
-
-                  {showRoleDropdown && (
-                    <div
+                <SmartDropdown
+                  fullWidth
+                  width="100%"
+                  trigger={
+                    <button
+                      type="button"
                       className="
-                          absolute
-                          left-0
-                          right-0
-                          top-14
-                          z-50
-                          bg-white
-                          dark:bg-[#111827]
-                          border
-                          border-gray-200
-                          dark:border-gray-700
-                          rounded-2xl
-                          shadow-xl
-                          overflow-hidden
-                        "
+          w-full
+          border
+          border-gray-300
+          dark:border-gray-700
+          bg-white
+          dark:bg-[#1F2937]
+          dark:text-white
+          rounded-xl
+          px-4
+          py-3
+          flex
+          items-center
+          justify-between
+          transition
+        "
                     >
+                      <span className="capitalize">{formData.role}</span>
+
+                      <ChevronDown size={18} />
+                    </button>
+                  }
+                >
+                  {({ close }) => (
+                    <>
                       {availableRoles.map((role) => (
                         <button
                           key={role}
                           type="button"
                           onClick={() => {
-                            setFormData({
-                              ...formData,
+                            setFormData((prev) => ({
+                              ...prev,
                               role,
-                            });
+                            }));
 
-                            setShowRoleDropdown(false);
+                            close();
                           }}
                           className="
-                              w-full
-                              text-left
-                              px-4
-                              py-3
-                              hover:bg-gray-100
-                              dark:hover:bg-[#1F2937]
-                              capitalize
-                              transition
-                            "
+              w-full
+              text-left
+              px-4
+              py-3
+              hover:bg-gray-100
+              dark:hover:bg-[#1F2937]
+              capitalize
+              transition
+            "
                         >
                           {role}
                         </button>
                       ))}
-                    </div>
+                    </>
                   )}
-                </div>
+                </SmartDropdown>
               </div>
               <div className="flex justify-end gap-3 pt-3">
                 <button
