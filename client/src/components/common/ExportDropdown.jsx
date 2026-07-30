@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import {
-  ChevronDown,
+  Download,
   FileSpreadsheet,
   FileText,
 } from "lucide-react";
@@ -9,6 +9,7 @@ function ExportDropdown({
   onExcel,
   onCSV,
   label = "Export",
+  variant = "button",
 }) {
   const [open, setOpen] = useState(false);
 
@@ -16,51 +17,63 @@ function ExportDropdown({
 
   useEffect(() => {
     const close = (e) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(e.target)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setOpen(false);
       }
     };
 
     document.addEventListener("mousedown", close);
 
-    return () =>
-      document.removeEventListener(
-        "mousedown",
-        close
-      );
+    return () => document.removeEventListener("mousedown", close);
   }, []);
 
   return (
-    <div
-      ref={dropdownRef}
-      className="relative inline-block"
-    >
+    <div ref={dropdownRef} className="relative inline-block">
       <button
-        onClick={() => setOpen(!open)}
-        className="
-          flex
-          items-center
-          gap-2
-          rounded-lg
-          bg-[#1D546C]
-          hover:bg-[#17475d]
-          text-white
-          px-4
-          py-2
-          transition
-        "
+        onClick={() => setOpen((prev) => !prev)}
+        className={
+          variant === "icon"
+            ? `
+              relative
+              h-12
+              w-12
+              rounded-xl
+              bg-cyan-700
+              hover:bg-cyan-600
+              text-white
+              flex
+              items-center
+              justify-center
+              transition-all
+              duration-200
+            `
+            : `
+              flex
+              items-center
+              gap-2
+              px-5
+              h-12
+              rounded-xl
+              bg-cyan-700
+              hover:bg-cyan-600
+              text-white
+              font-medium
+              transition-all
+              duration-200
+            `
+        }
       >
-        {label}
+        {variant === "icon" ? (
+          <>
+            <Download size={20} />
+          </>
+        ) : (
+          <>
+            <Download size={18} />
 
-        <ChevronDown
-          size={18}
-          className={`transition-transform ${
-            open ? "rotate-180" : ""
-          }`}
-        />
+            <span>{label}</span>
+          </>
+        )}
       </button>
 
       {open && (
@@ -98,19 +111,11 @@ function ExportDropdown({
               transition
             "
           >
-            <FileSpreadsheet
-              size={18}
-              className="text-green-600"
-            />
+            <FileSpreadsheet size={18} className="text-green-600" />
 
             <div className="text-left">
-              <p className="font-medium dark:text-white">
-                Excel
-              </p>
-
-              <p className="text-xs text-gray-500">
-                .xlsx
-              </p>
+              <p className="font-medium dark:text-white">Excel</p>
+              <p className="text-xs text-gray-500">.xlsx</p>
             </div>
           </button>
 
@@ -131,19 +136,11 @@ function ExportDropdown({
               transition
             "
           >
-            <FileText
-              size={18}
-              className="text-blue-600"
-            />
+            <FileText size={18} className="text-blue-600" />
 
             <div className="text-left">
-              <p className="font-medium dark:text-white">
-                CSV
-              </p>
-
-              <p className="text-xs text-gray-500">
-                .csv
-              </p>
+              <p className="font-medium dark:text-white">CSV</p>
+              <p className="text-xs text-gray-500">.csv</p>
             </div>
           </button>
         </div>

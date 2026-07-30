@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import DashboardLayout from "../layouts/DashboardLayout";
 import api from "../api/axios";
+import ExportDropdown from "../components/common/ExportDropdown";
+import { exportToExcel, exportToCSV } from "../utils/exportData";
 
 import {
   ResponsiveContainer,
@@ -17,15 +19,11 @@ import {
 import {
   ChevronLeft,
   ChevronRight,
-  Download,
   ChevronUp,
   ChevronDown,
   Search,
   X,
 } from "lucide-react";
-
-import * as XLSX from "xlsx";
-import { saveAs } from "file-saver";
 
 function Analytics() {
   const [stats, setStats] = useState({
@@ -574,68 +572,16 @@ function Analytics() {
   // EXPORT EXCEL
   //
 
-  const exportOrders = async () => {
-    if (!filteredOrders.length) {
-      alert("No orders available to export.");
-
-      return;
-    }
-
-    const token = localStorage.getItem("token");
-
-    const exportData = filteredOrders.map((order) => ({
-      "Order ID": order.orderNumber,
+  const getExportRows = () =>
+    filteredOrders.map((order) => ({
+      "Order Number": order.orderNumber,
       Customer: order.customerName,
-
       Product: order.product,
-
       Amount: order.amount,
-
       Status: order.status,
-
-      CreatedAt: new Date(order.createdAt)
-        .toLocaleDateString("en-GB")
-        .replace(/\//g, "-"),
-      UpdatedAt: new Date(order.updatedAt)
-        .toLocaleDateString("en-GB")
-        .replace(/\//g, "-"),
+      "Ordered On": formatDate(order.createdAt),
+      "Updated On": formatDate(order.updatedAt),
     }));
-
-    const worksheet = XLSX.utils.json_to_sheet(exportData);
-
-    const workbook = XLSX.utils.book_new();
-
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
-
-    const excelBuffer = XLSX.write(workbook, {
-      bookType: "xlsx",
-      type: "array",
-    });
-
-    const data = new Blob([excelBuffer], {
-      type: "application/octet-stream",
-    });
-
-    saveAs(data, `orders-${activeFilter}.xlsx`);
-    try {
-      await api.post(
-        "/activity-logs/export",
-        {
-          action: "Exported Analytics Report",
-          module: "Analytics",
-          details: `${activeFilter} report exported (${filteredOrders.length} orders)`,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-    } catch (error) {
-      console.log(error.response?.data);
-    }
-  };
-
   //
   // SORT FUNCTION
   //
@@ -1373,20 +1319,12 @@ function Analytics() {
 
               {/* EXPORT */}
 
-              <button
-                onClick={exportOrders}
-                disabled={!filteredOrders.length}
-                className={`flex items-center justify-center gap-2 px-4 py-2 rounded-xl border transition whitespace-nowrap
-                  ${
-                    filteredOrders.length
-                      ? "border-gray-200 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-[#1F2937] dark:text-white"
-                      : "border-gray-100 bg-gray-100 text-gray-400 cursor-not-allowed dark:border-gray-800 dark:bg-[#1F2937]"
-                  }
-                `}
-              >
-                <Download size={18} />
-                Export
-              </button>
+              <ExportDropdown
+                onExcel={() =>
+                  exportToExcel(getExportRows(), "analytics-report")
+                }
+                onCSV={() => exportToCSV(getExportRows(), "analytics-report")}
+              />
             </div>
           </div>
 

@@ -4,8 +4,6 @@ import api from "../api/axios";
 import DashboardLayout from "../layouts/DashboardLayout";
 import toast from "react-hot-toast";
 import { exportToExcel, exportToCSV } from "../utils/exportData";
-import ExportDropdown from "../components/common/ExportDropdown";
-// import { saveAs } from "file-saver";
 
 import OrdersToolbar from "../components/orders/OrdersToolbar";
 import OrdersTable from "../components/orders/OrdersTable";
@@ -494,11 +492,21 @@ function Orders() {
     }
   };
 
+  // EXPORT ORDERS
+  const getExportRows = () =>
+    filteredOrders.map((order) => ({
+      "Order Number": order.orderNumber,
+      Customer: order.customerName,
+      Product: order.product,
+      Quantity: order.quantity,
+      Amount: order.amount,
+      Status: order.status,
+      Date: new Date(order.createdAt).toLocaleDateString("en-IN"),
+    }));
+
   useEffect(() => {
     setCurrentPage(1);
   }, [search, statusFilter]);
-
-exportToExcel(filteredOrders, "orders");
 
   return (
     <DashboardLayout
@@ -511,7 +519,8 @@ exportToExcel(filteredOrders, "orders");
           setSearch={setSearch}
           statusFilter={statusFilter}
           setStatusFilter={setStatusFilter}
-          exportOrders={exportOrders}
+          onExportExcel={() => exportToExcel(getExportRows(), "orders")}
+          onExportCSV={() => exportToCSV(getExportRows(), "orders")}
           canCreateOrders={canCreateOrders}
           canExportReports={canExportReports}
           setShowModal={setShowModal}

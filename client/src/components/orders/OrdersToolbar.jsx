@@ -1,5 +1,5 @@
-import { Search, Download, Plus, X } from "lucide-react";
-
+import { Search, Plus, X } from "lucide-react";
+import ExportDropdown from "../common/ExportDropdown";
 import FilterDropdown from "./FilterDropdown";
 
 function OrdersToolbar({
@@ -7,7 +7,8 @@ function OrdersToolbar({
   setSearch,
   statusFilter,
   setStatusFilter,
-  exportOrders,
+  onExportExcel,
+  onExportCSV,
   canCreateOrders,
   canExportReports,
   setShowModal,
@@ -81,29 +82,11 @@ function OrdersToolbar({
           >
             {/* EXPORT */}
             {canExportReports && (
-              <button
-                onClick={exportOrders}
-                className="
-                h-14
-                w-14
-                rounded-2xl
-                border
-                border-gray-200
-                dark:border-[#243041]
-                bg-[#F8FAFC]
-                dark:bg-[#1E293B]
-                text-[#0F172A]
-                dark:text-white
-                flex
-                items-center
-                justify-center
-                transition
-                hover:scale-[1.03]
-                hover:border-[#2563EB]
-              "
-              >
-                <Download size={20} />
-              </button>
+              <ExportDropdown
+                variant="icon"
+                onExcel={onExportExcel}
+                onCSV={onExportCSV}
+              />
             )}
             {/* CREATE */}
 
@@ -315,29 +298,11 @@ function OrdersToolbar({
             <div className="flex items-center gap-3 shrink-0">
               {/* EXPORT */}
 
-              <button
-                onClick={exportOrders}
-                className="
-                  h-14
-                  w-14
-                  rounded-2xl
-                  border
-                  border-gray-200
-                  dark:border-[#243041]
-                  bg-[#F8FAFC]
-                  dark:bg-[#1E293B]
-                  text-[#0F172A]
-                  dark:text-white
-                  flex
-                  items-center
-                  justify-center
-                  transition
-                  hover:scale-[1.03]
-                  hover:border-[#2563EB]
-                "
-              >
-                <Download size={20} />
-              </button>
+              <ExportDropdown
+                variant="icon"
+                onExcel={onExportExcel}
+                onCSV={onExportCSV}
+              />
 
               {/* CREATE */}
 
