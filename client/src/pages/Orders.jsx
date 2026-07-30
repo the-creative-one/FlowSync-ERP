@@ -3,8 +3,9 @@ import { useAuth } from "../context/AuthContext";
 import api from "../api/axios";
 import DashboardLayout from "../layouts/DashboardLayout";
 import toast from "react-hot-toast";
-import * as XLSX from "xlsx";
-import { saveAs } from "file-saver";
+import { exportToExcel, exportToCSV } from "../utils/exportData";
+import ExportDropdown from "../components/common/ExportDropdown";
+// import { saveAs } from "file-saver";
 
 import OrdersToolbar from "../components/orders/OrdersToolbar";
 import OrdersTable from "../components/orders/OrdersTable";
@@ -497,55 +498,7 @@ function Orders() {
     setCurrentPage(1);
   }, [search, statusFilter]);
 
-  //
-  // EXPORT
-  //
-
-  const exportOrders = () => {
-    if (!filteredOrders.length) {
-      toast.error("No orders available to export");
-
-      return;
-    }
-
-    const exportData = filteredOrders.map((order) => ({
-      "Order ID": order.orderNumber,
-
-      Customer: order.customerName,
-
-      Product: order.product,
-
-      Quantity: order.quantity,
-
-      Amount: order.amount,
-
-      Status: order.status,
-
-      CreatedAt: new Date(order.createdAt)
-        .toLocaleDateString("en-GB")
-        .replace(/\//g, "-"),
-      UpdatedAt: new Date(order.updatedAt)
-        .toLocaleDateString("en-GB")
-        .replace(/\//g, "-"),
-    }));
-
-    const worksheet = XLSX.utils.json_to_sheet(exportData);
-
-    const workbook = XLSX.utils.book_new();
-
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
-
-    const excelBuffer = XLSX.write(workbook, {
-      bookType: "xlsx",
-      type: "array",
-    });
-
-    const data = new Blob([excelBuffer], {
-      type: "application/octet-stream",
-    });
-
-    saveAs(data, "orders.xlsx");
-  };
+exportToExcel(filteredOrders, "orders");
 
   return (
     <DashboardLayout

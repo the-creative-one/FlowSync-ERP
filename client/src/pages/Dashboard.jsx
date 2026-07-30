@@ -4,6 +4,8 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import DashboardStats from "../components/dashboard/DashboardStats";
 import WelcomeHero from "../components/dashboard/WelcomeHero/WelcomeHero";
 import { useAuth } from "../context/AuthContext";
+import TeamDirectory from "../components/dashboard/TeamDirectory";
+import LifetimeRevenue from "../components/dashboard/LifetimeRevenue";
 
 import { ShoppingBag, Clock3, CheckCircle2, IndianRupee } from "lucide-react";
 
@@ -42,6 +44,12 @@ function Dashboard() {
         <DashboardStats stats={stats} />
 
         <WelcomeHero user={user} />
+
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          <TeamDirectory />
+
+          <LifetimeRevenue stats={stats} />
+        </div>
       </div>
     </DashboardLayout>
   );
