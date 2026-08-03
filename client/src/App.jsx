@@ -99,8 +99,10 @@ function App() {
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         {/* Forgot Password */}
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        {/* Other Pages */}
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-conditions" element={<TermsConditions />} />
+        {/* 404 Page */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
