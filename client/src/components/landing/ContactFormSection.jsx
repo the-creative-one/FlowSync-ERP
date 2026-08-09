@@ -128,7 +128,7 @@ function ContactFormSection() {
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, amount: 0.2 }}
-      className="relative overflow-hidden pt-20 pb-12 sm:pt-32 sm:pb-24 bg-slate-50 dark:bg-[#020817]"
+      className="relative overflow-hidden pt-10 md:pt-20 pb-12 sm:pt-32 sm:pb-24 bg-slate-50 dark:bg-[#020817]"
     >
       <div className="pointer-events-none absolute inset-x-0 top-0 h-40 sm:h-64 bg-gradient-to-b from-sky-500/10 to-transparent dark:from-slate-900/0" />
       <div className="pointer-events-none absolute right-0 top-24 hidden h-72 w-72 rounded-full bg-sky-500/10 blur-3xl xl:block" />

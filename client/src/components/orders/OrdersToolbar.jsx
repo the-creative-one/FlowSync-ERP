@@ -94,9 +94,9 @@ function OrdersToolbar({
               <button
                 onClick={() => setShowModal(true)}
                 className="
-                  h-14
-                  w-14
-                  rounded-2xl
+                  h-12
+                  w-12
+                  rounded-xl
                   bg-[#1D546C]
                   hover:bg-[#16485c]
                   text-white
@@ -310,8 +310,8 @@ function OrdersToolbar({
                 <button
                   onClick={() => setShowModal(true)}
                   className="
-                    h-14
-                    w-14
+                    h-12
+                    w-12                   
                     rounded-2xl
                     bg-[#1D546C]
                     hover:bg-[#16485c]

@@ -20,7 +20,9 @@ function BuiltWithPurpose() {
   return (
     <section
       className="
-        py-24
+        pt-15
+        pb-20
+        md:py-24
         bg-white
         dark:bg-[#020817]
       "

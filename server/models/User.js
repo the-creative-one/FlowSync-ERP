@@ -60,6 +60,27 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
 
+   
+    // EMAIL VERIFICATION
+   
+
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
+    },
+
+    emailVerificationCode: {
+      type: String,
+    },
+
+    emailVerificationExpire: {
+      type: Date,
+    },
+
+   
+    // PASSWORD RESET
+   
+
     resetPasswordToken: {
       type: String,
     },
@@ -68,11 +89,19 @@ const userSchema = new mongoose.Schema(
       type: Date,
     },
 
+   
+    // USER ROLE
+   
+
     role: {
       type: String,
       enum: ["admin", "manager", "employee", "operations", "analyst"],
       default: "employee",
     },
+
+   
+    // PERMISSIONS
+   
 
     permissions: {
       type: permissionSchema,
@@ -88,10 +117,15 @@ const userSchema = new mongoose.Schema(
       }),
     },
 
+   
+    // AVATAR
+   
+
     avatar: {
       type: String,
       default: "",
     },
+
     avatarType: {
       type: String,
       default: "",

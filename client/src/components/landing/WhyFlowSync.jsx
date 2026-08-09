@@ -37,10 +37,11 @@ function WhyFlowSync() {
   return (
     <section
       className="
-        py-24
-        bg-[#F8FAFC]
-        dark:bg-[#0B1120]
-        pb-80
+      pt-15
+      md:py-24
+      bg-[#F8FAFC]
+      dark:bg-[#0B1120]
+      pb-80
       "
     >
       <div className="max-w-7xl mx-auto px-6">

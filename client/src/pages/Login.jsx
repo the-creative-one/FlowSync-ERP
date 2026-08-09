@@ -116,7 +116,7 @@ function Login() {
               <img
                 src="/White-Logo.png"
                 alt="FlowSync Logo"
-                className="h-25 object-contain"
+                className="h-20 object-contain"
               />
             </Link>
           </div>

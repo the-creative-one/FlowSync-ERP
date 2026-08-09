@@ -34,7 +34,7 @@ const steps = [
 
 function ContactProcess() {
   return (
-    <section className="py-20 bg-slate-50 dark:bg-[#020817]">
+    <section className="py-10 md:py-20 bg-slate-50 dark:bg-[#020817]">
       <div className="max-w-7xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 25 }}

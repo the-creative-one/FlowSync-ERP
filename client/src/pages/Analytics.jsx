@@ -23,6 +23,8 @@ import {
   ChevronDown,
   Search,
   X,
+  ArrowDown,
+  ArrowUp,
 } from "lucide-react";
 
 function Analytics() {
@@ -223,14 +225,7 @@ function Analytics() {
     const currentMonth = currentDate.getMonth() + 1;
 
     let orders = [...(stats?.recentOrders || [])];
-
-    //
     // LAST 7 DAYS
-    //
-
-    //
-    // LAST 7 DAYS
-    //
 
     if (activeFilter === "7days") {
       const last7Days = new Date();
@@ -243,10 +238,7 @@ function Analytics() {
         return orderDate >= last7Days;
       });
     }
-
-    //
     // LAST 30 DAYS
-    //
 
     if (activeFilter === "30days") {
       const last30Days = new Date();
@@ -259,11 +251,7 @@ function Analytics() {
         return orderDate >= last30Days;
       });
     }
-
-    //
     // LAST 90 DAYS
-    //
-
     if (activeFilter === "90days") {
       const last90Days = new Date();
 
@@ -568,24 +556,20 @@ function Analytics() {
     startIndex + ORDERS_PER_PAGE,
   );
 
-  //
   // EXPORT EXCEL
-  //
-
   const getExportRows = () =>
     filteredOrders.map((order) => ({
-      "Order Number": order.orderNumber,
+      "Order ID": order.orderNumber,
       Customer: order.customerName,
       Product: order.product,
+      Quantity: order.quantity,
       Amount: order.amount,
       Status: order.status,
       "Ordered On": formatDate(order.createdAt),
       "Updated On": formatDate(order.updatedAt),
     }));
-  //
-  // SORT FUNCTION
-  //
 
+  // SORT FUNCTION
   const handleSort = (key) => {
     setSortConfig((prev) => {
       //
@@ -634,7 +618,7 @@ function Analytics() {
 
     if (!active) {
       return (
-        <ChevronDown
+        <ArrowDown
           size={16}
           className="
           opacity-60
@@ -650,7 +634,7 @@ function Analytics() {
 
     if (sortConfig.direction === "asc") {
       return (
-        <ChevronUp
+        <ArrowUp
           size={16}
           className="
           text-blue-400
@@ -664,7 +648,7 @@ function Analytics() {
     //
 
     return (
-      <ChevronDown
+      <ArrowDown
         size={16}
         className="
         text-blue-400
@@ -1320,6 +1304,7 @@ function Analytics() {
               {/* EXPORT */}
 
               <ExportDropdown
+                fullWidth
                 onExcel={() =>
                   exportToExcel(getExportRows(), "analytics-report")
                 }

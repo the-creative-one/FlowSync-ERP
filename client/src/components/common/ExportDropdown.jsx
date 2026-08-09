@@ -1,15 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  Download,
-  FileSpreadsheet,
-  FileText,
-} from "lucide-react";
+import { Download, FileSpreadsheet, FileText } from "lucide-react";
 
 function ExportDropdown({
   onExcel,
   onCSV,
   label = "Export",
   variant = "button",
+  fullWidth = false,
 }) {
   const [open, setOpen] = useState(false);
 
@@ -24,43 +21,62 @@ function ExportDropdown({
 
     document.addEventListener("mousedown", close);
 
-    return () => document.removeEventListener("mousedown", close);
+    return () => {
+      document.removeEventListener("mousedown", close);
+    };
   }, []);
 
   return (
-    <div ref={dropdownRef} className="relative inline-block">
+    <div
+      ref={dropdownRef}
+      className={
+        variant === "icon"
+          ? "relative inline-block"
+          : fullWidth
+            ? "relative w-full sm:w-auto"
+            : "relative inline-block"
+      }
+    >
       <button
+        type="button"
         onClick={() => setOpen((prev) => !prev)}
         className={
           variant === "icon"
             ? `
-              relative
-              h-12
-              w-12
-              rounded-xl
-              bg-cyan-700
-              hover:bg-cyan-600
-              text-white
-              flex
-              items-center
-              justify-center
-              transition-all
-              duration-200
-            `
+                relative
+                h-12
+                w-12
+                rounded-xl
+                bg-[#1D546C]
+                hover:bg-[#16485c]
+                text-white
+                flex
+                items-center
+                justify-center
+                transition-all
+                duration-200
+              `
             : `
-              flex
-              items-center
-              gap-2
-              px-5
-              h-12
-              rounded-xl
-              bg-cyan-700
-              hover:bg-cyan-600
-              text-white
-              font-medium
-              transition-all
-              duration-200
-            `
+                h-11
+                ${fullWidth ? "w-full sm:w-auto" : "w-auto"}
+                px-4
+                flex
+                items-center
+                justify-center
+                gap-2
+                rounded-xl
+                border
+                border-gray-200
+                dark:border-gray-700
+                bg-white
+                dark:bg-[#111827]
+                text-[#0C2B4E]
+                dark:text-white
+                hover:bg-gray-50
+                dark:hover:bg-[#1F2937]
+                transition
+                whitespace-nowrap
+              `
         }
       >
         {variant === "icon" ? (
@@ -70,7 +86,6 @@ function ExportDropdown({
         ) : (
           <>
             <Download size={18} />
-
             <span>{label}</span>
           </>
         )}
@@ -94,7 +109,9 @@ function ExportDropdown({
             z-50
           "
         >
+          {/* EXCEL */}
           <button
+            type="button"
             onClick={() => {
               onExcel();
               setOpen(false);
@@ -115,11 +132,14 @@ function ExportDropdown({
 
             <div className="text-left">
               <p className="font-medium dark:text-white">Excel</p>
+
               <p className="text-xs text-gray-500">.xlsx</p>
             </div>
           </button>
 
+          {/* CSV */}
           <button
+            type="button"
             onClick={() => {
               onCSV();
               setOpen(false);
@@ -140,6 +160,7 @@ function ExportDropdown({
 
             <div className="text-left">
               <p className="font-medium dark:text-white">CSV</p>
+
               <p className="text-xs text-gray-500">.csv</p>
             </div>
           </button>

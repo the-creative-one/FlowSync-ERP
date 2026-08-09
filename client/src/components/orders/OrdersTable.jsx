@@ -1,4 +1,4 @@
-import { Trash2, Pencil, ChevronUp, ChevronDown } from "lucide-react";
+import { Trash2, Pencil, ArrowDown, ArrowUp } from "lucide-react";
 
 import OrderStatusDropdown from "./OrderStatusDropdown";
 
@@ -30,7 +30,7 @@ function OrdersTable({
 
     if (!active) {
       return (
-        <ChevronDown
+        <ArrowDown
           size={16}
           className="
             opacity-60
@@ -46,7 +46,7 @@ function OrdersTable({
 
     if (sortConfig.direction === "asc") {
       return (
-        <ChevronUp
+        <ArrowUp
           size={16}
           className="
             text-blue-400
@@ -60,7 +60,7 @@ function OrdersTable({
     //
 
     return (
-      <ChevronDown
+      <ArrowDown
         size={16}
         className="
           text-blue-400
@@ -266,7 +266,7 @@ function OrdersTable({
                     <div
                       className={`
                         inline-flex
-                        px-4
+                        px-3
                         py-2
                         rounded-full
                         text-sm

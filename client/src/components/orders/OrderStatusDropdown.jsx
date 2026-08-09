@@ -17,15 +17,15 @@ function OrderStatusDropdown({
       trigger={
         <button
           className={`
-        px-5
-        py-3
+        px-4
+        py-2
         rounded-full
         text-sm
         font-semibold
         capitalize
         flex
         items-center
-        gap-4
+        gap-2
         min-w-[145px]
         justify-between
         transition-all

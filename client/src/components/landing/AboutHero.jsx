@@ -6,7 +6,8 @@ function AboutHero() {
       className="
         relative
         overflow-hidden
-        pt-40
+        pt-30
+        md:pt-40
         pb-24
         bg-[#F8FAFC]
         dark:bg-[#020817]
