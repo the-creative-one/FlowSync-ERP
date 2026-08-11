@@ -1,5 +1,8 @@
+// User model that stores user accounts, roles, permissions, email verification, password reset, and avatar data.
+
 const mongoose = require("mongoose");
 
+// Permission schema for controlling what each user can access or modify.
 const permissionSchema = new mongoose.Schema(
   {
     canCreateOrders: {
@@ -42,8 +45,10 @@ const permissionSchema = new mongoose.Schema(
   },
 );
 
+// User schema.
 const userSchema = new mongoose.Schema(
   {
+    // Basic user information.
     name: {
       type: String,
       required: true,
@@ -60,10 +65,7 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
 
-   
-    // EMAIL VERIFICATION
-   
-
+    // Email verification information.
     isEmailVerified: {
       type: Boolean,
       default: false,
@@ -77,10 +79,23 @@ const userSchema = new mongoose.Schema(
       type: Date,
     },
 
-   
-    // PASSWORD RESET
-   
+    // Stores when the latest verification code was sent.
+    emailVerificationLastSentAt: {
+      type: Date,
+    },
 
+    // Counts verification code sends within the current limit period.
+    emailVerificationSendCount: {
+      type: Number,
+      default: 0,
+    },
+
+    // Stores when the current verification send limit period ends.
+    emailVerificationSendCountResetAt: {
+      type: Date,
+    },
+
+    // Password reset information.
     resetPasswordToken: {
       type: String,
     },
@@ -89,20 +104,14 @@ const userSchema = new mongoose.Schema(
       type: Date,
     },
 
-   
-    // USER ROLE
-   
-
+    // User role.
     role: {
       type: String,
       enum: ["admin", "manager", "employee", "operations", "analyst"],
       default: "employee",
     },
 
-   
-    // PERMISSIONS
-   
-
+    // User permissions.
     permissions: {
       type: permissionSchema,
 
@@ -117,10 +126,7 @@ const userSchema = new mongoose.Schema(
       }),
     },
 
-   
-    // AVATAR
-   
-
+    // User avatar information.
     avatar: {
       type: String,
       default: "",

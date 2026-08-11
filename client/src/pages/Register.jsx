@@ -1,11 +1,9 @@
+//Register page with account creation and email verification
+
 import { useEffect, useState } from "react";
-
 import { Link, useNavigate } from "react-router-dom";
-
 import api from "../api/axios";
-
 import toast from "react-hot-toast";
-
 import {
   User,
   Mail,
@@ -15,21 +13,19 @@ import {
   ArrowRight,
   ShieldCheck,
   RefreshCw,
+  Check,
+  X,
 } from "lucide-react";
-
 import ThemeToggle from "../components/ThemeToggle";
+import { useAuth } from "../context/AuthContext";
 
 function Register() {
   const navigate = useNavigate();
-
-  // --------------------------------------------------
-  // REGISTER STATE
-  // --------------------------------------------------
+  const { login } = useAuth();
+  //Register state
 
   const [showPassword, setShowPassword] = useState(false);
-
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
   const [errors, setErrors] = useState({});
 
   const [formData, setFormData] = useState({
@@ -39,25 +35,33 @@ function Register() {
     confirmPassword: "",
   });
 
-  // --------------------------------------------------
-  // VERIFICATION STATE
-  // --------------------------------------------------
+  //Verification state
 
   const [showVerification, setShowVerification] = useState(false);
-
   const [verificationCode, setVerificationCode] = useState("");
-
   const [verificationError, setVerificationError] = useState("");
-
   const [verifying, setVerifying] = useState(false);
-
   const [resending, setResending] = useState(false);
-
   const [timeLeft, setTimeLeft] = useState(180);
 
-  // --------------------------------------------------
-  // HANDLE INPUT
-  // --------------------------------------------------
+  //Password validation
+
+  const passwordRequirements = {
+    minLength: formData.password.length >= 8,
+    uppercase: /[A-Z]/.test(formData.password),
+    lowercase: /[a-z]/.test(formData.password),
+    number: /\d/.test(formData.password),
+    special: /[^A-Za-z0-9]/.test(formData.password),
+  };
+
+  const isPasswordValid =
+    passwordRequirements.minLength &&
+    passwordRequirements.uppercase &&
+    passwordRequirements.lowercase &&
+    passwordRequirements.number &&
+    passwordRequirements.special;
+
+  //Handle input
 
   const handleChange = (e) => {
     setFormData({
@@ -71,9 +75,7 @@ function Register() {
     }));
   };
 
-  // --------------------------------------------------
-  // VALIDATION
-  // --------------------------------------------------
+  //Validate form
 
   const validateForm = () => {
     const newErrors = {};
@@ -90,8 +92,8 @@ function Register() {
 
     if (!formData.password.trim()) {
       newErrors.password = "Password is required";
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
+    } else if (!isPasswordValid) {
+      newErrors.password = "Password does not meet the required criteria";
     }
 
     if (!formData.confirmPassword.trim()) {
@@ -105,9 +107,7 @@ function Register() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // --------------------------------------------------
-  // TIMER
-  // --------------------------------------------------
+  //Verification timer
 
   useEffect(() => {
     if (!showVerification || timeLeft <= 0) {
@@ -128,9 +128,7 @@ function Register() {
     return () => clearInterval(timer);
   }, [showVerification, timeLeft]);
 
-  // --------------------------------------------------
-  // FORMAT TIMER
-  // --------------------------------------------------
+  //Format verification timer
 
   const formatTime = () => {
     const minutes = Math.floor(timeLeft / 60);
@@ -139,19 +137,19 @@ function Register() {
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
-  // --------------------------------------------------
-  // REGISTER
-  // --------------------------------------------------
+  //Register user
 
   const handleRegister = async (e) => {
     e.preventDefault();
 
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      return;
+    }
 
     try {
       await api.post("/auth/register", {
-        name: formData.name,
-        email: formData.email,
+        name: formData.name.trim(),
+        email: formData.email.trim().toLowerCase(),
         password: formData.password,
       });
 
@@ -166,10 +164,7 @@ function Register() {
     }
   };
 
-  // --------------------------------------------------
-  // VERIFY EMAIL
-  // --------------------------------------------------
-
+  //Verify email
   const handleVerify = async (e) => {
     e.preventDefault();
 
@@ -195,14 +190,20 @@ function Register() {
     try {
       setVerifying(true);
 
-      await api.post("/auth/verify-email", {
+      const response = await api.post("/auth/verify-email", {
         email: formData.email,
         code: verificationCode.trim(),
       });
 
+      //Login the user immediately after email verification
+
+      login(response.data.token, response.data.user);
+
       toast.success("Email verified successfully");
 
-      navigate("/");
+      //Send the user directly to the dashboard
+
+      navigate("/dashboard");
     } catch (error) {
       setVerificationError(
         error.response?.data?.message ||
@@ -213,17 +214,19 @@ function Register() {
     }
   };
 
-  // --------------------------------------------------
-  // RESEND CODE
-  // --------------------------------------------------
+  //Resend verification code
 
   const handleResendCode = async () => {
+    if (timeLeft > 0 || resending) {
+      return;
+    }
+
     try {
       setResending(true);
       setVerificationError("");
 
       await api.post("/auth/resend-verification", {
-        email: formData.email,
+        email: formData.email.trim().toLowerCase(),
       });
 
       setVerificationCode("");
@@ -239,15 +242,31 @@ function Register() {
     }
   };
 
-  // --------------------------------------------------
-  // GO BACK TO REGISTER
-  // --------------------------------------------------
+  //Go back to registration
 
   const handleBackToRegister = () => {
     setShowVerification(false);
     setVerificationCode("");
     setVerificationError("");
     setTimeLeft(180);
+  };
+
+  //Password requirement item
+
+  const PasswordRequirement = ({ valid, children }) => {
+    return (
+      <div
+        className={`flex items-center gap-2 text-xs ${
+          valid
+            ? "text-green-600 dark:text-green-400"
+            : "text-gray-500 dark:text-gray-400"
+        }`}
+      >
+        {valid ? <Check size={13} /> : <X size={13} />}
+
+        <span>{children}</span>
+      </div>
+    );
   };
 
   return (
@@ -261,13 +280,13 @@ function Register() {
         duration-300
       "
     >
-      {/* THEME TOGGLE */}
+      {/* Theme toggle */}
 
       <div className="fixed top-5 right-5 z-50">
         <ThemeToggle />
       </div>
 
-      {/* LEFT SECTION */}
+      {/* Left section */}
 
       <div
         className="
@@ -286,13 +305,9 @@ function Register() {
           duration-300
         "
       >
-        {/* GLOW */}
-
         <div className="absolute top-0 left-0 w-72 h-72 bg-[#1D546C]/20 rounded-full blur-3xl" />
 
         <div className="relative z-10">
-          {/* LOGO */}
-
           <div className="flex justify-center lg:justify-start mb-8">
             <Link to="/">
               <img
@@ -303,14 +318,10 @@ function Register() {
             </Link>
           </div>
 
-          {/* TEXT */}
-
           <p className="text-lg text-gray-300 leading-relaxed max-w-lg">
             Join FlowSync ERP and streamline your business operations with a
             modern and scalable platform.
           </p>
-
-          {/* FEATURES */}
 
           <div className="mt-10 space-y-4">
             <div
@@ -364,7 +375,7 @@ function Register() {
         </div>
       </div>
 
-      {/* RIGHT SECTION */}
+      {/* Right section */}
 
       <div
         className="
@@ -384,7 +395,7 @@ function Register() {
           overflow-y-auto
         "
       >
-        {/* MOBILE LOGO */}
+        {/* Mobile logo */}
 
         <div className="lg:hidden fixed top-5 left-5 z-20">
           <Link to="/">
@@ -396,7 +407,7 @@ function Register() {
           </Link>
         </div>
 
-        {/* REGISTER / VERIFICATION CARD */}
+        {/* Register and verification card */}
 
         <div
           className="
@@ -418,7 +429,7 @@ function Register() {
         >
           {!showVerification ? (
             <>
-              {/* REGISTER HEADER */}
+              {/* Register header */}
 
               <div className="mb-8">
                 <h2
@@ -445,10 +456,10 @@ function Register() {
                 </p>
               </div>
 
-              {/* REGISTER FORM */}
+              {/* Register form */}
 
               <form onSubmit={handleRegister} className="space-y-4">
-                {/* NAME */}
+                {/* Name */}
 
                 <div>
                   <div className="relative">
@@ -505,7 +516,7 @@ function Register() {
                   )}
                 </div>
 
-                {/* EMAIL */}
+                {/* Email */}
 
                 <div>
                   <div className="relative">
@@ -562,7 +573,7 @@ function Register() {
                   )}
                 </div>
 
-                {/* PASSWORD */}
+                {/* Password */}
 
                 <div>
                   <div className="relative">
@@ -629,6 +640,53 @@ function Register() {
                     </button>
                   </div>
 
+                  {/* Password requirements */}
+
+                  {formData.password && (
+                    <div
+                      className="
+                        mt-3
+                        grid
+                        grid-cols-1
+                        sm:grid-cols-2
+                        gap-2
+                        rounded-xl
+                        bg-gray-50
+                        dark:bg-[#0F172A]
+                        border
+                        border-gray-100
+                        dark:border-gray-800
+                        p-3
+                      "
+                    >
+                      <PasswordRequirement
+                        valid={passwordRequirements.minLength}
+                      >
+                        At least 8 characters
+                      </PasswordRequirement>
+
+                      <PasswordRequirement
+                        valid={passwordRequirements.uppercase}
+                      >
+                        One uppercase letter
+                      </PasswordRequirement>
+
+                      <PasswordRequirement
+                        valid={passwordRequirements.lowercase}
+                      >
+                        One lowercase letter
+                      </PasswordRequirement>
+
+                      <PasswordRequirement valid={passwordRequirements.number}>
+                        One number
+                      </PasswordRequirement>
+
+                      <PasswordRequirement valid={passwordRequirements.special}>
+                        One special character
+                      </PasswordRequirement>
+                    </div>
+                  )}
+
                   {errors.password && (
                     <p className="text-red-500 text-sm mt-2 ml-1">
                       {errors.password}
@@ -636,7 +694,7 @@ function Register() {
                   )}
                 </div>
 
-                {/* CONFIRM PASSWORD */}
+                {/* Confirm password */}
 
                 <div>
                   <div className="relative">
@@ -716,7 +774,7 @@ function Register() {
                   )}
                 </div>
 
-                {/* REGISTER BUTTON */}
+                {/* Register button */}
 
                 <button
                   type="submit"
@@ -745,7 +803,7 @@ function Register() {
                 </button>
               </form>
 
-              {/* LOGIN */}
+              {/* Login */}
 
               <p
                 className="
@@ -771,7 +829,7 @@ function Register() {
             </>
           ) : (
             <>
-              {/* VERIFICATION HEADER */}
+              {/* Verification header */}
 
               <div className="mb-8 text-center">
                 <div
@@ -829,7 +887,7 @@ function Register() {
                 </p>
               </div>
 
-              {/* VERIFICATION FORM */}
+              {/* Verification form */}
 
               <form onSubmit={handleVerify} className="space-y-5">
                 <div>
@@ -898,7 +956,7 @@ function Register() {
                   )}
                 </div>
 
-                {/* TIMER */}
+                {/* Verification timer */}
 
                 <div className="text-center">
                   {timeLeft > 0 ? (
@@ -915,7 +973,7 @@ function Register() {
                   )}
                 </div>
 
-                {/* VERIFY BUTTON */}
+                {/* Verify button */}
 
                 <button
                   type="submit"
@@ -947,7 +1005,7 @@ function Register() {
                   {!verifying && <ArrowRight size={18} />}
                 </button>
 
-                {/* RESEND */}
+                {/* Resend verification code */}
 
                 <div className="text-center">
                   <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -957,7 +1015,7 @@ function Register() {
                   <button
                     type="button"
                     onClick={handleResendCode}
-                    disabled={resending}
+                    disabled={resending || timeLeft > 0}
                     className="
                       mt-2
                       inline-flex
@@ -976,12 +1034,16 @@ function Register() {
                       className={resending ? "animate-spin" : ""}
                     />
 
-                    {resending ? "Sending..." : "Resend Code"}
+                    {resending
+                      ? "Sending..."
+                      : timeLeft > 0
+                        ? `Resend available in ${formatTime()}`
+                        : "Resend Code"}
                   </button>
                 </div>
               </form>
 
-              {/* LOGIN */}
+              {/* Login */}
 
               <p
                 className="
@@ -1005,7 +1067,7 @@ function Register() {
                 </Link>
               </p>
 
-              {/* BACK TO REGISTER */}
+              {/* Back to registration */}
 
               <button
                 type="button"

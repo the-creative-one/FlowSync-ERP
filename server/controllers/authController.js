@@ -1,103 +1,66 @@
+// Authentication controller that handles registration, email verification, login, and password recovery.
+
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const sendEmail = require("../utils/sendEmail");
 
+// Email verification settings.
+const VERIFICATION_CODE_EXPIRY = 3 * 60 * 1000;
+const VERIFICATION_SEND_LIMIT = 3;
+const VERIFICATION_SEND_LIMIT_PERIOD = 24 * 60 * 60 * 1000;
 
-// REGISTER USER
+// Password reset settings.
+const RESET_PASSWORD_EXPIRY = 15 * 60 * 1000;
 
+// Password validation rule.
+const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
 
-const registerUser = async (req, res) => {
-  try {
-    const { name, email, password, role } = req.body;
+// Generate a new six-digit verification code.
+const generateVerificationCode = () => {
+  return crypto.randomInt(100000, 1000000).toString();
+};
 
-    if (!name || !email || !password) {
-      return res.status(400).json({
-        message: "Name, email and password are required",
-      });
-    }
+// Check whether a password follows the required password policy.
+const isValidPassword = (password) => {
+  return PASSWORD_REGEX.test(password);
+};
 
-    const normalizedEmail = email.trim().toLowerCase();
+// Get the remaining seconds before the current OTP expires.
+const getRemainingVerificationSeconds = (expireAt) => {
+  if (!expireAt) {
+    return 0;
+  }
 
-    const userExists = await User.findOne({
-      email: normalizedEmail,
-    });
+  const remainingMilliseconds = new Date(expireAt).getTime() - Date.now();
 
-    if (userExists) {
-      return res.status(400).json({
-        message: "User already exists",
-      });
-    }
+  return Math.max(0, Math.ceil(remainingMilliseconds / 1000));
+};
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+// Check and reset the OTP send limit when the 24-hour period has ended.
+const resetVerificationSendLimitIfNeeded = (user) => {
+  if (
+    user.emailVerificationSendCountResetAt &&
+    new Date(user.emailVerificationSendCountResetAt).getTime() <= Date.now()
+  ) {
+    user.emailVerificationSendCount = 0;
+    user.emailVerificationSendCountResetAt = undefined;
+  }
+};
 
-    let defaultPermissions = {};
-
-    if (role === "admin") {
-      defaultPermissions = {
-        canCreateOrders: true,
-        canUpdateOrders: true,
-        canDeleteOrders: true,
-        canManageEmployees: true,
-        canViewAdvancedAnalytics: true,
-        canExportReports: true,
-        canAccessSettings: true,
-      };
-    } else if (role === "manager") {
-      defaultPermissions = {
-        canCreateOrders: true,
-        canUpdateOrders: true,
-        canDeleteOrders: true,
-        canManageEmployees: true,
-        canViewAdvancedAnalytics: true,
-        canExportReports: true,
-        canAccessSettings: true,
-      };
-    } else {
-      defaultPermissions = {
-        canCreateOrders: false,
-        canUpdateOrders: false,
-        canDeleteOrders: false,
-        canManageEmployees: false,
-        canViewAdvancedAnalytics: false,
-        canExportReports: false,
-        canAccessSettings: false,
-      };
-    }
-
-    
-    // Generate 6-digit verification code
-    
-
-    const verificationCode = crypto.randomInt(100000, 1000000).toString();
-
-    
-    // Code expires after 3 minutes
-    
-
-    const verificationExpire = new Date(Date.now() + 3 * 60 * 1000);
-
-    
-    // Send verification email FIRST
-    //
-    // We intentionally do NOT create the user yet.
-    // If Resend fails, no user will be created.
-    
-
-    await sendEmail({
-      to: normalizedEmail,
-      subject: "Verify Your FlowSync ERP Account",
-      html: `
+// Verification email template.
+const verificationEmailTemplate = (verificationCode, isResend = false) => {
+  return `
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8" />
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1.0"
-/>
-<title>Verify Your Email</title>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+  <title>${isResend ? "New Verification Code" : "Verify Your Email"}</title>
 </head>
 
 <body
@@ -130,8 +93,6 @@ const registerUser = async (req, res) => {
           "
         >
 
-          <!-- HEADER -->
-
           <tr>
             <td
               align="center"
@@ -160,8 +121,6 @@ const registerUser = async (req, res) => {
             </td>
           </tr>
 
-          <!-- CONTENT -->
-
           <tr>
             <td style="padding:50px 45px;">
 
@@ -183,7 +142,7 @@ const registerUser = async (req, res) => {
                   line-height:40px;
                 "
               >
-                Verify Your Email
+                ${isResend ? "New Verification Code" : "Verify Your Email"}
               </h1>
 
               <p
@@ -194,9 +153,16 @@ const registerUser = async (req, res) => {
                   line-height:26px;
                 "
               >
-                Welcome to FlowSync ERP!
+                ${
+                  isResend
+                    ? "You requested a new verification code for your FlowSync ERP account."
+                    : "Welcome to FlowSync ERP!"
+                }
               </p>
 
+              ${
+                !isResend
+                  ? `
               <p
                 style="
                   text-align:center;
@@ -208,8 +174,9 @@ const registerUser = async (req, res) => {
                 Use the verification code below to complete
                 your account registration.
               </p>
-
-              <!-- OTP -->
+              `
+                  : ""
+              }
 
               <div
                 style="
@@ -244,8 +211,6 @@ const registerUser = async (req, res) => {
                 </div>
               </div>
 
-              <!-- EXPIRY -->
-
               <div
                 style="
                   background:#FFF7ED;
@@ -260,8 +225,6 @@ const registerUser = async (req, res) => {
                 This verification code will expire in
                 <strong>3 minutes</strong>.
               </div>
-
-              <!-- SECURITY -->
 
               <div
                 style="
@@ -295,8 +258,6 @@ const registerUser = async (req, res) => {
 
             </td>
           </tr>
-
-          <!-- FOOTER -->
 
           <tr>
             <td
@@ -347,157 +308,21 @@ const registerUser = async (req, res) => {
   </table>
 </body>
 </html>
-      `,
-    });
-
-    
-    // ONLY CREATE THE USER AFTER EMAIL WAS ACCEPTED
-    
-
-    const user = await User.create({
-      name,
-      email: normalizedEmail,
-      password: hashedPassword,
-      role,
-      permissions: defaultPermissions,
-
-      isEmailVerified: false,
-      emailVerificationCode: verificationCode,
-      emailVerificationExpire: verificationExpire,
-    });
-
-    console.log(`Verification email sent and user created: ${user.email}`);
-
-    res.status(201).json({
-      message: "Verification code sent to your email",
-    });
-  } catch (error) {
-    console.error("Registration Error:", error);
-
-    res.status(500).json({
-      message: error.message || "Unable to send verification email",
-    });
-  }
+`;
 };
 
-// VERIFY EMAIL
-
-const verifyEmail = async (req, res) => {
-  try {
-    const { email, code } = req.body;
-
-    if (!email || !code) {
-      return res.status(400).json({
-        message: "Email and verification code are required",
-      });
-    }
-
-    const normalizedEmail = email.trim().toLowerCase();
-
-    const user = await User.findOne({
-      email: normalizedEmail,
-    });
-
-    if (!user) {
-      return res.status(404).json({
-        message: "User not found",
-      });
-    }
-
-    if (user.isEmailVerified) {
-      return res.status(400).json({
-        message: "Email is already verified",
-      });
-    }
-
-    // Check whether code has expired
-    if (
-      !user.emailVerificationExpire ||
-      user.emailVerificationExpire.getTime() < Date.now()
-    ) {
-      return res.status(400).json({
-        message: "Verification code has expired. Please request a new code.",
-      });
-    }
-
-    // Check code
-    if (user.emailVerificationCode !== code.trim()) {
-      return res.status(400).json({
-        message: "Invalid verification code",
-      });
-    }
-
-    // Verify account
-    user.isEmailVerified = true;
-
-    // Remove verification data
-    user.emailVerificationCode = undefined;
-    user.emailVerificationExpire = undefined;
-
-    await user.save();
-
-    res.status(200).json({
-      message: "Email verified successfully",
-    });
-  } catch (error) {
-    console.error("Email Verification Error:", error);
-
-    res.status(500).json({
-      message: error.message,
-    });
-  }
-};
-
-// RESEND VERIFICATION CODE
-
-const resendVerificationCode = async (req, res) => {
-  try {
-    const { email } = req.body;
-
-    if (!email) {
-      return res.status(400).json({
-        message: "Email is required",
-      });
-    }
-
-    const normalizedEmail = email.trim().toLowerCase();
-
-    const user = await User.findOne({
-      email: normalizedEmail,
-    });
-
-    if (!user) {
-      return res.status(404).json({
-        message: "User not found",
-      });
-    }
-
-    if (user.isEmailVerified) {
-      return res.status(400).json({
-        message: "Email is already verified",
-      });
-    }
-
-    // Generate new 6-digit code
-    const verificationCode = crypto.randomInt(100000, 1000000).toString();
-
-    const verificationExpire = new Date(Date.now() + 3 * 60 * 1000);
-
-    user.emailVerificationCode = verificationCode;
-    user.emailVerificationExpire = verificationExpire;
-
-    await user.save();
-
-    await sendEmail({
-      to: user.email,
-      subject: "Your New FlowSync ERP Verification Code",
-      html: `
+// Password reset email template.
+const passwordResetEmailTemplate = (resetUrl) => {
+  return `
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Verification Code</title>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+  <title>Password Reset</title>
 </head>
 
 <body
@@ -539,312 +364,6 @@ const resendVerificationCode = async (req, res) => {
                 border-bottom:4px solid #1D546C;
               "
             >
-              <img
-                src="https://res.cloudinary.com/dsbwtn2lu/image/upload/v1781344316/White-Logo_vpyxsw.png"
-                alt="FlowSync ERP"
-                width="220"
-              />
-
-              <p
-                style="
-                  margin-top:18px;
-                  color:#CBD5E1;
-                  font-size:14px;
-                "
-              >
-                Email Verification
-              </p>
-            </td>
-          </tr>
-
-          <tr>
-            <td style="padding:50px 45px;">
-
-              <h1
-                style="
-                  text-align:center;
-                  color:#0C2B4E;
-                  font-size:30px;
-                "
-              >
-                New Verification Code
-              </h1>
-
-              <p
-                style="
-                  text-align:center;
-                  color:#64748B;
-                  font-size:16px;
-                  line-height:26px;
-                "
-              >
-                You requested a new verification code
-                for your FlowSync ERP account.
-              </p>
-
-              <div
-                style="
-                  margin:35px auto;
-                  background:#F8FAFC;
-                  border:1px solid #E2E8F0;
-                  border-radius:16px;
-                  padding:25px;
-                  text-align:center;
-                  max-width:300px;
-                "
-              >
-
-                <p
-                  style="
-                    margin:0 0 10px;
-                    color:#64748B;
-                    font-size:14px;
-                  "
-                >
-                  Your verification code
-                </p>
-
-                <div
-                  style="
-                    color:#1D546C;
-                    font-size:36px;
-                    font-weight:bold;
-                    letter-spacing:8px;
-                  "
-                >
-                  ${verificationCode}
-                </div>
-
-              </div>
-
-              <div
-                style="
-                  background:#FFF7ED;
-                  border:1px solid #FED7AA;
-                  border-radius:14px;
-                  padding:18px;
-                  text-align:center;
-                  color:#9A3412;
-                  font-size:15px;
-                "
-              >
-                This code will expire in
-                <strong>3 minutes</strong>.
-              </div>
-
-            </td>
-          </tr>
-
-          <tr>
-            <td
-              style="
-                background:#0C2B4E;
-                color:white;
-                padding:30px;
-                text-align:center;
-              "
-            >
-
-              <p
-                style="
-                  margin:0;
-                  font-size:18px;
-                  font-weight:bold;
-                "
-              >
-                FlowSync ERP
-              </p>
-
-              <p
-                style="
-                  margin-top:10px;
-                  color:#CBD5E1;
-                  font-size:14px;
-                "
-              >
-                Smart. Fast. Connected.
-              </p>
-
-            </td>
-          </tr>
-
-        </table>
-
-      </td>
-    </tr>
-  </table>
-</body>
-</html>
-      `,
-    });
-
-    res.status(200).json({
-      message: "New verification code sent",
-    });
-  } catch (error) {
-    console.error("Resend Verification Error:", error);
-
-    res.status(500).json({
-      message: error.message,
-    });
-  }
-};
-
-// LOGIN
-
-const loginUser = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    const normalizedEmail = email.trim().toLowerCase();
-
-    const user = await User.findOne({
-      email: normalizedEmail,
-    });
-
-    if (!user) {
-      return res.status(400).json({
-        message: "Invalid credentials",
-      });
-    }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-
-    if (!isMatch) {
-      return res.status(400).json({
-        message: "Invalid credentials",
-      });
-    }
-
-    // IMPORTANT:
-    // Do not allow an unverified email to log in.
-
-    if (!user.isEmailVerified) {
-      return res.status(403).json({
-        message: "Please verify your email before logging in",
-      });
-    }
-
-    const token = jwt.sign(
-      {
-        id: user._id,
-        role: user.role,
-      },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "7d",
-      },
-    );
-
-    const safeUser = {
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      permissions: user.permissions,
-
-      avatar: user.avatar,
-      avatarType: user.avatarType,
-      avatarSeed: user.avatarSeed,
-    };
-
-    res.status(200).json({
-      message: "Login successful",
-      token,
-      user: safeUser,
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: error.message,
-    });
-  }
-};
-
-// FORGOT PASSWORD
-
-const forgotPassword = async (req, res) => {
-  try {
-    const { email } = req.body;
-
-    const user = await User.findOne({
-      email,
-    });
-
-    if (!user) {
-      return res.status(404).json({
-        message: "User not found",
-      });
-    }
-
-    const resetToken = crypto.randomBytes(32).toString("hex");
-
-    const hashedToken = crypto
-      .createHash("sha256")
-      .update(resetToken)
-      .digest("hex");
-
-    user.resetPasswordToken = hashedToken;
-
-    user.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
-
-    await user.save();
-
-    const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
-
-    await sendEmail({
-      to: user.email,
-      subject: "Reset Your FlowSync ERP Password",
-      html: `
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Password Reset</title>
-</head>
-
-<body
-  style="
-    margin:0;
-    padding:0;
-    background:#F4F7FA;
-    font-family:Arial, Helvetica, sans-serif;
-  "
->
-  <table
-    width="100%"
-    cellpadding="0"
-    cellspacing="0"
-    style="padding:40px 20px;"
-  >
-    <tr>
-      <td align="center">
-
-        <table
-          width="650"
-          cellpadding="0"
-          cellspacing="0"
-          style="
-            max-width:650px;
-            background:#ffffff;
-            border-radius:24px;
-            overflow:hidden;
-            box-shadow:0 10px 30px rgba(0,0,0,0.08);
-          "
-        >
-
-          <!-- HEADER -->
-
-          <tr>
-            <td
-              align="center"
-              style="
-                background:#0C2B4E;
-                padding:40px 35px;
-                border-bottom:4px solid #1D546C;
-              "
-            >
-
               <img
                 src="https://res.cloudinary.com/dsbwtn2lu/image/upload/v1781344316/White-Logo_vpyxsw.png"
                 alt="FlowSync ERP"
@@ -861,23 +380,18 @@ const forgotPassword = async (req, res) => {
               >
                 Secure Password Recovery
               </p>
-
             </td>
           </tr>
-
-          <!-- CONTENT -->
 
           <tr>
             <td style="padding:50px 45px;">
 
               <div style="text-align:center;">
-
                 <img
                   src="https://res.cloudinary.com/dsbwtn2lu/image/upload/v1781344316/Favicon-Color_jgnbzp.png"
                   width="90"
                   alt="FlowSync"
                 />
-
               </div>
 
               <h1
@@ -916,8 +430,6 @@ const forgotPassword = async (req, res) => {
                 Click the button below to create a new password.
               </p>
 
-              <!-- BUTTON -->
-
               <div
                 style="
                   text-align:center;
@@ -925,7 +437,6 @@ const forgotPassword = async (req, res) => {
                   margin-bottom:40px;
                 "
               >
-
                 <a
                   href="${resetUrl}"
                   style="
@@ -942,10 +453,7 @@ const forgotPassword = async (req, res) => {
                 >
                   Reset Password
                 </a>
-
               </div>
-
-              <!-- EXPIRY CARD -->
 
               <div
                 style="
@@ -958,15 +466,11 @@ const forgotPassword = async (req, res) => {
                   font-size:16px;
                 "
               >
-
                 This reset link will expire in
                 <strong style="color:#2563EB;">
                   15 minutes
                 </strong>
-
               </div>
-
-              <!-- SECURITY -->
 
               <div
                 style="
@@ -977,7 +481,6 @@ const forgotPassword = async (req, res) => {
                   padding:22px;
                 "
               >
-
                 <h3
                   style="
                     color:#166534;
@@ -998,13 +501,10 @@ const forgotPassword = async (req, res) => {
                   you can safely ignore this email.
                   Your account will remain secure.
                 </p>
-
               </div>
 
             </td>
           </tr>
-
-          <!-- FOOTER -->
 
           <tr>
             <td
@@ -1015,7 +515,6 @@ const forgotPassword = async (req, res) => {
                 text-align:center;
               "
             >
-
               <p
                 style="
                   margin:0;
@@ -1046,7 +545,6 @@ const forgotPassword = async (req, res) => {
                 © ${new Date().getFullYear()} FlowSync ERP.
                 All rights reserved.
               </p>
-
             </td>
           </tr>
 
@@ -1057,21 +555,509 @@ const forgotPassword = async (req, res) => {
   </table>
 </body>
 </html>
-      `,
+`;
+};
+
+// Register a new user or restart verification for an unverified user.
+const registerUser = async (req, res) => {
+  try {
+    const { name, email, password, role } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        message: "Name, email and password are required",
+      });
+    }
+
+    // Validate password before doing any email or database work.
+    if (!isValidPassword(password)) {
+      return res.status(400).json({
+        message:
+          "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+      });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+
+    let user = await User.findOne({
+      email: normalizedEmail,
     });
 
-    res.status(200).json({
-      message: "Password reset email sent successfully",
+    // A verified account cannot be registered again.
+    if (user && user.isEmailVerified) {
+      return res.status(400).json({
+        message: "User already exists",
+      });
+    }
+
+    // If an unverified account already exists, allow the user to continue
+    // registration instead of blocking them permanently.
+    if (user && !user.isEmailVerified) {
+      resetVerificationSendLimitIfNeeded(user);
+
+      const remainingSeconds = getRemainingVerificationSeconds(
+        user.emailVerificationExpire,
+      );
+
+      // The existing OTP is still valid.
+      if (remainingSeconds > 0) {
+        return res.status(429).json({
+          message:
+            "A verification code has already been sent. Please wait until it expires before requesting a new code.",
+          retryAfter: remainingSeconds,
+        });
+      }
+
+      // Check the 24-hour send limit.
+      if (user.emailVerificationSendCount >= VERIFICATION_SEND_LIMIT) {
+        const resetAt = user.emailVerificationSendCountResetAt;
+
+        return res.status(429).json({
+          message:
+            "You have reached the verification code limit. Please try again later.",
+          retryAt: resetAt,
+        });
+      }
+    }
+
+    // Set permissions based on the selected role.
+    let defaultPermissions = {};
+
+    if (role === "admin" || role === "manager") {
+      defaultPermissions = {
+        canCreateOrders: true,
+        canUpdateOrders: true,
+        canDeleteOrders: true,
+        canManageEmployees: true,
+        canViewAdvancedAnalytics: true,
+        canExportReports: true,
+        canAccessSettings: true,
+      };
+    } else {
+      defaultPermissions = {
+        canCreateOrders: false,
+        canUpdateOrders: false,
+        canDeleteOrders: false,
+        canManageEmployees: false,
+        canViewAdvancedAnalytics: false,
+        canExportReports: false,
+        canAccessSettings: false,
+      };
+    }
+
+    // Generate a new verification code.
+    const verificationCode = generateVerificationCode();
+
+    const verificationExpire = new Date(Date.now() + VERIFICATION_CODE_EXPIRY);
+
+    // Hash the verification code before storing it.
+    const hashedVerificationCode = await bcrypt.hash(verificationCode, 10);
+
+    // Send the email before changing the database.
+    await sendEmail({
+      to: normalizedEmail,
+      subject: "Verify Your FlowSync ERP Account",
+      html: verificationEmailTemplate(verificationCode),
+    });
+
+    // Update an existing unverified user.
+    if (user) {
+      user.name = name.trim();
+      user.password = await bcrypt.hash(password, 10);
+      user.role = role || user.role;
+      user.permissions = defaultPermissions;
+
+      user.emailVerificationCode = hashedVerificationCode;
+      user.emailVerificationExpire = verificationExpire;
+      user.emailVerificationLastSentAt = new Date();
+
+      resetVerificationSendLimitIfNeeded(user);
+
+      user.emailVerificationSendCount =
+        (user.emailVerificationSendCount || 0) + 1;
+
+      if (!user.emailVerificationSendCountResetAt) {
+        user.emailVerificationSendCountResetAt = new Date(
+          Date.now() + VERIFICATION_SEND_LIMIT_PERIOD,
+        );
+      }
+
+      await user.save();
+
+      console.log(`Verification restarted for unverified user: ${user.email}`);
+
+      return res.status(201).json({
+        message: "Verification code sent to your email",
+        email: normalizedEmail,
+      });
+    }
+
+    // Create a new user after Brevo accepts the email.
+    user = await User.create({
+      name: name.trim(),
+      email: normalizedEmail,
+      password: await bcrypt.hash(password, 10),
+      role,
+      permissions: defaultPermissions,
+
+      isEmailVerified: false,
+
+      emailVerificationCode: hashedVerificationCode,
+      emailVerificationExpire: verificationExpire,
+      emailVerificationLastSentAt: new Date(),
+      emailVerificationSendCount: 1,
+      emailVerificationSendCountResetAt: new Date(
+        Date.now() + VERIFICATION_SEND_LIMIT_PERIOD,
+      ),
+    });
+
+    console.log(
+      `Verification email sent and unverified user created: ${user.email}`,
+    );
+
+    return res.status(201).json({
+      message: "Verification code sent to your email",
+      email: normalizedEmail,
     });
   } catch (error) {
-    res.status(500).json({
-      message: error.message,
+    console.error("Registration Error:", error);
+
+    return res.status(500).json({
+      message: error.message || "Unable to complete registration",
     });
   }
 };
 
-// RESET PASSWORD
+//Verify a user's email using the six-digit verification code
+const verifyEmail = async (req, res) => {
+  try {
+    const { email, code } = req.body;
 
+    if (!email || !code) {
+      return res.status(400).json({
+        message: "Email and verification code are required",
+      });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const user = await User.findOne({
+      email: normalizedEmail,
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    if (user.isEmailVerified) {
+      return res.status(400).json({
+        message: "Email is already verified",
+      });
+    }
+
+    //Check verification code expiry
+
+    if (
+      !user.emailVerificationExpire ||
+      user.emailVerificationExpire.getTime() < Date.now()
+    ) {
+      return res.status(400).json({
+        message: "Verification code has expired. Please request a new code.",
+      });
+    }
+
+    //Check verification code
+
+    const isCodeValid = await bcrypt.compare(
+      code.trim(),
+      user.emailVerificationCode,
+    );
+
+    if (!isCodeValid) {
+      return res.status(400).json({
+        message: "Invalid verification code",
+      });
+    }
+
+    //Verify email
+
+    user.isEmailVerified = true;
+
+    user.emailVerificationCode = undefined;
+    user.emailVerificationExpire = undefined;
+
+    await user.save();
+
+    //Create login token after successful verification
+
+    const token = jwt.sign(
+      {
+        id: user._id,
+        role: user.role,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "7d",
+      },
+    );
+
+    //Return safe user data
+
+    const safeUser = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      permissions: user.permissions,
+      avatar: user.avatar,
+      avatarType: user.avatarType,
+      avatarSeed: user.avatarSeed,
+    };
+
+    return res.status(200).json({
+      message: "Email verified successfully",
+      token,
+      user: safeUser,
+    });
+  } catch (error) {
+    console.error("Email Verification Error:", error);
+
+    return res.status(500).json({
+      message: error.message || "Unable to verify email",
+    });
+  }
+};
+
+// Send another verification code after the current code expires.
+const resendVerificationCode = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        message: "Email is required",
+      });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const user = await User.findOne({
+      email: normalizedEmail,
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    if (user.isEmailVerified) {
+      return res.status(400).json({
+        message: "Email is already verified",
+      });
+    }
+
+    resetVerificationSendLimitIfNeeded(user);
+
+    // Do not allow another OTP while the current one is active.
+    const remainingSeconds = getRemainingVerificationSeconds(
+      user.emailVerificationExpire,
+    );
+
+    if (remainingSeconds > 0) {
+      return res.status(429).json({
+        message:
+          "Your current verification code is still active. Please wait until it expires before requesting a new code.",
+        retryAfter: remainingSeconds,
+      });
+    }
+
+    // Do not allow more than three OTP emails in 24 hours.
+    if (user.emailVerificationSendCount >= VERIFICATION_SEND_LIMIT) {
+      return res.status(429).json({
+        message:
+          "You have reached the verification code limit. Please try again later.",
+        retryAt: user.emailVerificationSendCountResetAt,
+      });
+    }
+
+    // Generate a new verification code.
+    const verificationCode = generateVerificationCode();
+
+    const verificationExpire = new Date(Date.now() + VERIFICATION_CODE_EXPIRY);
+
+    const hashedVerificationCode = await bcrypt.hash(verificationCode, 10);
+
+    // Send the email before updating the database.
+    await sendEmail({
+      to: normalizedEmail,
+      subject: "Your New FlowSync ERP Verification Code",
+      html: verificationEmailTemplate(verificationCode, true),
+    });
+
+    user.emailVerificationCode = hashedVerificationCode;
+    user.emailVerificationExpire = verificationExpire;
+    user.emailVerificationLastSentAt = new Date();
+
+    user.emailVerificationSendCount =
+      (user.emailVerificationSendCount || 0) + 1;
+
+    if (!user.emailVerificationSendCountResetAt) {
+      user.emailVerificationSendCountResetAt = new Date(
+        Date.now() + VERIFICATION_SEND_LIMIT_PERIOD,
+      );
+    }
+
+    await user.save();
+
+    console.log(`New verification code sent: ${user.email}`);
+
+    return res.status(200).json({
+      message: "New verification code sent",
+      retryAfter: VERIFICATION_CODE_EXPIRY / 1000,
+    });
+  } catch (error) {
+    console.error("Resend Verification Error:", error);
+
+    return res.status(500).json({
+      message: error.message || "Unable to resend verification code",
+    });
+  }
+};
+
+// Log a verified user into the application.
+const loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        message: "Email and password are required",
+      });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const user = await User.findOne({
+      email: normalizedEmail,
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        message: "Invalid credentials",
+      });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(400).json({
+        message: "Invalid credentials",
+      });
+    }
+
+    if (!user.isEmailVerified) {
+      return res.status(403).json({
+        message: "Please verify your email before logging in",
+      });
+    }
+
+    const token = jwt.sign(
+      {
+        id: user._id,
+        role: user.role,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "7d",
+      },
+    );
+
+    const safeUser = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      permissions: user.permissions,
+
+      avatar: user.avatar,
+      avatarType: user.avatarType,
+      avatarSeed: user.avatarSeed,
+    };
+
+    return res.status(200).json({
+      message: "Login successful",
+      token,
+      user: safeUser,
+    });
+  } catch (error) {
+    console.error("Login Error:", error);
+
+    return res.status(500).json({
+      message: error.message || "Unable to login",
+    });
+  }
+};
+
+// Send a password reset email.
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        message: "Email is required",
+      });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const user = await User.findOne({
+      email: normalizedEmail,
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    const resetToken = crypto.randomBytes(32).toString("hex");
+
+    const hashedToken = crypto
+      .createHash("sha256")
+      .update(resetToken)
+      .digest("hex");
+
+    user.resetPasswordToken = hashedToken;
+
+    user.resetPasswordExpire = Date.now() + RESET_PASSWORD_EXPIRY;
+
+    await user.save();
+
+    const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
+
+    await sendEmail({
+      to: user.email,
+      subject: "Reset Your FlowSync ERP Password",
+      html: passwordResetEmailTemplate(resetUrl),
+    });
+
+    return res.status(200).json({
+      message: "Password reset email sent successfully",
+    });
+  } catch (error) {
+    console.error("Forgot Password Error:", error);
+
+    return res.status(500).json({
+      message: error.message || "Unable to send password reset email",
+    });
+  }
+};
+
+// Reset the user's password using the reset token.
 const resetPassword = async (req, res) => {
   try {
     const resetToken = crypto
@@ -1100,6 +1086,14 @@ const resetPassword = async (req, res) => {
       });
     }
 
+    // Apply the same password policy used during registration.
+    if (!isValidPassword(password)) {
+      return res.status(400).json({
+        message:
+          "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+      });
+    }
+
     user.password = await bcrypt.hash(password, 10);
 
     user.resetPasswordToken = undefined;
@@ -1107,30 +1101,32 @@ const resetPassword = async (req, res) => {
 
     await user.save();
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "Password reset successful",
     });
   } catch (error) {
-    res.status(500).json({
-      message: error.message,
+    console.error("Reset Password Error:", error);
+
+    return res.status(500).json({
+      message: error.message || "Unable to reset password",
     });
   }
 };
 
-// GET ME
-
+// Return the currently authenticated user's information.
 const getMe = async (req, res) => {
   try {
-    res.status(200).json(req.user);
+    return res.status(200).json(req.user);
   } catch (error) {
-    res.status(500).json({
+    console.error("Get Me Error:", error);
+
+    return res.status(500).json({
       message: "Server Error",
     });
   }
 };
 
-// EXPORTS
-
+// Export authentication controllers.
 module.exports = {
   registerUser,
   verifyEmail,
