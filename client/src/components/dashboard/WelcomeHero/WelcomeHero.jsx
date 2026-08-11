@@ -69,9 +69,7 @@ function WelcomeHero({ user }) {
           </p>
 
           <h1 className="mt-2 text-4xl md:text-5xl font-bold text-white leading-tight">
-            Welcome back,
-            <br />
-            {firstName}
+            Welcome! {firstName}
           </h1>
 
           <p className="mt-5 max-w-2xl text-cyan-100/90 leading-8 text-lg">

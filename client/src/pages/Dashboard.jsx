@@ -6,8 +6,7 @@ import WelcomeHero from "../components/dashboard/WelcomeHero/WelcomeHero";
 import { useAuth } from "../context/AuthContext";
 import TeamDirectory from "../components/dashboard/TeamDirectory";
 import LifetimeRevenue from "../components/dashboard/LifetimeRevenue";
-
-import { ShoppingBag, Clock3, CheckCircle2, IndianRupee } from "lucide-react";
+import RecentOrders from "../components/dashboard/RecentOrders/RecentOrders";
 
 function Dashboard() {
   const [stats, setStats] = useState({});
@@ -46,7 +45,11 @@ function Dashboard() {
         <WelcomeHero user={user} />
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-          <TeamDirectory />
+          {user?.permissions?.canManageEmployees ? (
+            <TeamDirectory />
+          ) : (
+            <RecentOrders />
+          )}
 
           <LifetimeRevenue stats={stats} />
         </div>
