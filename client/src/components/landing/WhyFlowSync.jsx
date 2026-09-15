@@ -1,10 +1,5 @@
 import { motion } from "framer-motion";
-import {
-  Database,
-  BarChart3,
-  ShieldCheck,
-  Eye,
-} from "lucide-react";
+import { Database, BarChart3, ShieldCheck, Eye } from "lucide-react";
 
 function WhyFlowSync() {
   const benefits = [
@@ -38,10 +33,11 @@ function WhyFlowSync() {
     <section
       className="
       pt-15
-      md:py-24
+      py-24
       bg-[#F8FAFC]
       dark:bg-[#0B1120]
       pb-80
+
       "
     >
       <div className="max-w-7xl mx-auto px-6">
@@ -68,9 +64,8 @@ function WhyFlowSync() {
               dark:text-gray-400
             "
           >
-            Designed to simplify operations, improve
-            visibility and help teams make informed
-            decisions with confidence.
+            Designed to simplify operations, improve visibility and help teams
+            make informed decisions with confidence.
           </p>
         </div>
 
