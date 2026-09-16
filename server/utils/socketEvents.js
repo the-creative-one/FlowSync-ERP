@@ -46,7 +46,6 @@ const emitEmployeeCreated = (io, employee) => {
 
 const emitEmployeeRoleChanged = (io, employee, oldRole) => {
   io.to("employees").emit("employee-role-changed", employee);
-
   io.to("employees").emit("notification", {
     id: `employee-role-${employee._id}-${employee.updatedAt}`,
     type: "employee",
@@ -54,17 +53,17 @@ const emitEmployeeRoleChanged = (io, employee, oldRole) => {
     message: `${employee.name}'s role changed from ${oldRole} to ${employee.role}.`,
   });
 
+  io.to(`user:${employee._id}`).emit("user-updated", employee);
   io.to(`user:${employee._id}`).emit("notification", {
     id: `personal-role-${employee._id}-${employee.updatedAt}`,
     type: "account",
     title: "Role Updated",
-    message: `Your FlowSync role has been changed to ${employee.role}.`,
+    message: `Your role has been changed to ${employee.role}.`,
   });
 };
 
 const emitEmployeePermissionsChanged = (io, employee) => {
   io.to("employees").emit("employee-permissions-changed", employee);
-
   io.to("employees").emit("notification", {
     id: `employee-permissions-${employee._id}-${employee.updatedAt}`,
     type: "employee",
@@ -72,11 +71,12 @@ const emitEmployeePermissionsChanged = (io, employee) => {
     message: `${employee.name}'s permissions were updated.`,
   });
 
+  io.to(`user:${employee._id}`).emit("user-updated", employee);
   io.to(`user:${employee._id}`).emit("notification", {
     id: `personal-permissions-${employee._id}-${employee.updatedAt}`,
     type: "account",
     title: "Permissions Updated",
-    message: "Your FlowSync permissions have been updated.",
+    message: "Your permissions have been updated.",
   });
 };
 
@@ -102,21 +102,12 @@ const emitPermissionRequestApproved = (io, request, employee) => {
     ...request.toObject(),
     employeeId: employee,
   };
-
   io.to("employees").emit("permission-request-approved", requestData);
-
   io.to("employees").emit("notification", {
     id: `permission-request-approved-${request._id}`,
     type: "permission",
     title: "Permission Request Approved",
     message: `${employee.name}'s permission request was approved.`,
-  });
-
-  io.to(`user:${employee._id}`).emit("notification", {
-    id: `personal-request-approved-${request._id}`,
-    type: "permission",
-    title: "Permission Request Approved",
-    message: "Your permission request was approved.",
   });
 };
 

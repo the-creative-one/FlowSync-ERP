@@ -64,8 +64,6 @@ router.put("/:id/role", protect, managerOrAdmin, async (req, res) => {
       });
     }
 
-    const oldRole = targetUser.role;
-
     // CANNOT MODIFY YOURSELF
     if (targetUser._id.toString() === req.user._id.toString()) {
       return res.status(403).json({
@@ -91,8 +89,8 @@ router.put("/:id/role", protect, managerOrAdmin, async (req, res) => {
         });
       }
     }
-
     // UPDATE ROLE
+    const oldRole = targetUser.role;
     targetUser.role = role;
     await targetUser.save();
     await AuditLog.create({
@@ -103,7 +101,7 @@ router.put("/:id/role", protect, managerOrAdmin, async (req, res) => {
     const updatedUser = await User.findById(req.params.id).select("-password");
     const io = req.app.get("io");
     emitEmployeeRoleChanged(io, updatedUser, oldRole);
-    await refreshUserSocketRooms(io, updatedUser._id.toString());
+    await refreshUserSocketRooms(io, updatedUser._id);
     res.json({
       message: "Role updated successfully",
       user: updatedUser,
@@ -177,7 +175,7 @@ router.put("/:id/permissions", protect, managerOrAdmin, async (req, res) => {
     const updatedUser = await User.findById(req.params.id).select("-password");
     const io = req.app.get("io");
     emitEmployeePermissionsChanged(io, updatedUser);
-    await refreshUserSocketRooms(io, updatedUser._id.toString());
+    await refreshUserSocketRooms(io, updatedUser._id);
     res.json({
       message: "Permissions updated successfully",
       user: updatedUser,
@@ -297,20 +295,13 @@ router.post("/create", protect, managerOrAdmin, async (req, res) => {
       role,
       permissions,
     });
+    const createdUser = await User.findById(user._id).select("-password");
     await AuditLog.create({
       userId: req.user._id,
       action: "USER_CREATED",
       details: `Created user ${user.name} (${user.role})`,
     });
     const io = req.app.get("io");
-    const createdUser = {
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      permissions: user.permissions,
-    };
-
     emitEmployeeCreated(io, createdUser);
     res.status(201).json({
       message: "User created successfully",

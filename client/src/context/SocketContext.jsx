@@ -1,23 +1,26 @@
 import { createContext, useContext, useEffect, useState } from "react";
-
 import { useAuth } from "./AuthContext";
 import socket from "../services/socket";
 
 const SocketContext = createContext(null);
 
 export function SocketProvider({ children }) {
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
+
   const [connected, setConnected] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+
   const notificationStorageKey = user
     ? `flowsync-notifications-${user._id || user.id}`
     : null;
 
-  const [notifications, setNotifications] = useState([]);
+  // Load notifications
   useEffect(() => {
     if (!notificationStorageKey) {
       setNotifications([]);
       return;
     }
+
     try {
       const storedNotifications = localStorage.getItem(notificationStorageKey);
       setNotifications(
@@ -28,14 +31,13 @@ export function SocketProvider({ children }) {
     }
   }, [notificationStorageKey]);
 
+  // Save notifications
   useEffect(() => {
-    if (!notificationStorageKey) {
-      return;
-    }
-
+    if (!notificationStorageKey) return;
     localStorage.setItem(notificationStorageKey, JSON.stringify(notifications));
   }, [notifications, notificationStorageKey]);
 
+  // Socket lifecycle
   useEffect(() => {
     if (!user) {
       if (socket.connected) {
@@ -45,16 +47,18 @@ export function SocketProvider({ children }) {
       setNotifications([]);
       return;
     }
-
     const handleConnect = () => {
       setConnected(true);
     };
     const handleDisconnect = () => {
       setConnected(false);
     };
+
     const handleConnectError = (error) => {
       console.error("Socket connection error:", error.message);
     };
+
+    // Handle notifications
     const handleNotification = (notification) => {
       const notificationId =
         notification.id ||
@@ -65,40 +69,52 @@ export function SocketProvider({ children }) {
         read: false,
         receivedAt: notification.receivedAt || new Date().toISOString(),
       };
+
       setNotifications((prev) => {
         const exists = prev.some((item) => item.id === newNotification.id);
-        if (exists) {
-          return prev;
-        }
+        if (exists) return prev;
         return [newNotification, ...prev].slice(0, 50);
       });
     };
 
+    // Handle live role/permission changes
+    const handleUserUpdated = (updatedUser) => {
+      setUser((currentUser) => {
+        if (!currentUser) return updatedUser;
+        return {
+          ...currentUser,
+          ...updatedUser,
+          permissions: {
+            ...currentUser.permissions,
+            ...updatedUser.permissions,
+          },
+        };
+      });
+    };
     socket.on("connect", handleConnect);
     socket.on("disconnect", handleDisconnect);
     socket.on("connect_error", handleConnectError);
     socket.on("notification", handleNotification);
+    socket.on("user-updated", handleUserUpdated);
     socket.connect();
     return () => {
       socket.off("connect", handleConnect);
       socket.off("disconnect", handleDisconnect);
       socket.off("connect_error", handleConnectError);
       socket.off("notification", handleNotification);
+      socket.off("user-updated", handleUserUpdated);
       if (socket.connected) {
         socket.disconnect();
       }
       setConnected(false);
     };
-  }, [user]);
+  }, [user, setUser]);
 
   const markNotificationAsRead = (notificationId) => {
     setNotifications((prev) =>
       prev.map((notification) =>
         notification.id === notificationId
-          ? {
-              ...notification,
-              read: true,
-            }
+          ? { ...notification, read: true }
           : notification,
       ),
     );
@@ -122,6 +138,7 @@ export function SocketProvider({ children }) {
   const clearNotifications = () => {
     setNotifications([]);
   };
+
   const unreadCount = notifications.filter(
     (notification) => !notification.read,
   ).length;
@@ -146,10 +163,8 @@ export function SocketProvider({ children }) {
 
 export function useSocket() {
   const context = useContext(SocketContext);
-
   if (!context) {
     throw new Error("useSocket must be used inside SocketProvider");
   }
-
   return context;
 }

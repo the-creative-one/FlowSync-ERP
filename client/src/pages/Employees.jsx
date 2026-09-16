@@ -8,11 +8,11 @@ import CreateUserModal from "../components/employees/CreateUserModal";
 import PermissionRequests from "../components/employees/PermissionRequests";
 import UserAvatar from "../components/common/UserAvatar";
 import SmartDropdown from "../components/common/SmartDropdown";
-import socket from "../services/socket";
+import { useSocket } from "../context/SocketContext";
 
 function Employees() {
   const { user } = useAuth();
-
+  const { socket } = useSocket();
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -28,17 +28,19 @@ function Employees() {
     const handleEmployeeCreated = (employee) => {
       setEmployees((prev) => {
         const exists = prev.some((item) => item._id === employee._id);
-        if (exists) {
-          return prev;
-        }
+
+        if (exists) return prev;
+
         return [employee, ...prev];
       });
     };
+
     const handleEmployeeRoleChanged = (employee) => {
       setEmployees((prev) =>
         prev.map((item) => (item._id === employee._id ? employee : item)),
       );
     };
+
     const handleEmployeePermissionsChanged = (employee) => {
       setEmployees((prev) =>
         prev.map((item) => (item._id === employee._id ? employee : item)),
@@ -48,6 +50,7 @@ function Employees() {
     socket.on("employee-created", handleEmployeeCreated);
     socket.on("employee-role-changed", handleEmployeeRoleChanged);
     socket.on("employee-permissions-changed", handleEmployeePermissionsChanged);
+
     return () => {
       socket.off("employee-created", handleEmployeeCreated);
       socket.off("employee-role-changed", handleEmployeeRoleChanged);
@@ -56,7 +59,7 @@ function Employees() {
         handleEmployeePermissionsChanged,
       );
     };
-  }, []);
+  }, [socket]);
 
   // AVAILABLE ROLES
   const getAvailableRoles = () => {
@@ -130,7 +133,6 @@ function Employees() {
   const updateRole = async (userId, role) => {
     try {
       const token = localStorage.getItem("token");
-
       await api.put(
         `/employees/${userId}/role`,
         { role },
@@ -140,20 +142,7 @@ function Employees() {
           },
         },
       );
-
-      setEmployees((prev) =>
-        prev.map((employee) =>
-          employee._id === userId
-            ? {
-                ...employee,
-                role,
-              }
-            : employee,
-        ),
-      );
-
       setActiveRoleDropdown(null);
-
       toast.success("Role updated successfully");
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to update role");
@@ -164,7 +153,6 @@ function Employees() {
   const updatePermission = async (userId, permissionKey, value) => {
     try {
       const token = localStorage.getItem("token");
-
       await api.put(
         `/employees/${userId}/permissions`,
         {
@@ -176,21 +164,6 @@ function Employees() {
           },
         },
       );
-
-      setEmployees((prev) =>
-        prev.map((employee) =>
-          employee._id === userId
-            ? {
-                ...employee,
-                permissions: {
-                  ...employee.permissions,
-                  [permissionKey]: value,
-                },
-              }
-            : employee,
-        ),
-      );
-
       toast.success("Permission updated");
     } catch (error) {
       toast.error(
@@ -248,9 +221,7 @@ function Employees() {
           },
         },
       );
-
       toast.success("Request approved");
-
       fetchRequests();
       fetchEmployees();
     } catch (error) {
