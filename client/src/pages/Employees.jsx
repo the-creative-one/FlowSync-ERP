@@ -8,6 +8,7 @@ import CreateUserModal from "../components/employees/CreateUserModal";
 import PermissionRequests from "../components/employees/PermissionRequests";
 import UserAvatar from "../components/common/UserAvatar";
 import SmartDropdown from "../components/common/SmartDropdown";
+import socket from "../services/socket";
 
 function Employees() {
   const { user } = useAuth();
@@ -23,10 +24,41 @@ function Employees() {
     (request) => request.status === "pending",
   );
 
-  //
-  // AVAILABLE ROLES
-  //
+  useEffect(() => {
+    const handleEmployeeCreated = (employee) => {
+      setEmployees((prev) => {
+        const exists = prev.some((item) => item._id === employee._id);
+        if (exists) {
+          return prev;
+        }
+        return [employee, ...prev];
+      });
+    };
+    const handleEmployeeRoleChanged = (employee) => {
+      setEmployees((prev) =>
+        prev.map((item) => (item._id === employee._id ? employee : item)),
+      );
+    };
+    const handleEmployeePermissionsChanged = (employee) => {
+      setEmployees((prev) =>
+        prev.map((item) => (item._id === employee._id ? employee : item)),
+      );
+    };
 
+    socket.on("employee-created", handleEmployeeCreated);
+    socket.on("employee-role-changed", handleEmployeeRoleChanged);
+    socket.on("employee-permissions-changed", handleEmployeePermissionsChanged);
+    return () => {
+      socket.off("employee-created", handleEmployeeCreated);
+      socket.off("employee-role-changed", handleEmployeeRoleChanged);
+      socket.off(
+        "employee-permissions-changed",
+        handleEmployeePermissionsChanged,
+      );
+    };
+  }, []);
+
+  // AVAILABLE ROLES
   const getAvailableRoles = () => {
     if (user?.role === "admin") {
       return ["admin", "manager", "operations", "analyst", "employee"];
@@ -39,10 +71,7 @@ function Employees() {
     return [];
   };
 
-  //
   // PERMISSIONS
-  //
-
   const permissionList = [
     {
       key: "canCreateOrders",
@@ -75,18 +104,12 @@ function Employees() {
       : []),
   ];
 
-  //
   // OPEN UPWARD FOR LAST ROWS
-  //
-
   const shouldOpenUpward = (index, total) => {
     return index >= total - 2;
   };
 
-  //
   // ROLE CONTROL
-  //
-
   const canManageUser = (employee) => {
     if (employee.email === user?.email) {
       return false;
@@ -103,10 +126,7 @@ function Employees() {
     return false;
   };
 
-  //
   // UPDATE ROLE
-  //
-
   const updateRole = async (userId, role) => {
     try {
       const token = localStorage.getItem("token");
@@ -140,10 +160,7 @@ function Employees() {
     }
   };
 
-  //
   // UPDATE PERMISSION
-  //
-
   const updatePermission = async (userId, permissionKey, value) => {
     try {
       const token = localStorage.getItem("token");
@@ -182,10 +199,7 @@ function Employees() {
     }
   };
 
-  //
   // FETCH EMPLOYEES
-  //
-
   const fetchEmployees = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -204,15 +218,11 @@ function Employees() {
     }
   };
 
-  //
   // FETCH REQUESTS
-  //
-
   const fetchRequests = async () => {
     try {
       const token = localStorage.getItem("token");
-
-      const response = await api.get("/employees/requests", {
+      const response = await api.get("/employees/requests?scope=team", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -224,10 +234,7 @@ function Employees() {
     }
   };
 
-  //
   // APPROVE REQUEST
-  //
-
   const approveRequest = async (requestId) => {
     try {
       const token = localStorage.getItem("token");
@@ -251,10 +258,7 @@ function Employees() {
     }
   };
 
-  //
   // REJECT REQUEST
-  //
-
   const rejectRequest = async (requestId) => {
     try {
       const token = localStorage.getItem("token");

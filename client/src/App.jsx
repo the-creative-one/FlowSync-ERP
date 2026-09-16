@@ -19,46 +19,8 @@ import ForgotPassword from "./pages/ForgotPassword";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsConditions from "./pages/TermsConditions";
 import NotFound from "./pages/NotFound";
-import socket from "./services/socket";
-import { useEffect } from "react";
-import { useAuth } from "./context/AuthContext";
 
 function App() {
-  const { user } = useAuth();
-  useEffect(() => {
-    if (!user) {
-      if (socket.connected) {
-        socket.disconnect();
-      }
-      return;
-    }
-    socket.connect();
-
-    const handleConnect = () => {
-      console.log("Socket connected:", socket.id);
-    };
-    const handleDisconnect = (reason) => {
-      console.log("Socket disconnected:", reason);
-    };
-    const handleConnectError = (error) => {
-      console.error("Socket connection error:", error.message);
-    };
-    const handleOrderCreated = (order) => {
-      console.log("New order received:", order);
-    };
-
-    socket.on("connect", handleConnect);
-    socket.on("disconnect", handleDisconnect);
-    socket.on("connect_error", handleConnectError);
-    socket.on("order-created", handleOrderCreated);
-
-    return () => {
-      socket.off("connect", handleConnect);
-      socket.off("disconnect", handleDisconnect);
-      socket.off("connect_error", handleConnectError);
-      socket.off("order-created", handleOrderCreated);
-    };
-  }, [user]);
   return (
     <BrowserRouter>
       <ScrollToTop />
@@ -133,14 +95,13 @@ function App() {
             </ProtectedRoute>
           }
         />
-        {/* Reset Password */}
+        {/* Password */}
         <Route path="/reset-password/:token" element={<ResetPassword />} />
-        {/* Forgot Password */}
         <Route path="/forgot-password" element={<ForgotPassword />} />
         {/* Other Pages */}
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-conditions" element={<TermsConditions />} />
-        {/* 404 Page */}
+        {/* 404 */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

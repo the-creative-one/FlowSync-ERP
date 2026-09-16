@@ -186,22 +186,6 @@ function Profile() {
     }
   };
 
-  // const fetchTeamActivity = async () => {
-  //   try {
-  //     const token = localStorage.getItem("token");
-
-  //     const response = await api.get("/employees/requests", {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     });
-
-  //     setTeamActivity(response.data);
-  //   } catch (error) {
-  //     console.log(error.response?.data);
-  //   }
-  // };
-
   const fetchAuditLogs = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -217,19 +201,6 @@ function Profile() {
       console.log(error.response?.data);
     }
   };
-
-  useEffect(() => {
-    if (isRequesterRole) {
-      fetchRequests();
-    }
-
-    if (user?.role === "manager" || user?.role === "admin") {
-      fetchEmployees();
-      fetchAuditLogs();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -364,11 +335,21 @@ function Profile() {
     canExportReports: Download,
   };
 
-  const isRequesterRole =
-    user?.role === "employee" ||
-    user?.role === "operations" ||
-    user?.role === "analyst";
-
+  const hasPermissionToRequestAccess = Object.keys(permissionLabels).some(
+    (permission) => !user?.permissions?.[permission],
+  );
+  const isManagerOrAdmin = user?.role === "manager" || user?.role === "admin";
+  useEffect(() => {
+    if (!user) return;
+    if (hasPermissionToRequestAccess) {
+      fetchRequests();
+    }
+    if (isManagerOrAdmin) {
+      fetchEmployees();
+      fetchAuditLogs();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
   return (
     <DashboardLayout
       title="My Profile"
@@ -651,7 +632,7 @@ function Profile() {
 
         {/* REQUEST ACCESS */}
 
-        {isRequesterRole && (
+        {hasPermissionToRequestAccess && (
           <div
             className="
         bg-white
@@ -718,7 +699,7 @@ function Profile() {
         )}
         {/* REQUEST HISTORY */}
 
-        {isRequesterRole && (
+        {!isManagerOrAdmin && (
           <div
             className="
         bg-white
@@ -820,7 +801,7 @@ function Profile() {
 
         {/* RECENT TEAM ACTIVITY */}
 
-        {!isRequesterRole && (
+        {isManagerOrAdmin && (
           <div
             className="
               bg-white

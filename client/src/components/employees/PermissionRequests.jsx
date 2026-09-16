@@ -1,8 +1,31 @@
 import { X, Bell, Check, ShieldCheck } from "lucide-react";
 import api from "../../api/axios";
 import UserAvatar from "../common/UserAvatar";
+import socket from "../../services/socket";
+import { useEffect } from "react";
 
 function PermissionRequests({ isOpen, onClose, requests, fetchRequests }) {
+  useEffect(() => {
+    const handleRequestCreated = () => {
+      fetchRequests();
+    };
+    const handleRequestApproved = () => {
+      fetchRequests();
+    };
+    const handleRequestRejected = () => {
+      fetchRequests();
+    };
+
+    socket.on("permission-request-created", handleRequestCreated);
+    socket.on("permission-request-approved", handleRequestApproved);
+    socket.on("permission-request-rejected", handleRequestRejected);
+
+    return () => {
+      socket.off("permission-request-created", handleRequestCreated);
+      socket.off("permission-request-approved", handleRequestApproved);
+      socket.off("permission-request-rejected", handleRequestRejected);
+    };
+  }, [fetchRequests]);
   if (!isOpen) return null;
 
   const pendingRequests = requests.filter(
@@ -20,33 +43,23 @@ function PermissionRequests({ isOpen, onClose, requests, fetchRequests }) {
   const getTimeAgo = (date) => {
     const now = new Date();
     const createdAt = new Date(date);
-
     const diffMs = now - createdAt;
-
     const minutes = Math.floor(diffMs / (1000 * 60));
-
     if (minutes < 60) {
       return `${minutes} min${minutes !== 1 ? "s" : ""} ago`;
     }
-
     const hours = Math.floor(minutes / 60);
-
     if (hours < 24) {
       return `${hours} hour${hours !== 1 ? "s" : ""} ago`;
     }
-
     const days = Math.floor(hours / 24);
-
     if (days < 7) {
       return `${days} day${days !== 1 ? "s" : ""} ago`;
     }
-
     const weeks = Math.floor(days / 7);
-
     if (weeks <= 2) {
       return `${weeks} week${weeks !== 1 ? "s" : ""} ago`;
     }
-
     return createdAt.toLocaleDateString();
   };
 
@@ -163,8 +176,6 @@ function PermissionRequests({ isOpen, onClose, requests, fetchRequests }) {
             </div>
           ) : (
             pendingRequests.map((request) => {
-              console.log(request.employeeId);
-
               return (
                 <div
                   key={request._id}

@@ -1,21 +1,18 @@
 const checkPermission = (permission) => {
   return (req, res, next) => {
-    // Admin bypass
-    if (req.user.role === "admin") {
+    // Admin has full access.
+    if (req.user?.role === "admin") {
       return next();
     }
 
-    // Permission check
-    if (req.user?.permissions?.[permission]) {
-      return next();
+    if (!req.user?.permissions?.[permission]) {
+      return res.status(403).json({
+        message: "Permission denied",
+      });
     }
-
-    return res.status(403).json({
-      message: "Access denied",
-    });
+    next();
   };
 };
-
 module.exports = {
   checkPermission,
 };

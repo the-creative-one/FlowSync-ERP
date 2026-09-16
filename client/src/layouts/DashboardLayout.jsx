@@ -1,13 +1,10 @@
 import { useState } from "react";
-
 import Sidebar from "../components/Sidebar";
 import ThemeToggle from "../components/ThemeToggle";
-
+import NotificationBell from "../components/common/NotificationBell";
 import { Menu } from "lucide-react";
-
 function DashboardLayout({ children, title, subtitle }) {
   const [collapsed, setCollapsed] = useState(false);
-
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
@@ -22,10 +19,8 @@ function DashboardLayout({ children, title, subtitle }) {
       "
     >
       {/* SIDEBAR */}
-
       <>
         {/* DESKTOP SIDEBAR */}
-
         <div className="hidden md:flex h-screen sticky top-0">
           <Sidebar
             collapsed={collapsed}
@@ -34,9 +29,7 @@ function DashboardLayout({ children, title, subtitle }) {
             setMobileOpen={setMobileOpen}
           />
         </div>
-
         {/* MOBILE SIDEBAR */}
-
         <div
           className={`fixed inset-0 z-50 md:hidden transition-all duration-300 ${
             mobileOpen ? "visible bg-black/50" : "invisible"
@@ -47,7 +40,7 @@ function DashboardLayout({ children, title, subtitle }) {
             className={`h-full transition-transform duration-300 ${
               mobileOpen ? "translate-x-0" : "-translate-x-full"
             }`}
-            onClick={(e) => e.stopPropagation()}
+            onClick={(event) => event.stopPropagation()}
           >
             <Sidebar
               collapsed={false}
@@ -58,9 +51,7 @@ function DashboardLayout({ children, title, subtitle }) {
           </div>
         </div>
       </>
-
       {/* MAIN CONTENT */}
-
       <div
         className="
           flex-1
@@ -72,8 +63,20 @@ function DashboardLayout({ children, title, subtitle }) {
         "
       >
         {/* MOBILE FLOATING BUTTONS */}
-
-        <div className="md:hidden fixed top-4 left-0 right-0 z-40 px-4 flex items-center justify-between">
+        <div
+          className="
+            md:hidden
+            fixed
+            top-4
+            left-0
+            right-0
+            z-40
+            px-4
+            flex
+            items-center
+            justify-between
+          "
+        >
           <button
             onClick={() => setMobileOpen(true)}
             className="
@@ -91,21 +94,30 @@ function DashboardLayout({ children, title, subtitle }) {
           >
             <Menu size={22} />
           </button>
-
+          <div className="flex items-center gap-2">
+            <NotificationBell />
+            <ThemeToggle />
+          </div>
+        </div>
+        {/* DESKTOP TOP CONTROLS */}
+        <div
+          className="
+            hidden
+            md:flex
+            fixed
+            top-6
+            right-6
+            z-40
+            items-center
+            gap-2
+          "
+        >
+          <NotificationBell />
           <ThemeToggle />
         </div>
-
-        {/* DESKTOP THEME BUTTON */}
-
-        <div className="hidden md:flex fixed top-6 right-6 z-40">
-          <ThemeToggle />
-        </div>
-
         {/* PAGE WRAPPER */}
-
         <div className="p-4 md:p-6 mt-16 md:mt-2">
           {/* PAGE HEADER */}
-
           <div className="mb-8">
             <h1
               className="
@@ -119,7 +131,6 @@ function DashboardLayout({ children, title, subtitle }) {
             >
               {title}
             </h1>
-
             {subtitle && (
               <p
                 className="
@@ -135,9 +146,7 @@ function DashboardLayout({ children, title, subtitle }) {
               </p>
             )}
           </div>
-
           {/* PAGE CONTENT */}
-
           <div>{children}</div>
         </div>
       </div>

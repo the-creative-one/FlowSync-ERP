@@ -78,13 +78,12 @@ const updateOrder = async (req, res) => {
     const { status, customerName, product, quantity, amount } = req.body;
 
     const order = await Order.findById(req.params.id);
-    const oldStatus = order.status;
-
     if (!order) {
       return res.status(404).json({
         message: "Order not found",
       });
     }
+    const oldStatus = order.status;
     // UPDATE FIELDS
     if (status !== undefined) {
       order.status = status;
@@ -161,7 +160,8 @@ const deleteOrder = async (req, res) => {
     await order.deleteOne();
     // Socket Update
     const io = req.app.get("io");
-    emitOrderDeleted(io, order._id);
+
+    emitOrderDeleted(io, order._id, order.orderNumber);
 
     res.status(200).json({
       message: "Order deleted successfully",

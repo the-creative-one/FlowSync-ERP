@@ -26,7 +26,6 @@ function Orders() {
     quantity: "",
     amount: "",
   });
-  const [notifications, setNotifications] = useState([]);
   const [editingOrderId, setEditingOrderId] = useState(null);
   const [deleteModal, setDeleteModal] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
@@ -50,22 +49,10 @@ function Orders() {
   });
 
   // PERMISSIONS
-  const canCreateOrders =
-    user?.permissions?.canCreateOrders ||
-    user?.role === "admin" ||
-    user?.role === "manager";
-  const canUpdateOrders =
-    user?.permissions?.canUpdateOrders ||
-    user?.role === "admin" ||
-    user?.role === "manager";
-  const canDeleteOrders =
-    user?.permissions?.canDeleteOrders ||
-    user?.role === "admin" ||
-    user?.role === "manager";
-  const canExportReports =
-    user?.permissions?.canExportReports ||
-    user?.role === "admin" ||
-    user?.role === "manager";
+  const canCreateOrders = !!user?.permissions?.canCreateOrders;
+  const canUpdateOrders = !!user?.permissions?.canUpdateOrders;
+  const canDeleteOrders = !!user?.permissions?.canDeleteOrders;
+  const canExportReports = !!user?.permissions?.canExportReports;
 
   // STATUS FLOW
   const statusFlow = ["pending", "processing", "shipped", "delivered"];
@@ -153,6 +140,7 @@ function Orders() {
   // ADDING SOCKET FOR ORDERS
   useEffect(() => {
     fetchOrders();
+
     const handleOrderCreated = (order) => {
       setOrders((prevOrders) => {
         const exists = prevOrders.some(
@@ -164,6 +152,7 @@ function Orders() {
         return [order, ...prevOrders];
       });
     };
+
     const handleOrderUpdated = (updatedOrder) => {
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
@@ -176,24 +165,14 @@ function Orders() {
         prevOrders.filter((order) => order._id !== orderId),
       );
     };
-    const handleNotification = (notification) => {
-      setNotifications((prev) => [
-        {
-          ...notification,
-          id: `${Date.now()}-${Math.random()}`,
-        },
-        ...prev,
-      ]);
-    };
+
     socket.on("order-created", handleOrderCreated);
     socket.on("order-updated", handleOrderUpdated);
     socket.on("order-deleted", handleOrderDeleted);
-    socket.on("notification", handleNotification);
     return () => {
       socket.off("order-created", handleOrderCreated);
       socket.off("order-updated", handleOrderUpdated);
       socket.off("order-deleted", handleOrderDeleted);
-      socket.off("notification", handleNotification);
     };
   }, []);
 
