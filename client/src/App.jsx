@@ -33,6 +33,7 @@ function App() {
       return;
     }
     socket.connect();
+
     const handleConnect = () => {
       console.log("Socket connected:", socket.id);
     };
@@ -40,17 +41,22 @@ function App() {
       console.log("Socket disconnected:", reason);
     };
     const handleConnectError = (error) => {
-      console.error("Socket connection error:", error.message, error);
+      console.error("Socket connection error:", error.message);
+    };
+    const handleOrderCreated = (order) => {
+      console.log("New order received:", order);
     };
 
     socket.on("connect", handleConnect);
     socket.on("disconnect", handleDisconnect);
     socket.on("connect_error", handleConnectError);
+    socket.on("order-created", handleOrderCreated);
 
     return () => {
       socket.off("connect", handleConnect);
       socket.off("disconnect", handleDisconnect);
       socket.off("connect_error", handleConnectError);
+      socket.off("order-created", handleOrderCreated);
     };
   }, [user]);
   return (

@@ -6,25 +6,15 @@ const getDashboardStats = async (req, res) => {
 
     const startOfYear = new Date(currentYear, 0, 1);
     const endOfYear = new Date(currentYear + 1, 0, 1);
-
-    console.log("Current Year:", currentYear);
-    console.log("Start Of Year:", startOfYear);
-    console.log("End Of Year:", endOfYear);
-
-    //
     // CURRENT YEAR STATS
-    //
-
     const currentYearOrders = await Order.find({
       createdAt: {
         $gte: startOfYear,
         $lt: endOfYear,
       },
     });
-    console.log("Orders Found:", currentYearOrders.length);
-
     if (currentYearOrders.length > 0) {
-      console.log("First Order Date:", currentYearOrders[0].createdAt);
+      // 
     }
 
     const totalOrders = currentYearOrders.length;

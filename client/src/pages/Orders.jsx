@@ -4,7 +4,7 @@ import api from "../api/axios";
 import DashboardLayout from "../layouts/DashboardLayout";
 import toast from "react-hot-toast";
 import { exportToExcel, exportToCSV } from "../utils/exportData";
-
+import socket from "../services/socket";
 import OrdersToolbar from "../components/orders/OrdersToolbar";
 import OrdersTable from "../components/orders/OrdersTable";
 import OrdersCards from "../components/orders/OrdersCards";
@@ -16,47 +16,32 @@ import OrdersPagination from "../components/orders/OrdersPagination";
 
 function Orders() {
   const { user } = useAuth();
-
   const [orders, setOrders] = useState([]);
-
   const [loading, setLoading] = useState(true);
-
   const [showModal, setShowModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-
   const [editFormData, setEditFormData] = useState({
     customerName: "",
     product: "",
     quantity: "",
     amount: "",
   });
-
+  const [notifications, setNotifications] = useState([]);
   const [editingOrderId, setEditingOrderId] = useState(null);
-
   const [deleteModal, setDeleteModal] = useState(false);
-
   const [selectedOrderId, setSelectedOrderId] = useState(null);
-
   const [search, setSearch] = useState("");
-
   const [statusFilter, setStatusFilter] = useState("all");
-
   const [currentPage, setCurrentPage] = useState(1);
-
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [currency, setCurrency] = useState("INR");
 
-  //
   // SORTING
-  //
-
   const [sortConfig, setSortConfig] = useState({
     key: null,
     direction: null,
   });
-
   const ORDERS_PER_PAGE = 10;
-
   const [formData, setFormData] = useState({
     customerName: "",
     product: "",
@@ -64,48 +49,33 @@ function Orders() {
     amount: "",
   });
 
-  //
   // PERMISSIONS
-  //
-
   const canCreateOrders =
     user?.permissions?.canCreateOrders ||
     user?.role === "admin" ||
     user?.role === "manager";
-
   const canUpdateOrders =
     user?.permissions?.canUpdateOrders ||
     user?.role === "admin" ||
     user?.role === "manager";
-
   const canDeleteOrders =
     user?.permissions?.canDeleteOrders ||
     user?.role === "admin" ||
     user?.role === "manager";
-
   const canExportReports =
     user?.permissions?.canExportReports ||
     user?.role === "admin" ||
     user?.role === "manager";
 
-  //
   // STATUS FLOW
-  //
-
   const statusFlow = ["pending", "processing", "shipped", "delivered"];
 
-  //
   // OPEN UPWARD
-  //
-
   const shouldOpenUpward = (index, total) => {
     return index >= total - 2;
   };
 
-  //
   // STATUS COLORS
-  //
-
   const getStatusStyles = (status) => {
     switch (status) {
       case "pending":
@@ -150,10 +120,7 @@ function Orders() {
     }
   };
 
-  //
   // FETCH ORDERS
-  //
-
   const fetchOrders = async () => {
     try {
       setLoading(true);
@@ -183,47 +150,77 @@ function Orders() {
     }
   };
 
+  // ADDING SOCKET FOR ORDERS
   useEffect(() => {
     fetchOrders();
+    const handleOrderCreated = (order) => {
+      setOrders((prevOrders) => {
+        const exists = prevOrders.some(
+          (existingOrder) => existingOrder._id === order._id,
+        );
+        if (exists) {
+          return prevOrders;
+        }
+        return [order, ...prevOrders];
+      });
+    };
+    const handleOrderUpdated = (updatedOrder) => {
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order._id === updatedOrder._id ? updatedOrder : order,
+        ),
+      );
+    };
+    const handleOrderDeleted = (orderId) => {
+      setOrders((prevOrders) =>
+        prevOrders.filter((order) => order._id !== orderId),
+      );
+    };
+    const handleNotification = (notification) => {
+      setNotifications((prev) => [
+        {
+          ...notification,
+          id: `${Date.now()}-${Math.random()}`,
+        },
+        ...prev,
+      ]);
+    };
+    socket.on("order-created", handleOrderCreated);
+    socket.on("order-updated", handleOrderUpdated);
+    socket.on("order-deleted", handleOrderDeleted);
+    socket.on("notification", handleNotification);
+    return () => {
+      socket.off("order-created", handleOrderCreated);
+      socket.off("order-updated", handleOrderUpdated);
+      socket.off("order-deleted", handleOrderDeleted);
+      socket.off("notification", handleNotification);
+    };
   }, []);
 
-  //
   // CREATE ORDER
-  //
-
   const createOrder = async () => {
     try {
       const token = localStorage.getItem("token");
-
-      const response = await api.post("/orders", formData, {
+      await api.post("/orders", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-
-      await fetchOrders();
-
       setShowModal(false);
-
       setFormData({
         customerName: "",
         product: "",
         quantity: "",
         amount: "",
       });
-
       toast.success("Order created successfully");
     } catch (error) {
       console.log(error.response?.data);
-
       toast.error("Failed to create order");
     }
   };
 
-  //
   // UPDATE STATUS
-  //
-
   const updateOrderStatus = async (orderId, newStatus) => {
     try {
       const token = localStorage.getItem("token");
@@ -261,10 +258,7 @@ function Orders() {
     }
   };
 
-  //
   // OPEN EDIT MODAL
-  //
-
   const openEditModal = (order) => {
     setEditingOrderId(order._id);
 
@@ -278,10 +272,7 @@ function Orders() {
     setShowEditModal(true);
   };
 
-  //
   // UPDATE ORDER
-  //
-
   const updateOrder = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -314,10 +305,7 @@ function Orders() {
     }
   };
 
-  //
   // DELETE ORDER
-  //
-
   const deleteOrder = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -344,10 +332,7 @@ function Orders() {
     }
   };
 
-  //
   // SORT FUNCTION
-  //
-
   const handleSort = (key) => {
     setSortConfig((prev) => {
       //
@@ -382,10 +367,8 @@ function Orders() {
       };
     });
   };
-  //
-  // FILTERED ORDERS
-  //
 
+  // FILTERED ORDERS
   const filteredOrders = useMemo(() => {
     let filtered = [...orders];
 
@@ -463,14 +446,9 @@ function Orders() {
     return filtered;
   }, [orders, search, statusFilter, sortConfig]);
 
-  //
   // PAGINATION
-  //
-
   const totalPages = Math.ceil(filteredOrders.length / ORDERS_PER_PAGE);
-
   const startIndex = (currentPage - 1) * ORDERS_PER_PAGE;
-
   const paginatedOrders = filteredOrders.slice(
     startIndex,
     startIndex + ORDERS_PER_PAGE,

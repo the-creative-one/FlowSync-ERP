@@ -70,7 +70,6 @@ const io = new Server(server, {
   },
 });
 app.set("io", io);
-
 io.use((socket, next) => {
   const token = socket.handshake.auth?.token;
   if (!token) {
@@ -84,11 +83,21 @@ io.use((socket, next) => {
     next(new Error("Invalid or expired token"));
   }
 });
-
 // Handle Socket.IO connections
 io.on("connection", (socket) => {
-  if (socket.user.role) {
-    socket.join(socket.user.role);
+  socket.join("orders");
+  const permissions = socket.user.permissions;
+  if (permissions?.canManageEmployees) {
+    socket.join("employees");
+  }
+  if (permissions?.canViewAdvancedAnalytics) {
+    socket.join("analytics");
+  }
+  if (permissions?.canExportReports) {
+    socket.join("reports");
+  }
+  if (permissions?.canAccessSettings) {
+    socket.join("settings");
   }
 });
 //Start server

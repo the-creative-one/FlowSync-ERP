@@ -334,9 +334,6 @@ router.post("/create", protect, managerOrAdmin, async (req, res) => {
       role,
       permissions,
     });
-
-    console.log("Creating audit log...");
-
     await AuditLog.create({
       userId: req.user._id,
       action: "USER_CREATED",

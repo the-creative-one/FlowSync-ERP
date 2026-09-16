@@ -1,6 +1,11 @@
 const Order = require("../models/Order");
 const logActivity = require("../utils/logActivity");
 const Settings = require("../models/Settings");
+const {
+  emitOrderCreated,
+  emitOrderUpdated,
+  emitOrderDeleted,
+} = require("../utils/socketEvents");
 
 const createOrder = async (req, res) => {
   try {
@@ -39,6 +44,9 @@ const createOrder = async (req, res) => {
       module: "Orders",
       details: order.orderNumber,
     });
+
+    const io = req.app.get("io");
+    emitOrderCreated(io, order);
 
     res.status(201).json({
       message: "Order created successfully",
@@ -100,6 +108,9 @@ const updateOrder = async (req, res) => {
 
     await order.save();
 
+    const io = req.app.get("io");
+    emitOrderUpdated(io, order);
+
     if (status !== undefined && status !== oldStatus) {
       await logActivity({
         userId: req.user.id,
@@ -148,6 +159,9 @@ const deleteOrder = async (req, res) => {
     });
 
     await order.deleteOne();
+    // Socket Update
+    const io = req.app.get("io");
+    emitOrderDeleted(io, order._id);
 
     res.status(200).json({
       message: "Order deleted successfully",
