@@ -22,10 +22,11 @@ import {
   Upload,
   User,
 } from "lucide-react";
+import { useSocket } from "../context/SocketContext";
 
 function Profile() {
   const { user, fetchUser } = useAuth();
-
+  const { socket } = useSocket();
   const [requests, setRequests] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [auditLogs, setAuditLogs] = useState([]);
@@ -350,6 +351,18 @@ function Profile() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
+  useEffect(() => {
+    if (!user) return;
+    const handleUserUpdated = async (updatedUser) => {
+      if (updatedUser._id !== user._id) return;
+      await fetchUser();
+      await fetchRequests();
+    };
+    socket.on("user-updated", handleUserUpdated);
+    return () => {
+      socket.off("user-updated", handleUserUpdated);
+    };
+  }, [socket, user?._id]);
   return (
     <DashboardLayout
       title="My Profile"

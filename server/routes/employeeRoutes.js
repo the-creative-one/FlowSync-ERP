@@ -9,6 +9,7 @@ const {
   emitEmployeeCreated,
   emitEmployeeRoleChanged,
   emitEmployeePermissionsChanged,
+  emitEmployeePermissionsNotification,
   emitPermissionRequestCreated,
   emitPermissionRequestApproved,
   emitPermissionRequestRejected,
@@ -100,7 +101,7 @@ router.put("/:id/role", protect, managerOrAdmin, async (req, res) => {
     });
     const updatedUser = await User.findById(req.params.id).select("-password");
     const io = req.app.get("io");
-    emitEmployeeRoleChanged(io, updatedUser, oldRole);
+    emitEmployeeRoleChanged(io, updatedUser, oldRole, req.user._id.toString());
     await refreshUserSocketRooms(io, updatedUser._id);
     res.json({
       message: "Role updated successfully",
@@ -175,6 +176,11 @@ router.put("/:id/permissions", protect, managerOrAdmin, async (req, res) => {
     const updatedUser = await User.findById(req.params.id).select("-password");
     const io = req.app.get("io");
     emitEmployeePermissionsChanged(io, updatedUser);
+    emitEmployeePermissionsNotification(
+      io,
+      updatedUser,
+      req.user._id.toString(),
+    );
     await refreshUserSocketRooms(io, updatedUser._id);
     res.json({
       message: "Permissions updated successfully",
@@ -302,7 +308,7 @@ router.post("/create", protect, managerOrAdmin, async (req, res) => {
       details: `Created user ${user.name} (${user.role})`,
     });
     const io = req.app.get("io");
-    emitEmployeeCreated(io, createdUser);
+    emitEmployeeCreated(io, createdUser, req.user._id.toString());
     res.status(201).json({
       message: "User created successfully",
       user: {
@@ -454,7 +460,12 @@ router.put(
       });
       const updatedUser = await User.findById(user._id).select("-password");
       const io = req.app.get("io");
-      emitPermissionRequestApproved(io, request, updatedUser);
+      emitPermissionRequestApproved(
+        io,
+        request,
+        updatedUser,
+        req.user._id.toString(),
+      );
       emitEmployeePermissionsChanged(io, updatedUser);
       await refreshUserSocketRooms(io, updatedUser._id.toString());
       res.json({
@@ -498,7 +509,12 @@ router.put(
         details: `Rejected ${request.permissionKey} for ${employee.name}`,
       });
       const io = req.app.get("io");
-      emitPermissionRequestRejected(io, request, employee);
+      emitPermissionRequestRejected(
+        io,
+        request,
+        employee,
+        req.user._id.toString(),
+      );
       res.json({
         message: "Request rejected successfully",
       });

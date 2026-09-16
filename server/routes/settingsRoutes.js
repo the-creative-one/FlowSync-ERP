@@ -4,33 +4,33 @@ const router = express.Router();
 const Settings = require("../models/Settings");
 const { protect } = require("../middleware/authMiddleware");
 const logActivity = require("../utils/logActivity");
+const { checkPermission } = require("../middleware/permissionMiddleware");
 
-//
 // GET SETTINGS
-//
+router.get(
+  "/",
+  protect,
+  checkPermission("canAccessSettings"),
+  async (req, res) => {
+    try {
+      let settings = await Settings.findOne();
 
-router.get("/", protect, async (req, res) => {
-  try {
-    let settings = await Settings.findOne();
+      if (!settings) {
+        settings = await Settings.create({});
+      }
 
-    if (!settings) {
-      settings = await Settings.create({});
+      res.json(settings);
+    } catch (error) {
+      console.log(error);
+
+      res.status(500).json({
+        message: "Failed to fetch settings",
+      });
     }
+  },
+);
 
-    res.json(settings);
-  } catch (error) {
-    console.log(error);
-
-    res.status(500).json({
-      message: "Failed to fetch settings",
-    });
-  }
-});
-
-//
 // UPDATE SETTINGS
-//
-
 router.put("/", protect, async (req, res) => {
   try {
     if (req.user.role !== "admin") {

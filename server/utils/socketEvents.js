@@ -32,55 +32,69 @@ const emitOrderDeleted = (io, orderId, orderNumber) => {
   });
 };
 
-/* EMPLOYEE EVENTS                  */
-const emitEmployeeCreated = (io, employee) => {
+// EMPLOYEE EVENTS
+const emitEmployeeCreated = (io, employee, actorId) => {
   io.to("employees").emit("employee-created", employee);
 
-  io.to("employees").emit("notification", {
-    id: `employee-created-${employee._id}`,
-    type: "employee",
-    title: "Employee Added",
-    message: `${employee.name} was added to the organization.`,
-  });
+  io.to("employees")
+    .except(`user:${actorId}`)
+    .emit("notification", {
+      id: `employee-created-${employee._id}`,
+      type: "employee",
+      title: "Employee Added",
+      message: `${employee.name} was added to the organization.`,
+    });
 };
 
-const emitEmployeeRoleChanged = (io, employee, oldRole) => {
+const emitEmployeeRoleChanged = (io, employee, oldRole, actorId) => {
   io.to("employees").emit("employee-role-changed", employee);
-  io.to("employees").emit("notification", {
-    id: `employee-role-${employee._id}-${employee.updatedAt}`,
-    type: "employee",
-    title: "Role Updated",
-    message: `${employee.name}'s role changed from ${oldRole} to ${employee.role}.`,
-  });
+
+  io.to("admins")
+    .except(`user:${actorId}`)
+    .emit("notification", {
+      id: `employee-role-${employee._id}-${employee.updatedAt}`,
+      type: "employee",
+      title: "Role Updated",
+      message: `${employee.name}'s role changed from ${oldRole} to ${employee.role}.`,
+    });
 
   io.to(`user:${employee._id}`).emit("user-updated", employee);
-  io.to(`user:${employee._id}`).emit("notification", {
-    id: `personal-role-${employee._id}-${employee.updatedAt}`,
-    type: "account",
-    title: "Role Updated",
-    message: `Your role has been changed to ${employee.role}.`,
-  });
+
+  if (employee._id.toString() !== actorId) {
+    io.to(`user:${employee._id}`).emit("notification", {
+      id: `personal-role-${employee._id}-${employee.updatedAt}`,
+      type: "account",
+      title: "Role Updated",
+      message: `Your role has been changed to ${employee.role}.`,
+    });
+  }
 };
 
 const emitEmployeePermissionsChanged = (io, employee) => {
   io.to("employees").emit("employee-permissions-changed", employee);
-  io.to("employees").emit("notification", {
-    id: `employee-permissions-${employee._id}-${employee.updatedAt}`,
-    type: "employee",
-    title: "Permissions Updated",
-    message: `${employee.name}'s permissions were updated.`,
-  });
-
   io.to(`user:${employee._id}`).emit("user-updated", employee);
-  io.to(`user:${employee._id}`).emit("notification", {
-    id: `personal-permissions-${employee._id}-${employee.updatedAt}`,
-    type: "account",
-    title: "Permissions Updated",
-    message: "Your permissions have been updated.",
-  });
+};
+const emitEmployeePermissionsNotification = (io, employee, actorId) => {
+  io.to("admins")
+    .except(`user:${actorId}`)
+    .emit("notification", {
+      id: `employee-permissions-${employee._id}-${employee.updatedAt}`,
+      type: "employee",
+      title: "Permissions Updated",
+      message: `${employee.name}'s permissions were updated.`,
+    });
+
+  if (employee._id.toString() !== actorId) {
+    io.to(`user:${employee._id}`).emit("notification", {
+      id: `personal-permissions-${employee._id}-${employee.updatedAt}`,
+      type: "account",
+      title: "Permissions Updated",
+      message: "Your permissions have been updated.",
+    });
+  }
 };
 
-/* PERMISSION REQUEST EVENTS        */
+// PERMISSION REQUEST EVENTS
 const emitPermissionRequestCreated = (io, request, employee) => {
   const requestData = {
     ...request.toObject(),
@@ -89,29 +103,43 @@ const emitPermissionRequestCreated = (io, request, employee) => {
 
   io.to("employees").emit("permission-request-created", requestData);
 
-  io.to("employees").emit("notification", {
-    id: `permission-request-created-${request._id}`,
-    type: "permission",
-    title: "Permission Request",
-    message: `${employee.name} submitted a permission request.`,
-  });
+  io.to("employees")
+    .except(`user:${employee._id}`)
+    .emit("notification", {
+      id: `permission-request-created-${request._id}`,
+      type: "permission",
+      title: "Permission Request",
+      message: `${employee.name} submitted a permission request.`,
+    });
 };
 
-const emitPermissionRequestApproved = (io, request, employee) => {
+const emitPermissionRequestApproved = (io, request, employee, actorId) => {
   const requestData = {
     ...request.toObject(),
     employeeId: employee,
   };
+
   io.to("employees").emit("permission-request-approved", requestData);
-  io.to("employees").emit("notification", {
-    id: `permission-request-approved-${request._id}`,
+
+  io.to("employees")
+    .except(`user:${actorId}`)
+    .except(`user:${employee._id}`)
+    .emit("notification", {
+      id: `permission-request-approved-${request._id}`,
+      type: "permission",
+      title: "Permission Request Approved",
+      message: `${employee.name}'s permission request was approved.`,
+    });
+
+  io.to(`user:${employee._id}`).emit("notification", {
+    id: `personal-request-approved-${request._id}`,
     type: "permission",
     title: "Permission Request Approved",
-    message: `${employee.name}'s permission request was approved.`,
+    message: "Your permission request was approved.",
   });
 };
 
-const emitPermissionRequestRejected = (io, request, employee) => {
+const emitPermissionRequestRejected = (io, request, employee, actorId) => {
   const requestData = {
     ...request.toObject(),
     employeeId: employee,
@@ -119,12 +147,15 @@ const emitPermissionRequestRejected = (io, request, employee) => {
 
   io.to("employees").emit("permission-request-rejected", requestData);
 
-  io.to("employees").emit("notification", {
-    id: `permission-request-rejected-${request._id}`,
-    type: "permission",
-    title: "Permission Request Rejected",
-    message: `${employee.name}'s permission request was rejected.`,
-  });
+  io.to("employees")
+    .except(`user:${actorId}`)
+    .except(`user:${employee._id}`)
+    .emit("notification", {
+      id: `permission-request-rejected-${request._id}`,
+      type: "permission",
+      title: "Permission Request Rejected",
+      message: `${employee.name}'s permission request was rejected.`,
+    });
 
   io.to(`user:${employee._id}`).emit("notification", {
     id: `personal-request-rejected-${request._id}`,
@@ -141,6 +172,7 @@ module.exports = {
   emitEmployeeCreated,
   emitEmployeeRoleChanged,
   emitEmployeePermissionsChanged,
+  emitEmployeePermissionsNotification,
   emitPermissionRequestCreated,
   emitPermissionRequestApproved,
   emitPermissionRequestRejected,
