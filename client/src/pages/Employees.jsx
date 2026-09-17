@@ -44,9 +44,13 @@ function Employees() {
         prev.map((item) => (item._id === employee._id ? employee : item)),
       );
     };
+    const handleEmployeeDeleted = (employeeId) => {
+      setEmployees((prev) => prev.filter((item) => item._id !== employeeId));
+    };
     socket.on("employee-created", handleEmployeeCreated);
     socket.on("employee-role-changed", handleEmployeeRoleChanged);
     socket.on("employee-permissions-changed", handleEmployeePermissionsChanged);
+    socket.on("employee-deleted", handleEmployeeDeleted);
     return () => {
       socket.off("employee-created", handleEmployeeCreated);
       socket.off("employee-role-changed", handleEmployeeRoleChanged);
@@ -54,6 +58,7 @@ function Employees() {
         "employee-permissions-changed",
         handleEmployeePermissionsChanged,
       );
+      socket.off("employee-deleted", handleEmployeeDeleted);
     };
   }, [socket]);
 

@@ -7,6 +7,7 @@ const AuditLog = require("../models/AuditLog");
 const { protect, managerOrAdmin } = require("../middleware/authMiddleware");
 const {
   emitEmployeeCreated,
+  emitEmployeeDeleted,
   emitEmployeeRoleChanged,
   emitEmployeePermissionsChanged,
   emitEmployeePermissionsNotification,
@@ -15,7 +16,10 @@ const {
   emitPermissionRequestRejected,
 } = require("../utils/socketEvents");
 
-const { refreshUserSocketRooms } = require("../utils/socketRooms");
+const {
+  refreshUserSocketRooms,
+  disconnectUserSockets,
+} = require("../utils/socketRooms");
 
 const allowedPermissions = [
   "canCreateOrders",
@@ -563,6 +567,8 @@ router.delete("/:id", protect, async (req, res) => {
       });
     }
     await User.findByIdAndDelete(req.params.id);
+    await disconnectUserSockets(io, req.params.id);
+    emitEmployeeDeleted(io, req.params.id, req.user._id);
     await AuditLog.create({
       userId: req.user._id,
       action: "USER_DELETED",

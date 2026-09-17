@@ -35,7 +35,16 @@ const refreshUserSocketRooms = async (io, userId) => {
   }
 };
 
+const disconnectUserSockets = async (io, userId) => {
+  const sockets = await io.in(`user:${userId}`).fetchSockets();
+  for (const socket of sockets) {
+    socket.emit("account-deleted");
+    socket.disconnect(true);
+  }
+};
+
 module.exports = {
   syncUserRooms,
   refreshUserSocketRooms,
+  disconnectUserSockets,
 };

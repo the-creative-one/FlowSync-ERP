@@ -91,11 +91,16 @@ export function SocketProvider({ children }) {
         };
       });
     };
+    const handleAccountDeleted = () => {
+      localStorage.removeItem("token");
+      setUser(null);
+    };
     socket.on("connect", handleConnect);
     socket.on("disconnect", handleDisconnect);
     socket.on("connect_error", handleConnectError);
     socket.on("notification", handleNotification);
     socket.on("user-updated", handleUserUpdated);
+    socket.on("account-deleted", handleAccountDeleted);
     socket.connect();
     return () => {
       socket.off("connect", handleConnect);
@@ -103,6 +108,7 @@ export function SocketProvider({ children }) {
       socket.off("connect_error", handleConnectError);
       socket.off("notification", handleNotification);
       socket.off("user-updated", handleUserUpdated);
+      socket.off("account-deleted", handleAccountDeleted);
       if (socket.connected) {
         socket.disconnect();
       }

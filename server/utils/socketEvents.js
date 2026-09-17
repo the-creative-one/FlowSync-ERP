@@ -165,11 +165,26 @@ const emitPermissionRequestRejected = (io, request, employee, actorId) => {
   });
 };
 
+const emitEmployeeDeleted = (io, employeeId, actorId) => {
+  io.to("employees")
+    .except(`user:${actorId}`)
+    .emit("employee-deleted", employeeId);
+  io.to("employees")
+    .except(`user:${actorId}`)
+    .emit("notification", {
+      id: `employee-deleted-${employeeId}`,
+      type: "employee",
+      title: "Employee Deleted",
+      message: "An employee was deleted from the organization.",
+    });
+};
+
 module.exports = {
   emitOrderCreated,
   emitOrderUpdated,
   emitOrderDeleted,
   emitEmployeeCreated,
+  emitEmployeeDeleted,
   emitEmployeeRoleChanged,
   emitEmployeePermissionsChanged,
   emitEmployeePermissionsNotification,
