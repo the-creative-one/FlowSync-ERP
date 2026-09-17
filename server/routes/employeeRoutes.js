@@ -30,6 +30,30 @@ const allowedPermissions = [
   "canExportReports",
   "canAccessSettings",
 ];
+const generateTemporaryPassword = () => {
+  const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const lowercase = "abcdefghijklmnopqrstuvwxyz";
+  const numbers = "0123456789";
+  const special = "!@#$%^&*";
+
+  const getRandom = (characters) =>
+    characters[Math.floor(Math.random() * characters.length)];
+
+  const requiredCharacters = [
+    getRandom(uppercase),
+    getRandom(lowercase),
+    getRandom(numbers),
+    getRandom(special),
+  ];
+
+  const allCharacters = uppercase + lowercase + numbers + special;
+
+  for (let i = requiredCharacters.length; i < 10; i++) {
+    requiredCharacters.push(getRandom(allCharacters));
+  }
+
+  return requiredCharacters.sort(() => Math.random() - 0.5).join("");
+};
 
 // GET ALL EMPLOYEES
 router.get("/", protect, managerOrAdmin, async (req, res) => {
@@ -229,7 +253,7 @@ router.post("/create", protect, managerOrAdmin, async (req, res) => {
       }
     }
     // PASSWORD
-    const temporaryPassword = Math.random().toString(36).slice(-8);
+    const temporaryPassword = generateTemporaryPassword();
 
     const hashedPassword = await bcrypt.hash(temporaryPassword, 10);
     // ROLE DEFAULT PERMISSIONS
@@ -304,6 +328,7 @@ router.post("/create", protect, managerOrAdmin, async (req, res) => {
       password: hashedPassword,
       role,
       permissions,
+      isEmailVerified: true,
     });
     const createdUser = await User.findById(user._id).select("-password");
     await AuditLog.create({
@@ -567,6 +592,7 @@ router.delete("/:id", protect, async (req, res) => {
       });
     }
     await User.findByIdAndDelete(req.params.id);
+    const io = req.app.get("io");
     await disconnectUserSockets(io, req.params.id);
     emitEmployeeDeleted(io, req.params.id, req.user._id);
     await AuditLog.create({

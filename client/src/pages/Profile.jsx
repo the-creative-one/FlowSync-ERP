@@ -14,6 +14,7 @@ import {
   Clock3,
   CheckCircle2,
   XCircle,
+  X,
   UserPlus,
   RefreshCw,
   ShieldCheck,
@@ -21,13 +22,17 @@ import {
   Palette,
   Upload,
   User,
+  SquarePen,
 } from "lucide-react";
 import { useSocket } from "../context/SocketContext";
 
 function Profile() {
-  const { user, fetchUser } = useAuth();
+  const { user, fetchUser, setUser } = useAuth();
   const { socket } = useSocket();
   const [requests, setRequests] = useState([]);
+  const [editingName, setEditingName] = useState(false);
+  const [name, setName] = useState("");
+  const [savingName, setSavingName] = useState(false);
   const [employees, setEmployees] = useState([]);
   const [auditLogs, setAuditLogs] = useState([]);
   const [selectedAvatar, setSelectedAvatar] = useState(null);
@@ -168,6 +173,40 @@ function Profile() {
       setRequests(response.data);
     } catch (error) {
       console.log(error.response?.data);
+    }
+  };
+
+  const updateName = async () => {
+    if (!name.trim()) {
+      toast.error("Name is required");
+      return;
+    }
+
+    try {
+      setSavingName(true);
+
+      const token = localStorage.getItem("token");
+
+      const response = await api.put(
+        "/profile/name",
+        {
+          name: name.trim(),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      setUser(response.data.user);
+      setEditingName(false);
+
+      toast.success("Name updated successfully");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to update name");
+    } finally {
+      setSavingName(false);
     }
   };
 
@@ -406,7 +445,11 @@ function Profile() {
                   dark:text-white
                 "
               >
-                <UserAvatar user={user} size="lg" iconClassName="text-[#0C2B4E] dark:text-white" />
+                <UserAvatar
+                  user={user}
+                  size="lg"
+                  iconClassName="text-[#0C2B4E] dark:text-white"
+                />
               </div>
 
               <button
@@ -519,17 +562,29 @@ function Profile() {
               )}
             </div>
 
-            <h2
-              className="
-                mt-5
-                text-3xl
-                font-bold
-                text-[#0C2B4E]
-                dark:text-white
-              "
-            >
-              {user?.name}
-            </h2>
+            <div className="relative flex items-center justify-center">
+              <h2 className="text-2xl font-bold text-[#0C2B4E] dark:text-white">
+                {user?.name}
+              </h2>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setName(user?.name || "");
+                  setEditingName(true);
+                }}
+                className="
+      p-1.5
+      text-gray-400
+      hover:text-[#1D546C]
+      dark:hover:text-blue-400
+      transition
+    "
+                aria-label="Edit name"
+              >
+                <SquarePen size={15} />
+              </button>
+            </div>
 
             <p className="text-gray-500 mt-2">{user?.email}</p>
 
@@ -567,6 +622,70 @@ function Profile() {
             </div>
           </div>
         </div>
+
+        {editingName && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+            <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-800 shadow-2xl p-6">
+              <div className="flex items-center justify-between mb-5">
+                <h3 className="text-lg font-semibold text-[#0C2B4E] dark:text-white">
+                  Edit Name
+                </h3>
+
+                <button
+                  type="button"
+                  onClick={() => setEditingName(false)}
+                  disabled={savingName}
+                  className="p-1 text-gray-400 hover:text-gray-700 dark:hover:text-white transition"
+                  aria-label="Close"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                autoFocus
+                className="
+          w-full
+          border
+          border-gray-200
+          dark:border-gray-700
+          rounded-xl
+          px-4
+          py-3
+          outline-none
+          bg-white
+          dark:bg-[#1F2937]
+          text-[#0C2B4E]
+          dark:text-white
+          focus:border-[#1D546C]
+        "
+              />
+
+              <button
+                type="button"
+                onClick={updateName}
+                disabled={savingName}
+                className="
+          w-full
+          mt-5
+          px-4
+          py-3
+          rounded-xl
+          bg-[#0C2B4E]
+          text-white
+          font-medium
+          disabled:opacity-50
+          transition
+        "
+              >
+                {savingName ? "Saving..." : "Confirm"}
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* CURRENT PERMISSIONS */}
 
