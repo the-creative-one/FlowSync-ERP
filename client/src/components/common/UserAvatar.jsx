@@ -1,18 +1,16 @@
 import { User } from "lucide-react";
 import { getAvatarUrl } from "../../utils/avatarUrl";
 
-function UserAvatar({ user, size = "md", className = "" }) {
+function UserAvatar({ user, size = "md", className = "", iconClassName = "" }) {
   const sizes = {
     sm: {
       container: "w-10 h-10",
       icon: 18,
     },
-
     md: {
       container: "w-12 h-12",
       icon: 22,
     },
-
     lg: {
       container: "w-24 h-24",
       icon: 42,
@@ -28,8 +26,7 @@ function UserAvatar({ user, size = "md", className = "" }) {
         rounded-full
         overflow-hidden
         border
-      border-gray-300
-      dark:border-gray-800
+      border-gray-200
         flex
         items-center
         justify-center
@@ -50,7 +47,10 @@ function UserAvatar({ user, size = "md", className = "" }) {
           className="w-full h-full object-cover"
         />
       ) : (
-        <User className="text-[#1F2937] dark:text-white" size={currentSize.icon} />
+        <User
+          className={iconClassName || "text-[#0C2B4E]"}
+          size={currentSize.icon}
+        />
       )}
     </div>
   );

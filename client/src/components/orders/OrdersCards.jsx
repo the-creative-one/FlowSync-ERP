@@ -33,10 +33,8 @@ function OrdersCards({
           "
         >
           {/* ACTION BUTTONS */}
-
           <div className="  absolute  top-5  right-5  flex  items-center  gap-1">
             {/* EDIT */}
-
             {canUpdateOrders && (
               <button
                 onClick={() => openEditModal(order)}
@@ -78,7 +76,6 @@ function OrdersCards({
               {order.orderNumber}
             </div>
             {/* CUSTOMER */}
-
             <div>
               <p
                 className="

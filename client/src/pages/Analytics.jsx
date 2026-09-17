@@ -3,7 +3,7 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import api from "../api/axios";
 import ExportDropdown from "../components/common/ExportDropdown";
 import { exportToExcel, exportToCSV } from "../utils/exportData";
-
+import { useAuth } from "../context/AuthContext";
 import {
   ResponsiveContainer,
   BarChart,
@@ -15,12 +15,9 @@ import {
   Pie,
   Cell,
 } from "recharts";
-
 import {
   ChevronLeft,
   ChevronRight,
-  ChevronUp,
-  ChevronDown,
   Search,
   X,
   ArrowDown,
@@ -35,16 +32,17 @@ function Analytics() {
     processingOrders: 0,
     shippedOrders: 0,
     deliveredOrders: 0,
-
     currentMonthRevenue: 0,
     previousMonthRevenue: 0,
     averageOrderValue: 0,
     highestOrderValue: 0,
     topStatus: "N/A",
-
     monthlyRevenue: [],
     recentOrders: [],
   });
+  const { user } = useAuth();
+  const canExportReports =
+    user?.permissions?.canExportReports || user?.role === "admin";
 
   const [activeFilter, setActiveFilter] = useState("ytd");
   // SEARCH
@@ -60,10 +58,7 @@ function Analytics() {
 
   const ORDERS_PER_PAGE = 10;
 
-  //
   // FETCH ANALYTICS
-  //
-
   const fetchAnalytics = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -73,7 +68,6 @@ function Analytics() {
           Authorization: `Bearer ${token}`,
         },
       });
-
       setStats({
         totalOrders: response.data.totalOrders || 0,
         totalRevenue: response.data.totalRevenue || 0,
@@ -81,19 +75,12 @@ function Analytics() {
         processingOrders: response.data.processingOrders || 0,
         shippedOrders: response.data.shippedOrders || 0,
         deliveredOrders: response.data.deliveredOrders || 0,
-
         currentMonthRevenue: response.data.currentMonthRevenue || 0,
-
         previousMonthRevenue: response.data.previousMonthRevenue || 0,
-
         averageOrderValue: response.data.averageOrderValue || 0,
-
         highestOrderValue: response.data.highestOrderValue || 0,
-
         topStatus: response.data.topStatus || "N/A",
-
         monthlyRevenue: response.data.monthlyRevenue || [],
-
         recentOrders: response.data.recentOrders || [],
       });
 
@@ -102,7 +89,6 @@ function Analytics() {
           Authorization: `Bearer ${token}`,
         },
       });
-
       setCurrency(settingsResponse.data.currency || "INR");
     } catch (error) {
       console.log(error.response?.data);
@@ -113,33 +99,23 @@ function Analytics() {
     fetchAnalytics();
   }, []);
 
-  //
   // RESET PAGE ON FILTER CHANGE
-  //
-
   useEffect(() => {
     setCurrentPage(1);
   }, [activeFilter, search]);
 
-  //
   // FORMATTERS
-  //
-
   const formatCurrency = (amount) => {
     return Number(amount || 0).toLocaleString("en-IN");
   };
-
   const getCurrencySymbol = () => {
     switch (currency) {
       case "USD":
         return "$";
-
       case "EUR":
         return "€";
-
       case "GBP":
         return "£";
-
       default:
         return "₹";
     }
@@ -153,10 +129,7 @@ function Analytics() {
     });
   };
 
-  //
   // MONTH LABELS
-  //
-
   const monthNames = [
     "Jan",
     "Feb",
@@ -172,94 +145,68 @@ function Analytics() {
     "Dec",
   ];
 
-  //
   // FILTERS
-  //
-
   const filters = [
     {
       label: "7 Days",
       value: "7days",
     },
-
     {
       label: "30 Days",
       value: "30days",
     },
-
     {
       label: "90 Days",
       value: "90days",
     },
-
     {
       label: "YTD",
       value: "ytd",
     },
-
     {
       label: "Last Year",
       value: "lastYear",
     },
-
     {
       label: "MTD",
       value: "mtd",
     },
-
     {
       label: "Last Month",
       value: "lastMonth",
     },
   ];
 
-  //
   // FILTERED ORDERS
-  //
-
   const filteredOrders = useMemo(() => {
     const currentDate = new Date();
-
     const currentYear = currentDate.getFullYear();
-
     const currentMonth = currentDate.getMonth() + 1;
-
     let orders = [...(stats?.recentOrders || [])];
     // LAST 7 DAYS
-
     if (activeFilter === "7days") {
       const last7Days = new Date();
-
       last7Days.setDate(currentDate.getDate() - 7);
-
       orders = orders.filter((order) => {
         const orderDate = new Date(order.createdAt);
-
         return orderDate >= last7Days;
       });
     }
     // LAST 30 DAYS
-
     if (activeFilter === "30days") {
       const last30Days = new Date();
-
       last30Days.setDate(currentDate.getDate() - 30);
-
       orders = orders.filter((order) => {
         const orderDate = new Date(order.createdAt);
-
         return orderDate >= last30Days;
       });
     }
     // LAST 90 DAYS
     if (activeFilter === "90days") {
       const last90Days = new Date();
-
       last90Days.setDate(currentDate.getDate() - 90);
-
       orders = orders.filter((order) => {
         const orderDate = new Date(order.createdAt);
-
         return orderDate >= last90Days;
       });
     }
@@ -268,33 +215,26 @@ function Analytics() {
         (order) => new Date(order.createdAt).getFullYear() === currentYear,
       );
     }
-
     if (activeFilter === "lastYear") {
       orders = orders.filter(
         (order) => new Date(order.createdAt).getFullYear() === currentYear - 1,
       );
     }
-
     if (activeFilter === "mtd") {
       orders = orders.filter((order) => {
         const date = new Date(order.createdAt);
-
         return (
           date.getFullYear() === currentYear &&
           date.getMonth() + 1 === currentMonth
         );
       });
     }
-
     if (activeFilter === "lastMonth") {
       orders = orders.filter((order) => {
         const date = new Date(order.createdAt);
-
         const previousMonth = currentMonth === 1 ? 12 : currentMonth - 1;
-
         const previousMonthYear =
           currentMonth === 1 ? currentYear - 1 : currentYear;
-
         return (
           date.getFullYear() === previousMonthYear &&
           date.getMonth() + 1 === previousMonth
@@ -302,10 +242,7 @@ function Analytics() {
       });
     }
 
-    //
     // SEARCH FILTER
-    //
-
     if (search.trim()) {
       orders = orders.filter((order) =>
         [order.customerName, order.product, order.status]
@@ -314,228 +251,146 @@ function Analytics() {
           .includes(search.toLowerCase()),
       );
     }
-
-    //
     // DEFAULT SORT
-    //
-
     orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-    //
     // CUSTOM SORT
-    //
-
     if (sortConfig.key && sortConfig.direction) {
       orders.sort((a, b) => {
         let aValue;
         let bValue;
-
         switch (sortConfig.key) {
           case "amount":
             aValue = a.amount;
             bValue = b.amount;
             break;
-
           case "status":
             aValue = a.status;
             bValue = b.status;
             break;
-
           case "createdAt":
             aValue = new Date(a.createdAt);
             bValue = new Date(b.createdAt);
             break;
-
           case "updatedAt":
             aValue = new Date(a.updatedAt);
-
             bValue = new Date(b.updatedAt);
-
             break;
-
           default:
             return 0;
         }
-
         if (sortConfig.direction === "asc") {
           return aValue > bValue ? 1 : -1;
         }
-
         return aValue < bValue ? 1 : -1;
       });
     }
-
     return orders;
   }, [stats.recentOrders, activeFilter, sortConfig, search]);
 
-  //
   // FILTERED REVENUE DATA
-  //
-
   const revenueData = useMemo(() => {
-    //
     // SHORT RANGE FILTERS
     // USE FILTERED ORDERS INSTEAD OF monthlyRevenue
-    //
-
     if (
       activeFilter === "7days" ||
       activeFilter === "30days" ||
       activeFilter === "90days"
     ) {
       const groupedData = {};
-
       filteredOrders.forEach((order) => {
         const orderDate = new Date(order.createdAt);
-
-        //
         // DATE LABEL
-        //
-
         const label = orderDate.toLocaleDateString("en-IN", {
           day: "2-digit",
           month: "short",
         });
-
-        //
         // INIT
-        //
-
         if (!groupedData[label]) {
           groupedData[label] = 0;
         }
-
-        //
         // ADD REVENUE
-        //
-
         groupedData[label] += Number(order.amount || 0);
       });
-
-      //
       // CONVERT TO ARRAY
-      //
-
       return Object.entries(groupedData).map(([day, revenue]) => ({
         month: day,
         revenue,
       }));
     }
-
-    //
     // MONTHLY DATA
-    //
-
     const currentDate = new Date();
-
     const currentYear = currentDate.getFullYear();
-
     const currentMonth = currentDate.getMonth() + 1;
-
     let filteredData = [...(stats?.monthlyRevenue || [])];
-
-    //
     // YTD
-    //
-
     if (activeFilter === "ytd") {
       filteredData = filteredData.filter(
         (item) => item?._id?.year === currentYear,
       );
     }
-
-    //
     // LAST YEAR
-    //
-
     if (activeFilter === "lastYear") {
       filteredData = filteredData.filter(
         (item) => item?._id?.year === currentYear - 1,
       );
     }
-
-    //
     // MTD
-    //
-
     if (activeFilter === "mtd") {
       filteredData = filteredData.filter(
         (item) =>
           item?._id?.year === currentYear && item?._id?.month === currentMonth,
       );
     }
-
-    //
     // LAST MONTH
-    //
-
     if (activeFilter === "lastMonth") {
       filteredData = filteredData.filter((item) => {
         const previousMonth = currentMonth === 1 ? 12 : currentMonth - 1;
-
         const previousMonthYear =
           currentMonth === 1 ? currentYear - 1 : currentYear;
-
         return (
           item?._id?.year === previousMonthYear &&
           item?._id?.month === previousMonth
         );
       });
     }
-
-    //
     // FORMAT
-    //
-
     return filteredData.map((item) => ({
       month: monthNames[(item?._id?.month || 1) - 1],
-
       revenue: item?.revenue || 0,
     }));
   }, [stats.monthlyRevenue, activeFilter, filteredOrders]);
 
-  //
   // FILTERED TOP CARDS
-  //
-
   const filteredRevenue = filteredOrders.reduce(
     (acc, order) => acc + order.amount,
     0,
   );
-
   const deliveredCount = filteredOrders.filter(
     (order) => order.status === "delivered",
   ).length;
-
   const pendingCount = filteredOrders.filter(
     (order) => order.status === "pending",
   ).length;
-
-  //
   // PIE CHART
-  //
-
   const orderStatusData = [
     {
       name: "Pending",
       value: pendingCount,
       color: "#EAB308",
     },
-
     {
       name: "Processing",
       value: filteredOrders.filter((order) => order.status === "processing")
         .length,
       color: "#2563EB",
     },
-
     {
       name: "Shipped",
       value: filteredOrders.filter((order) => order.status === "shipped")
         .length,
       color: "#9333EA",
     },
-
     {
       name: "Delivered",
       value: deliveredCount,
@@ -543,19 +398,13 @@ function Analytics() {
     },
   ];
 
-  //
   // PAGINATION
-  //
-
   const totalPages = Math.ceil(filteredOrders.length / ORDERS_PER_PAGE);
-
   const startIndex = (currentPage - 1) * ORDERS_PER_PAGE;
-
   const paginatedOrders = filteredOrders.slice(
     startIndex,
     startIndex + ORDERS_PER_PAGE,
   );
-
   // EXPORT EXCEL
   const getExportRows = () =>
     filteredOrders.map((order) => ({
@@ -572,50 +421,31 @@ function Analytics() {
   // SORT FUNCTION
   const handleSort = (key) => {
     setSortConfig((prev) => {
-      //
       // NEW SORT
-      //
-
       if (prev.key !== key) {
         return {
           key,
           direction: "asc",
         };
       }
-
-      //
       // ASC -> DESC
-      //
-
       if (prev.direction === "asc") {
         return {
           key,
           direction: "desc",
         };
       }
-
-      //
       // DESC -> RESET
-      //
-
       return {
         key: null,
         direction: null,
       };
     });
   };
-
-  //
   // SORT ICON
-  //
-
   const renderSortIcon = (key) => {
     const active = sortConfig?.key === key;
-
-    //
     // NO SORT
-    //
-
     if (!active) {
       return (
         <ArrowDown
@@ -627,11 +457,7 @@ function Analytics() {
         />
       );
     }
-
-    //
     // ASC
-    //
-
     if (sortConfig.direction === "asc") {
       return (
         <ArrowUp
@@ -642,11 +468,7 @@ function Analytics() {
         />
       );
     }
-
-    //
     // DESC
-    //
-
     return (
       <ArrowDown
         size={16}
@@ -656,11 +478,7 @@ function Analytics() {
       />
     );
   };
-
-  //
   // SORTABLE HEADER
-  //
-
   const SortableHeader = ({ label, sortKey }) => (
     <button
       onClick={() => handleSort(sortKey)}
@@ -673,7 +491,6 @@ function Analytics() {
     "
     >
       <span>{label}</span>
-
       {renderSortIcon(sortKey)}
     </button>
   );
@@ -685,7 +502,6 @@ function Analytics() {
     >
       <div className="space-y-6">
         {/* TOP CARDS */}
-
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
           <div
             className="
@@ -710,7 +526,6 @@ function Analytics() {
             >
               Total Revenue
             </p>
-
             <h2
               className="
                 text-2xl
@@ -1303,19 +1118,21 @@ function Analytics() {
 
               {/* EXPORT */}
 
-              <ExportDropdown
-                fullWidth
-                onExcel={() =>
-                  exportToExcel(getExportRows(), "analytics-report")
-                }
-                onCSV={() => exportToCSV(getExportRows(), "analytics-report")}
-              />
+              {canExportReports && (
+                <ExportDropdown
+                  fullWidth
+                  onExcel={() =>
+                    exportToExcel(getExportRows(), "analytics-report")
+                  }
+                  onCSV={() => exportToCSV(getExportRows(), "analytics-report")}
+                />
+              )}
             </div>
           </div>
 
           {/* DESKTOP TABLE */}
 
-          <div className="hidden xl:block overflow-x-auto">
+          <div className="hidden lg:block overflow-x-auto">
             <table className="w-full">
               <thead
                 className="
@@ -1339,11 +1156,11 @@ function Analytics() {
                   </th>
 
                   <th className="p-5 text-left">
-                    <SortableHeader label="Ordered On" sortKey="createdAt" />
+                    <SortableHeader label="Ordered" sortKey="createdAt" />
                   </th>
 
                   <th className="p-5 text-left">
-                    <SortableHeader label="Updated On" sortKey="updatedAt" />
+                    <SortableHeader label="Updated" sortKey="updatedAt" />
                   </th>
                 </tr>
               </thead>
@@ -1462,7 +1279,7 @@ function Analytics() {
 
           {/* MOBILE */}
 
-          <div className="xl:hidden p-4 space-y-4">
+          <div className="lg:hidden p-4 space-y-4">
             {paginatedOrders.length ? (
               paginatedOrders.map((order) => (
                 <div

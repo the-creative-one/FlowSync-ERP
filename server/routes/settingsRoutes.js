@@ -4,13 +4,12 @@ const router = express.Router();
 const Settings = require("../models/Settings");
 const { protect } = require("../middleware/authMiddleware");
 const logActivity = require("../utils/logActivity");
-const { checkPermission } = require("../middleware/permissionMiddleware");
+// const { checkPermission } = require("../middleware/permissionMiddleware");
 
 // GET SETTINGS
 router.get(
   "/",
   protect,
-  checkPermission("canAccessSettings"),
   async (req, res) => {
     try {
       let settings = await Settings.findOne();

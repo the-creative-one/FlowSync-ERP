@@ -406,7 +406,7 @@ function Profile() {
                   dark:text-white
                 "
               >
-                <UserAvatar user={user} size="lg" />
+                <UserAvatar user={user} size="lg" iconClassName="text-[#0C2B4E] dark:text-white" />
               </div>
 
               <button

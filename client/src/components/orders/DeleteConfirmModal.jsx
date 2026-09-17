@@ -1,6 +1,12 @@
 import { TriangleAlert } from "lucide-react";
 
-function DeleteConfirmModal({ deleteModal, setDeleteModal, deleteOrder }) {
+function DeleteConfirmModal({
+  deleteModal,
+  setDeleteModal,
+  onDelete,
+  title = "Delete Order",
+  message = "Are you sure you want to delete this order? This action cannot be undone.",
+}) {
   if (!deleteModal) return null;
 
   return (
@@ -33,8 +39,6 @@ function DeleteConfirmModal({ deleteModal, setDeleteModal, deleteOrder }) {
           transition-colors
         "
       >
-        {/* ICON */}
-
         <div className="flex justify-center mb-5">
           <div
             className="
@@ -52,8 +56,6 @@ function DeleteConfirmModal({ deleteModal, setDeleteModal, deleteOrder }) {
           </div>
         </div>
 
-        {/* TEXT */}
-
         <div className="text-center">
           <h2
             className="
@@ -63,7 +65,7 @@ function DeleteConfirmModal({ deleteModal, setDeleteModal, deleteOrder }) {
               dark:text-white
             "
           >
-            Delete Order
+            {title}
           </h2>
 
           <p
@@ -74,12 +76,9 @@ function DeleteConfirmModal({ deleteModal, setDeleteModal, deleteOrder }) {
               leading-relaxed
             "
           >
-            Are you sure you want to delete this order? This action cannot be
-            undone.
+            {message}
           </p>
         </div>
-
-        {/* ACTIONS */}
 
         <div className="flex gap-3 mt-8">
           <button
@@ -102,7 +101,7 @@ function DeleteConfirmModal({ deleteModal, setDeleteModal, deleteOrder }) {
           </button>
 
           <button
-            onClick={deleteOrder}
+            onClick={onDelete}
             className="
               flex-1
               py-3

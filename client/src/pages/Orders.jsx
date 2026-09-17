@@ -572,7 +572,7 @@ function Orders() {
         <DeleteConfirmModal
           deleteModal={deleteModal}
           setDeleteModal={setDeleteModal}
-          deleteOrder={deleteOrder}
+          onDelete={deleteOrder}
         />
       </div>
     </DashboardLayout>

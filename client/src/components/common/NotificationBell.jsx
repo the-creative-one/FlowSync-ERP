@@ -34,10 +34,24 @@ function NotificationBell() {
 
   const formatTime = (date) => {
     const notificationDate = new Date(date);
-
-    return notificationDate.toLocaleTimeString("en-IN", {
-      hour: "2-digit",
-      minute: "2-digit",
+    const now = new Date();
+    const diffMs = now - notificationDate;
+    const diffMinutes = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMinutes / 60);
+    const diffDays = Math.floor(diffHours / 24);
+    if (diffMinutes < 60) {
+      return diffMinutes <= 1 ? "Just now" : `${diffMinutes} minutes ago`;
+    }
+    if (diffHours < 24) {
+      return `${diffHours} ${diffHours === 1 ? "hour" : "hours"} ago`;
+    }
+    if (diffDays <= 30) {
+      return `${diffDays} ${diffDays === 1 ? "day" : "days"} ago`;
+    }
+    return notificationDate.toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
     });
   };
 

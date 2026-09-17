@@ -3,54 +3,50 @@ import toast from "react-hot-toast";
 import DashboardLayout from "../layouts/DashboardLayout";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
-import { ChevronDown, Bell, Plus } from "lucide-react";
+import { ChevronDown, Bell, Plus, Trash2 } from "lucide-react";
 import CreateUserModal from "../components/employees/CreateUserModal";
 import PermissionRequests from "../components/employees/PermissionRequests";
 import UserAvatar from "../components/common/UserAvatar";
 import SmartDropdown from "../components/common/SmartDropdown";
 import { useSocket } from "../context/SocketContext";
+import DeleteConfirmModal from "../components/orders/DeleteConfirmModal";
 
 function Employees() {
   const { user } = useAuth();
   const { socket } = useSocket();
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const [activeRoleDropdown, setActiveRoleDropdown] = useState(null);
   const [requests, setRequests] = useState([]);
   const [showCreateUserModal, setShowCreateUserModal] = useState(false);
   const [showRequestsDrawer, setShowRequestsDrawer] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
   const pendingRequests = requests.filter(
     (request) => request.status === "pending",
   );
-
+  const isAdmin = user?.role === "admin";
   useEffect(() => {
     const handleEmployeeCreated = (employee) => {
       setEmployees((prev) => {
         const exists = prev.some((item) => item._id === employee._id);
-
         if (exists) return prev;
-
         return [employee, ...prev];
       });
     };
-
     const handleEmployeeRoleChanged = (employee) => {
       setEmployees((prev) =>
         prev.map((item) => (item._id === employee._id ? employee : item)),
       );
     };
-
     const handleEmployeePermissionsChanged = (employee) => {
       setEmployees((prev) =>
         prev.map((item) => (item._id === employee._id ? employee : item)),
       );
     };
-
     socket.on("employee-created", handleEmployeeCreated);
     socket.on("employee-role-changed", handleEmployeeRoleChanged);
     socket.on("employee-permissions-changed", handleEmployeePermissionsChanged);
-
     return () => {
       socket.off("employee-created", handleEmployeeCreated);
       socket.off("employee-role-changed", handleEmployeeRoleChanged);
@@ -66,11 +62,9 @@ function Employees() {
     if (user?.role === "admin") {
       return ["admin", "manager", "operations", "analyst", "employee"];
     }
-
     if (user?.role === "manager") {
       return ["operations", "analyst", "employee"];
     }
-
     return [];
   };
 
@@ -96,7 +90,10 @@ function Employees() {
       key: "canExportReports",
       label: "Export Reports",
     },
-
+    {
+      key: "canManageEmployees",
+      label: "Manage Employees",
+    },
     ...(user?.role === "admin"
       ? [
           {
@@ -117,15 +114,12 @@ function Employees() {
     if (employee.email === user?.email) {
       return false;
     }
-
     if (user?.role === "admin") {
       return true;
     }
-
     if (user?.role === "manager") {
       return employee.role !== "admin" && employee.role !== "manager";
     }
-
     return false;
   };
 
@@ -176,18 +170,36 @@ function Employees() {
   const fetchEmployees = async () => {
     try {
       const token = localStorage.getItem("token");
-
       const response = await api.get("/employees", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-
       setEmployees(response.data);
     } catch (error) {
       console.log(error.response?.data);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // DELETE USER
+  const deleteEmployee = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      await api.delete(`/employees/${selectedEmployeeId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setEmployees((prev) =>
+        prev.filter((employee) => employee._id !== selectedEmployeeId),
+      );
+      setShowDeleteModal(false);
+      setSelectedEmployeeId(null);
+      toast.success("User deleted successfully");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to delete user");
     }
   };
 
@@ -200,7 +212,6 @@ function Employees() {
           Authorization: `Bearer ${token}`,
         },
       });
-
       setRequests(response.data);
     } catch (error) {
       console.log(error.response?.data);
@@ -211,7 +222,6 @@ function Employees() {
   const approveRequest = async (requestId) => {
     try {
       const token = localStorage.getItem("token");
-
       await api.put(
         `/employees/requests/${requestId}/approve`,
         {},
@@ -233,7 +243,6 @@ function Employees() {
   const rejectRequest = async (requestId) => {
     try {
       const token = localStorage.getItem("token");
-
       await api.put(
         `/employees/requests/${requestId}/reject`,
         {},
@@ -243,9 +252,7 @@ function Employees() {
           },
         },
       );
-
       toast.success("Request rejected");
-
       fetchRequests();
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to reject request");
@@ -254,7 +261,6 @@ function Employees() {
 
   useEffect(() => {
     fetchEmployees();
-
     if (user?.role === "admin" || user?.role === "manager") {
       fetchRequests();
     }
@@ -292,7 +298,6 @@ function Employees() {
           >
             <div className="relative">
               <Bell size={18} />
-
               {pendingRequests.length > 0 && (
                 <span
                   className="
@@ -316,11 +321,9 @@ function Employees() {
                 </span>
               )}
             </div>
-
             <span className="font-medium max-[418px]:hidden">
               Pending Requests
             </span>
-
             {pendingRequests.length > 0 && (
               <span
                 className="
@@ -338,8 +341,8 @@ function Employees() {
               </span>
             )}
           </button>
-
-          {(user?.role === "admin" || user?.role === "manager") && (
+          {(user?.role === "admin" ||
+            user?.permissions?.canManageEmployees) && (
             <button
               onClick={() => setShowCreateUserModal(true)}
               className="
@@ -361,7 +364,6 @@ function Employees() {
               "
             >
               <Plus size={20} className="hidden max-[418px]:block" />
-
               <span className="max-[418px]:hidden">+ Create User</span>
             </button>
           )}
@@ -380,15 +382,12 @@ function Employees() {
                 <thead className="bg-[#0C2B4E] text-white">
                   <tr>
                     <th className="p-5 text-left w-[15%]">Name</th>
-
                     <th className="p-5 text-left w-[20%]">Email</th>
-
                     <th className="p-5 text-left w-[15%]">Role</th>
-
                     <th className="p-5 text-left w-[50%]">Permissions</th>
+                    <th className="p-5 text-center w-[5%]">Action</th>
                   </tr>
                 </thead>
-
                 <tbody>
                   {employees.map((employee, index) => (
                     <tr
@@ -397,18 +396,19 @@ function Employees() {
                     >
                       <td className="p-5 whitespace-nowrap">
                         <div className="flex items-center gap-3">
-                          <UserAvatar user={employee} size="sm" />
-
+                          <UserAvatar
+                            user={employee}
+                            size="sm"
+                            iconClassName="dark:text-white text-[#0C2B4E]"
+                          />
                           <span className="text-[#0C2B4E] dark:text-white">
                             {employee.name}
                           </span>
                         </div>
                       </td>
-
                       <td className="p-5 text-gray-700 dark:text-gray-300">
                         {employee.email}
                       </td>
-
                       <td className="p-5">
                         {canManageUser(employee) ? (
                           <SmartDropdown
@@ -471,7 +471,6 @@ function Employees() {
                           </span>
                         )}
                       </td>
-
                       <td className="p-5">
                         <div className="flex flex-wrap gap-x-6 gap-y-4">
                           {permissionList.map((permission) => (
@@ -503,61 +502,77 @@ function Employees() {
                                   )
                                 }
                               />
-
                               {permission.label}
                             </label>
                           ))}
                         </div>
+                      </td>
+                      <td className="p-5 text-center">
+                        {user?.role === "admin" &&
+                          employee._id !== user._id && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSelectedEmployeeId(employee._id);
+                                setShowDeleteModal(true);
+                              }}
+                              className="
+                                  text-red-500
+                                     hover:text-red-600
+                                     hover:scale-110
+                                     active:scale-95
+                                     p-2
+                                     transition
+                                  "
+                              title="Delete user"
+                            >
+                              <Trash2 size={18} />
+                            </button>
+                          )}
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-
             {/* MOBILE + TABLET */}
-
             <div className="xl:hidden space-y-5">
               {employees.map((employee, index) => (
                 <div
                   key={employee._id}
-                  className="  bg-white  dark:bg-[#111827]  rounded-3xl  shadow  p-5  border  border-gray-100  dark:border-gray-800"
+                  className="bg-white dark:bg-[#111827] rounded-3xl shadow p-5 border border-gray-100 dark:border-gray-800"
                 >
-                  <div className="space-y-5">
-                    <div>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Name
-                      </p>
-
-                      <div className="flex items-center gap-3 mt-2">
-                        <UserAvatar user={employee} size="sm" />
-
-                        <p className="text-[#0C2B4E] dark:text-white">
-                          {employee.name}
+                  <div className="flex justify-between items-start">
+                    <div className="space-y-5 flex-1">
+                      <div>
+                        <div className="flex items-center gap-3 mt-2">
+                          <UserAvatar
+                            user={employee}
+                            size="sm"
+                            iconClassName="dark:text-white text-[#0C2B4E]"
+                          />
+                          <p className="text-[#0C2B4E] dark:text-white">
+                            {employee.name}
+                          </p>
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          Email
+                        </p>
+                        <p className="mt-1 text-[#0C2B4E] dark:text-white">
+                          {employee.email}
                         </p>
                       </div>
-                    </div>
-
-                    <div>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Email
-                      </p>
-
-                      <p className="mt-1 text-[#0C2B4E] dark:text-white">
-                        {employee.email}
-                      </p>
-                    </div>
-
-                    <div>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
-                        Role
-                      </p>
-
-                      {canManageUser(employee) ? (
-                        <SmartDropdown
-                          trigger={
-                            <button
-                              className="
+                      <div>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
+                          Role
+                        </p>
+                        {canManageUser(employee) ? (
+                          <SmartDropdown
+                            trigger={
+                              <button
+                                className="
                                 bg-[#EAF2FF]
                                 hover:bg-[#DCE8FF]
                                 text-[#1D4ED8]
@@ -574,24 +589,23 @@ function Employees() {
                                 justify-between
                                 transition
                               "
-                            >
-                              <span className="capitalize text-[#0C2B4E] dark:text-white">
-                                {employee.role}
-                              </span>
-
-                              <ChevronDown size={18} />
-                            </button>
-                          }
-                        >
-                          {({ close }) =>
-                            getAvailableRoles().map((role) => (
-                              <button
-                                key={role}
-                                onClick={() => {
-                                  updateRole(employee._id, role);
-                                  close();
-                                }}
-                                className="
+                              >
+                                <span className="capitalize text-[#0C2B4E] dark:text-white">
+                                  {employee.role}
+                                </span>
+                                <ChevronDown size={18} />
+                              </button>
+                            }
+                          >
+                            {({ close }) =>
+                              getAvailableRoles().map((role) => (
+                                <button
+                                  key={role}
+                                  onClick={() => {
+                                    updateRole(employee._id, role);
+                                    close();
+                                  }}
+                                  className="
                                   w-full
                                   text-left
                                   px-5
@@ -602,53 +616,73 @@ function Employees() {
                                   text-gray-700
                                   dark:text-gray-300
                                 "
-                              >
-                                {role}
-                              </button>
-                            ))
-                          }
-                        </SmartDropdown>
-                      ) : (
-                        <p className="capitalize text-[#0C2B4E] dark:text-white">
-                          {employee.role}
+                                >
+                                  {role}
+                                </button>
+                              ))
+                            }
+                          </SmartDropdown>
+                        ) : (
+                          <p className="capitalize text-[#0C2B4E] dark:text-white">
+                            {employee.role}
+                          </p>
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                          Permissions
                         </p>
-                      )}
-                    </div>
-
-                    <div>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                        Permissions
-                      </p>
-
-                      <div className="space-y-4">
-                        {permissionList.map((permission) => (
-                          <label
-                            key={permission.key}
-                            className="flex items-center justify-between gap-4"
-                          >
-                            <span className="text-sm text-gray-700 dark:text-gray-300">
-                              {permission.label}
-                            </span>
-
-                            <input
-                              type="checkbox"
-                              className="w-4 h-4 accent-[#1D546C]"
-                              checked={
-                                employee.permissions?.[permission.key] || false
-                              }
-                              disabled={!canManageUser(employee)}
-                              onChange={(e) =>
-                                updatePermission(
-                                  employee._id,
-                                  permission.key,
-                                  e.target.checked,
-                                )
-                              }
-                            />
-                          </label>
-                        ))}
+                        <div className="space-y-4">
+                          {permissionList.map((permission) => (
+                            <label
+                              key={permission.key}
+                              className="flex items-center justify-between gap-4"
+                            >
+                              <span className="text-sm text-gray-700 dark:text-gray-300">
+                                {permission.label}
+                              </span>
+                              <input
+                                type="checkbox"
+                                className="w-4 h-4 accent-[#1D546C]"
+                                checked={
+                                  employee.permissions?.[permission.key] ||
+                                  false
+                                }
+                                disabled={!canManageUser(employee)}
+                                onChange={(e) =>
+                                  updatePermission(
+                                    employee._id,
+                                    permission.key,
+                                    e.target.checked,
+                                  )
+                                }
+                              />
+                            </label>
+                          ))}
+                        </div>
                       </div>
                     </div>
+
+                    {user?.role === "admin" && employee._id !== user._id && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedEmployeeId(employee._id);
+                          setShowDeleteModal(true);
+                        }}
+                        className="
+                            p-2
+                            rounded-xl
+                            text-red-500
+                            hover:bg-red-50
+                            dark:hover:bg-red-500/10
+                            transition
+                          "
+                        title="Delete user"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}
@@ -669,6 +703,13 @@ function Employees() {
         onClose={() => setShowRequestsDrawer(false)}
         requests={requests}
         fetchRequests={fetchRequests}
+      />
+      <DeleteConfirmModal
+        deleteModal={showDeleteModal}
+        setDeleteModal={setShowDeleteModal}
+        onDelete={deleteEmployee}
+        title="Delete User"
+        message="Are you sure you want to delete this user? This action cannot be undone."
       />
     </DashboardLayout>
   );

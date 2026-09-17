@@ -33,7 +33,7 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
       <div className="flex items-center justify-between p-5 pb-2.5 border-b border-[#1D546C]">
         {!collapsed && (
           <Link to="/">
-          <img src="/White-Logo.png" alt="FlowSync" className="h-12" />
+            <img src="/White-Logo.png" alt="FlowSync" className="h-12" />
           </Link>
         )}
 
@@ -154,7 +154,7 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
               collapsed ? "justify-center hover:scale-94" : "hover:scale-98"
             }`}
           >
-            <UserAvatar user={user} size="md" />
+            <UserAvatar user={user} size="md" iconClassName="text-white" />
 
             {!collapsed && (
               <div className="text-left">

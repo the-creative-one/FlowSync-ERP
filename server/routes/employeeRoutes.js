@@ -543,4 +543,40 @@ router.get("/audit-logs", protect, managerOrAdmin, async (req, res) => {
   }
 });
 
+// DELETE USER
+router.delete("/:id", protect, async (req, res) => {
+  try {
+    if (req.user.role !== "admin") {
+      return res.status(403).json({
+        message: "Only admins can delete users",
+      });
+    }
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+    if (user._id.toString() === req.user._id.toString()) {
+      return res.status(403).json({
+        message: "You cannot delete your own account",
+      });
+    }
+    await User.findByIdAndDelete(req.params.id);
+    await AuditLog.create({
+      userId: req.user._id,
+      action: "USER_DELETED",
+      details: `Deleted user ${user.name} (${user.role})`,
+    });
+    res.json({
+      message: "User deleted successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Failed to delete user",
+    });
+  }
+});
+
 module.exports = router;

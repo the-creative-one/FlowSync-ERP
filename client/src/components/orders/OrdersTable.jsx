@@ -109,7 +109,6 @@ function OrdersTable({
       <div className="overflow-x-auto">
         <table className="w-full">
           {/* HEADER */}
-
           <thead
             className="
               bg-[#0C2B4E]
