@@ -8,8 +8,24 @@ const { checkPermission } = require("../middleware/permissionMiddleware");
 // GET ACTIVITY LOGS
 router.get("/", protect, managerOrAdmin, async (req, res) => {
   try {
-    const logs = await ActivityLog.find().sort({ createdAt: -1 }).limit(100);
-    res.status(200).json(logs);
+    const page = Math.max(Number(req.query.page) || 1, 1);
+    const allowedLimits = [10, 25, 50, 100];
+    const requestedLimit = Number(req.query.limit) || 10;
+    const limit = allowedLimits.includes(requestedLimit) ? requestedLimit : 10;
+    const skip = (page - 1) * limit;
+    const [logs, totalLogs] = await Promise.all([
+      ActivityLog.find().sort({ createdAt: -1 }).skip(skip).limit(limit),
+      ActivityLog.countDocuments(),
+    ]);
+    res.status(200).json({
+      logs,
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil(totalLogs / limit),
+        totalLogs,
+        limit,
+      },
+    });
   } catch (error) {
     res.status(500).json({
       message: "Failed to fetch activity logs",

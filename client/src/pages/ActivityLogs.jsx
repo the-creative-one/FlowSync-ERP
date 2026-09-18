@@ -7,18 +7,25 @@ function ActivityLogs() {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-
-  const fetchLogs = async () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [logsPerPage, setLogsPerPage] = useState(10);
+  const [totalLogs, setTotalLogs] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const fetchLogs = async (page = currentPage, limit = logsPerPage) => {
     try {
+      setLoading(true);
       const token = localStorage.getItem("token");
-
-      const response = await api.get("/activity-logs", {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const response = await api.get(
+        `/activity-logs?page=${page}&limit=${limit}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
-
-      setLogs(response.data);
+      );
+      setLogs(response.data.logs);
+      setTotalLogs(response.data.pagination.totalLogs);
+      setTotalPages(response.data.pagination.totalPages);
     } catch (error) {
       console.log(error.response?.data);
     } finally {
@@ -27,8 +34,8 @@ function ActivityLogs() {
   };
 
   useEffect(() => {
-    fetchLogs();
-  }, []);
+    fetchLogs(currentPage, logsPerPage);
+  }, [currentPage, logsPerPage]);
 
   const filteredLogs = logs.filter((log) => {
     const searchTerm = search.toLowerCase();
@@ -82,7 +89,11 @@ function ActivityLogs() {
   };
 
   const formatTime = (date) => {
-    return new Date(date).toLocaleTimeString("en-GB");
+    return new Date(date).toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
   };
 
   return (
@@ -324,6 +335,113 @@ function ActivityLogs() {
                 </div>
               </div>
             ))}
+          </div>
+          <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+              <span>Show</span>
+
+              <select
+                value={logsPerPage}
+                onChange={(e) => {
+                  setLogsPerPage(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+                className="
+        rounded-xl
+        border
+        border-gray-200
+        dark:border-gray-700
+        bg-white
+        dark:bg-[#111827]
+        px-3
+        py-2
+        text-gray-700
+        dark:text-white
+        outline-none
+        focus:border-[#2563EB]
+      "
+              >
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+              </select>
+
+              <span>per page</span>
+            </div>
+
+            <div className="flex items-center justify-between gap-3 sm:justify-end">
+              <p className="text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">
+                {totalLogs === 0
+                  ? "0 logs"
+                  : `${(currentPage - 1) * logsPerPage + 1}-${Math.min(
+                      currentPage * logsPerPage,
+                      totalLogs,
+                    )} of ${totalLogs}`}
+              </p>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setCurrentPage((prev) => prev - 1)}
+                  disabled={currentPage === 1}
+                  className="
+          px-4
+          py-2
+          rounded-xl
+          border
+          border-gray-200
+          dark:border-gray-700
+          text-sm
+          font-medium
+          dark:text-white
+          disabled:opacity-40
+          disabled:cursor-not-allowed
+          hover:bg-gray-50
+          dark:hover:bg-[#1A2438]
+          transition
+        "
+                >
+                  Previous
+                </button>
+
+                <span
+                  className="
+          px-4
+          py-2
+          rounded-xl
+          bg-[#0C2B4E]
+          text-white
+          text-sm
+          font-medium
+        "
+                >
+                  {currentPage} / {totalPages}
+                </span>
+
+                <button
+                  onClick={() => setCurrentPage((prev) => prev + 1)}
+                  disabled={currentPage === totalPages}
+                  className="
+          px-4
+          py-2
+          rounded-xl
+          border
+          border-gray-200
+          dark:border-gray-700
+          text-sm
+          font-medium
+          dark:text-white
+          disabled:opacity-40
+          disabled:cursor-not-allowed
+          hover:bg-gray-50
+          dark:hover:bg-[#1A2438]
+          transition
+        "
+                >
+                  Next
+                </button>
+              </div>
+            </div>
           </div>
         </>
       )}

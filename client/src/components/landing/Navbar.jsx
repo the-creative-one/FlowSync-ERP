@@ -109,7 +109,7 @@ function Navbar() {
         duration-200
       "
               >
-                <UserAvatar user={user} size="sm" />
+                <UserAvatar user={user} size="sm" iconClassName="text-white" />
               </Link>
             ) : (
               <>
@@ -249,7 +249,11 @@ function Navbar() {
                       text-white
                     "
                   >
-                    <UserAvatar user={user} size="sm" />
+                    <UserAvatar
+                      user={user}
+                      size="sm"
+                      iconClassName="text-white"
+                    />
 
                     <span className="font-medium">Dashboard</span>
                   </Link>

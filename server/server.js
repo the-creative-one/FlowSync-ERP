@@ -17,6 +17,7 @@ const analyticsRoutes = require("./routes/analyticsRoutes");
 const profileRoutes = require("./routes/profileRoutes");
 const settingsRoutes = require("./routes/settingsRoutes");
 const activityLogRoutes = require("./routes/activityLogRoutes");
+const chatbotRoutes = require("./routes/chatbotRoutes");
 const User = require("./models/User");
 const { syncUserRooms, loadSocketUser } = require("./utils/socketRooms");
 
@@ -60,7 +61,7 @@ app.use("/api/settings", settingsRoutes);
 app.use("/api/activity-logs", activityLogRoutes);
 // Serve uploaded files
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
+app.use("/api/chatbot", chatbotRoutes);
 // Create HTTP server
 const server = http.createServer(app);
 // Create Socket.IO server
