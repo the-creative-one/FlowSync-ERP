@@ -21,7 +21,8 @@ import {
   Camera,
   Palette,
   Upload,
-  User,
+  Eye,
+  EyeOff,
   SquarePen,
 } from "lucide-react";
 import { useSocket } from "../context/SocketContext";
@@ -33,6 +34,14 @@ function Profile() {
   const [editingName, setEditingName] = useState(false);
   const [name, setName] = useState("");
   const [savingName, setSavingName] = useState(false);
+  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [savingPassword, setSavingPassword] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [employees, setEmployees] = useState([]);
   const [auditLogs, setAuditLogs] = useState([]);
   const [selectedAvatar, setSelectedAvatar] = useState(null);
@@ -47,18 +56,6 @@ function Profile() {
     canExportReports: "Export Orders",
     canViewAdvancedAnalytics: "Analytics Access",
   };
-
-  const visiblePermissions = [
-    "canCreateOrders",
-    "canUpdateOrders",
-    "canDeleteOrders",
-    "canExportReports",
-    "canViewAdvancedAnalytics",
-  ];
-
-  const activePermissionCount = visiblePermissions.filter(
-    (permission) => user?.permissions?.[permission],
-  ).length;
 
   const formatAuditDetails = (details) => {
     return details
@@ -210,6 +207,49 @@ function Profile() {
     }
   };
 
+  const updatePassword = async () => {
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      toast.error("All password fields are required");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      toast.error("New passwords do not match");
+      return;
+    }
+
+    try {
+      setSavingPassword(true);
+
+      const token = localStorage.getItem("token");
+
+      await api.put(
+        "/profile/password",
+        {
+          currentPassword,
+          newPassword,
+          confirmPassword,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      setShowPasswordDialog(false);
+
+      toast.success("Password changed successfully");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to change password");
+    } finally {
+      setSavingPassword(false);
+    }
+  };
+
   const fetchEmployees = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -329,6 +369,7 @@ function Profile() {
 
       toast.success("Avatar removed");
     } catch (error) {
+      console.log(error.message);
       toast.error("Failed to remove avatar");
     }
   };
@@ -357,6 +398,7 @@ function Profile() {
       toast.success("Avatar generated");
     } catch (error) {
       toast.error("Failed to generate avatar");
+      console.log(error.message);
     }
   };
 
@@ -401,18 +443,20 @@ function Profile() {
     return () => {
       socket.off("user-updated", handleUserUpdated);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket, user?._id]);
   return (
-    <DashboardLayout
-      title="My Profile"
-      subtitle="Manage your account and permissions"
-    >
-      <div className="space-y-6">
-        {/* HERO SECTION */}
+    <>
+      <DashboardLayout
+        title="My Profile"
+        subtitle="Manage your account and permissions"
+      >
+        <div className="space-y-6">
+          {/* HERO SECTION */}
 
-        <div className="flex justify-center">
-          <div
-            className="
+          <div className="flex justify-center">
+            <div
+              className="
               w-full
               max-w-2xl
               bg-white
@@ -425,10 +469,10 @@ function Profile() {
               text-center
               shadow-sm
             "
-          >
-            <div ref={avatarMenuRef} className="relative w-24 h-24 mx-auto">
-              <div
-                className="
+            >
+              <div ref={avatarMenuRef} className="relative w-24 h-24 mx-auto">
+                <div
+                  className="
                   w-24
                   h-24
                   border
@@ -444,17 +488,17 @@ function Profile() {
                   text-[#1D546C]
                   dark:text-white
                 "
-              >
-                <UserAvatar
-                  user={user}
-                  size="lg"
-                  iconClassName="text-[#0C2B4E] dark:text-white"
-                />
-              </div>
+                >
+                  <UserAvatar
+                    user={user}
+                    size="lg"
+                    iconClassName="text-[#0C2B4E] dark:text-white"
+                  />
+                </div>
 
-              <button
-                onClick={() => setShowAvatarMenu(!showAvatarMenu)}
-                className="
+                <button
+                  onClick={() => setShowAvatarMenu(!showAvatarMenu)}
+                  className="
                   absolute
                   bottom-0
                   right-0
@@ -471,12 +515,12 @@ function Profile() {
                   hover:scale-105
                   transition
                 "
-              >
-                <Camera size={16} />
-              </button>
-              {showAvatarMenu && (
-                <div
-                  className="
+                >
+                  <Camera size={16} />
+                </button>
+                {showAvatarMenu && (
+                  <div
+                    className="
                     absolute
                     top-full
                     left-1/2
@@ -494,9 +538,9 @@ function Profile() {
                     overflow-hidden
                     z-50
                   "
-                >
-                  <label
-                    className="
+                  >
+                    <label
+                      className="
                       flex
                       items-center
                       gap-3
@@ -506,25 +550,25 @@ function Profile() {
                       hover:bg-gray-50
                       dark:hover:bg-[#1F2937]
                     "
-                  >
-                    <Upload size={18} />
+                    >
+                      <Upload size={18} />
 
-                    <span>Upload Image</span>
+                      <span>Upload Image</span>
 
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handleAvatarSelect}
-                    />
-                  </label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleAvatarSelect}
+                      />
+                    </label>
 
-                  <button
-                    onClick={() => {
-                      setShowAvatarGenerator(true);
-                      setShowAvatarMenu(false);
-                    }}
-                    className="
+                    <button
+                      onClick={() => {
+                        setShowAvatarGenerator(true);
+                        setShowAvatarMenu(false);
+                      }}
+                      className="
                       w-full
                       flex
                       items-center
@@ -534,15 +578,15 @@ function Profile() {
                       hover:bg-gray-50
                       dark:hover:bg-[#1F2937]
                     "
-                  >
-                    <Palette size={18} />
+                    >
+                      <Palette size={18} />
 
-                    <span>Generate Avatar</span>
-                  </button>
+                      <span>Generate Avatar</span>
+                    </button>
 
-                  <button
-                    onClick={removeAvatar}
-                    className="
+                    <button
+                      onClick={removeAvatar}
+                      className="
                       w-full
                       flex
                       items-center
@@ -553,44 +597,44 @@ function Profile() {
                       hover:bg-red-50
                       dark:hover:bg-red-900/20
                     "
-                  >
-                    <Trash2 size={18} />
+                    >
+                      <Trash2 size={18} />
 
-                    <span>Remove Avatar</span>
-                  </button>
-                </div>
-              )}
-            </div>
+                      <span>Remove Avatar</span>
+                    </button>
+                  </div>
+                )}
+              </div>
 
-            <div className="relative flex items-center justify-center">
-              <h2 className="text-2xl font-bold text-[#0C2B4E] dark:text-white">
-                {user?.name}
-              </h2>
+              <div className="relative flex items-center justify-center">
+                <h2 className="text-2xl font-bold text-[#0C2B4E] dark:text-white">
+                  {user?.name}
+                </h2>
 
-              <button
-                type="button"
-                onClick={() => {
-                  setName(user?.name || "");
-                  setEditingName(true);
-                }}
-                className="
-      p-1.5
-      text-gray-400
-      hover:text-[#1D546C]
-      dark:hover:text-blue-400
-      transition
-    "
-                aria-label="Edit name"
-              >
-                <SquarePen size={15} />
-              </button>
-            </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setName(user?.name || "");
+                    setEditingName(true);
+                  }}
+                  className="
+                    p-1.5
+                    text-gray-400
+                    hover:text-[#1D546C]
+                    dark:hover:text-blue-400
+                    transition
+                  "
+                  aria-label="Edit name"
+                >
+                  <SquarePen size={15} />
+                </button>
+              </div>
 
-            <p className="text-gray-500 mt-2">{user?.email}</p>
+              <p className="text-gray-500 mt-2">{user?.email}</p>
 
-            <div className="mt-4">
-              <span
-                className="
+              <div className="mt-4">
+                <span
+                  className="
                     px-4
                     py-2
                     rounded-full
@@ -600,103 +644,37 @@ function Profile() {
                     font-medium
                     capitalize
                   "
-              >
-                {user?.role}
-              </span>
-            </div>
-
-            <div className="mt-6">
-              <p className="text-sm text-gray-500">Active Permissions</p>
-
-              <p
-                className="
-                  mt-1
-                  text-2xl
-                  font-bold
-                  text-[#0C2B4E]
-                  dark:text-white
-                "
-              >
-                {activePermissionCount}/{visiblePermissions.length}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {editingName && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-            <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-800 shadow-2xl p-6">
-              <div className="flex items-center justify-between mb-5">
-                <h3 className="text-lg font-semibold text-[#0C2B4E] dark:text-white">
-                  Edit Name
-                </h3>
-
+                >
+                  {user?.role}
+                </span>
+              </div>
+              <div className="mt-6">
                 <button
                   type="button"
-                  onClick={() => setEditingName(false)}
-                  disabled={savingName}
-                  className="p-1 text-gray-400 hover:text-gray-700 dark:hover:text-white transition"
-                  aria-label="Close"
+                  onClick={() => setShowPasswordDialog(true)}
+                  className="
+                    text-sm
+                    font-medium
+                    text-[#1D546C]
+                    hover:font-bold
+                    dark:text-blue-400
+                  "
                 >
-                  <X size={20} />
+                  Change Password
                 </button>
               </div>
-
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                autoFocus
-                className="
-          w-full
-          border
-          border-gray-200
-          dark:border-gray-700
-          rounded-xl
-          px-4
-          py-3
-          outline-none
-          bg-white
-          dark:bg-[#1F2937]
-          text-[#0C2B4E]
-          dark:text-white
-          focus:border-[#1D546C]
-        "
-              />
-
-              <button
-                type="button"
-                onClick={updateName}
-                disabled={savingName}
-                className="
-          w-full
-          mt-5
-          px-4
-          py-3
-          rounded-xl
-          bg-[#0C2B4E]
-          text-white
-          font-medium
-          disabled:opacity-50
-          transition
-        "
-              >
-                {savingName ? "Saving..." : "Confirm"}
-              </button>
             </div>
           </div>
-        )}
+          {/* CURRENT PERMISSIONS */}
 
-        {/* CURRENT PERMISSIONS */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
+            {Object.entries(permissionLabels).map(([key, label]) => {
+              const Icon = permissionIcons[key];
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
-          {Object.entries(permissionLabels).map(([key, label]) => {
-            const Icon = permissionIcons[key];
-
-            return (
-              <div
-                key={key}
-                className="
+              return (
+                <div
+                  key={key}
+                  className="
                   rounded-2xl
                   border
                   border-gray-200
@@ -709,9 +687,9 @@ function Profile() {
                   dark:hover:shadow-lg
                   transition
                 "
-              >
-                <div
-                  className={`
+                >
+                  <div
+                    className={`
                       w-14
                       h-14
                       rounded-2xl
@@ -726,47 +704,47 @@ function Profile() {
                           : "bg-red-100 dark:bg-red-900/30"
                       }
                     `}
-                >
-                  <Icon
-                    size={26}
-                    className={
-                      user?.permissions?.[key]
-                        ? "text-green-600"
-                        : "text-red-500"
-                    }
-                  />
-                </div>
+                  >
+                    <Icon
+                      size={26}
+                      className={
+                        user?.permissions?.[key]
+                          ? "text-green-600"
+                          : "text-red-500"
+                      }
+                    />
+                  </div>
 
-                <p
-                  className="
+                  <p
+                    className="
                     font-semibold
                     text-[#0C2B4E]
                     dark:text-white
                   "
-                >
-                  {label}
-                </p>
+                  >
+                    {label}
+                  </p>
 
-                <p
-                  className={`
+                  <p
+                    className={`
                     mt-2
                     text-sm
                     font-medium
                     ${user?.permissions?.[key] ? "text-green-600" : "text-red-500"}
                   `}
-                >
-                  {user?.permissions?.[key] ? "Granted" : "Not Granted"}
-                </p>
-              </div>
-            );
-          })}
-        </div>
+                  >
+                    {user?.permissions?.[key] ? "Granted" : "Not Granted"}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
 
-        {/* REQUEST ACCESS */}
+          {/* REQUEST ACCESS */}
 
-        {hasPermissionToRequestAccess && (
-          <div
-            className="
+          {hasPermissionToRequestAccess && (
+            <div
+              className="
         bg-white
         dark:bg-[#111827]
         border
@@ -775,28 +753,28 @@ function Profile() {
         rounded-3xl
         p-6
       "
-          >
-            <h2
-              className="
+            >
+              <h2
+                className="
           text-2xl
           font-bold
           text-[#0C2B4E]
           dark:text-white
           mb-6
         "
-            >
-              Request Additional Access
-            </h2>
+              >
+                Request Additional Access
+              </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-              {Object.entries(permissionLabels)
-                .filter(([key]) => !user?.permissions?.[key])
-                .map(([key, label]) => (
-                  <button
-                    key={key}
-                    disabled={hasPendingRequest(key)}
-                    onClick={() => requestPermission(key)}
-                    className="
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                {Object.entries(permissionLabels)
+                  .filter(([key]) => !user?.permissions?.[key])
+                  .map(([key, label]) => (
+                    <button
+                      key={key}
+                      disabled={hasPendingRequest(key)}
+                      onClick={() => requestPermission(key)}
+                      className="
                 text-left
                 rounded-2xl
                 border
@@ -808,32 +786,32 @@ function Profile() {
                 hover:border-[#1D546C]
                 disabled:opacity-50
               "
-                  >
-                    <h3
-                      className="
+                    >
+                      <h3
+                        className="
                   font-semibold
                   text-[#0C2B4E]
                   dark:text-white
                 "
-                    >
-                      {label}
-                    </h3>
+                      >
+                        {label}
+                      </h3>
 
-                    <p className="mt-2 text-sm text-gray-500">
-                      {hasPendingRequest(key)
-                        ? "Pending Approval"
-                        : "Request Access →"}
-                    </p>
-                  </button>
-                ))}
+                      <p className="mt-2 text-sm text-gray-500">
+                        {hasPendingRequest(key)
+                          ? "Pending Approval"
+                          : "Request Access →"}
+                      </p>
+                    </button>
+                  ))}
+              </div>
             </div>
-          </div>
-        )}
-        {/* REQUEST HISTORY */}
+          )}
+          {/* REQUEST HISTORY */}
 
-        {!isManagerOrAdmin && (
-          <div
-            className="
+          {!isManagerOrAdmin && (
+            <div
+              className="
         bg-white
         dark:bg-[#111827]
         border
@@ -842,25 +820,25 @@ function Profile() {
         rounded-3xl
         p-6
       "
-          >
-            <h2
-              className="
+            >
+              <h2
+                className="
           text-2xl
           font-bold
           text-[#0C2B4E]
           dark:text-white
           mb-6
         "
-            >
-              Request History
-            </h2>
+              >
+                Request History
+              </h2>
 
-            {requests.length ? (
-              <div className="space-y-4">
-                {requests.map((request) => (
-                  <div
-                    key={request._id}
-                    className="
+              {requests.length ? (
+                <div className="space-y-4">
+                  {requests.map((request) => (
+                    <div
+                      key={request._id}
+                      className="
                 border
                 border-gray-100
                 dark:border-gray-800
@@ -870,39 +848,42 @@ function Profile() {
                 items-center
                 justify-between
               "
-                  >
-                    <div>
-                      <div className="flex items-center gap-3">
-                        {request.status === "approved" ? (
-                          <CheckCircle2 size={22} className="text-green-600" />
-                        ) : request.status === "rejected" ? (
-                          <XCircle size={22} className="text-red-500" />
-                        ) : (
-                          <Clock3 size={22} className="text-yellow-500" />
-                        )}
+                    >
+                      <div>
+                        <div className="flex items-center gap-3">
+                          {request.status === "approved" ? (
+                            <CheckCircle2
+                              size={22}
+                              className="text-green-600"
+                            />
+                          ) : request.status === "rejected" ? (
+                            <XCircle size={22} className="text-red-500" />
+                          ) : (
+                            <Clock3 size={22} className="text-yellow-500" />
+                          )}
 
-                        <p
-                          className="
+                          <p
+                            className="
                           font-semibold
                           text-[#0C2B4E]
                           dark:text-white
                         "
-                        >
-                          {permissionLabels[request.permissionKey]}
+                          >
+                            {permissionLabels[request.permissionKey]}
+                          </p>
+                        </div>
+
+                        <p className="text-sm text-gray-500 mt-1">
+                          {request.status === "approved"
+                            ? "Permission granted by manager/admin"
+                            : request.status === "rejected"
+                              ? "Request was rejected"
+                              : "Awaiting review"}
                         </p>
                       </div>
 
-                      <p className="text-sm text-gray-500 mt-1">
-                        {request.status === "approved"
-                          ? "Permission granted by manager/admin"
-                          : request.status === "rejected"
-                            ? "Request was rejected"
-                            : "Awaiting review"}
-                      </p>
-                    </div>
-
-                    <span
-                      className={`
+                      <span
+                        className={`
                   px-3
                   py-1
                   rounded-full
@@ -917,25 +898,25 @@ function Profile() {
                         : "bg-yellow-100 text-yellow-700"
                   }
                 `}
-                    >
-                      {request.status}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-10">
-                <p className="text-gray-500">No requests found</p>
-              </div>
-            )}
-          </div>
-        )}
+                      >
+                        {request.status}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-10">
+                  <p className="text-gray-500">No requests found</p>
+                </div>
+              )}
+            </div>
+          )}
 
-        {/* RECENT TEAM ACTIVITY */}
+          {/* RECENT TEAM ACTIVITY */}
 
-        {isManagerOrAdmin && (
-          <div
-            className="
+          {isManagerOrAdmin && (
+            <div
+              className="
               bg-white
               dark:bg-[#111827]
               border
@@ -944,32 +925,32 @@ function Profile() {
               rounded-3xl
               p-6
             "
-          >
-            <h2
-              className="
+            >
+              <h2
+                className="
                 text-2xl
                 font-bold
                 text-[#0C2B4E]
                 dark:text-white
                 mb-6
               "
-            >
-              Recent Team Activity
-            </h2>
+              >
+                Recent Team Activity
+              </h2>
 
-            {auditLogs.length ? (
-              <div
-                className="
+              {auditLogs.length ? (
+                <div
+                  className="
                   grid
                   grid-cols-1
                   lg:grid-cols-2
                   gap-4
                 "
-              >
-                {auditLogs.map((log) => (
-                  <div
-                    key={log._id}
-                    className="
+                >
+                  {auditLogs.map((log) => (
+                    <div
+                      key={log._id}
+                      className="
                       flex
                       items-start
                       justify-between
@@ -979,57 +960,269 @@ function Profile() {
                       rounded-2xl
                       p-4
                     "
-                  >
-                    <div className="flex items-start gap-4">
-                      {(() => {
-                        const Icon =
-                          activityConfig[log.action]?.icon || ShieldCheck;
+                    >
+                      <div className="flex items-start gap-4">
+                        {(() => {
+                          const Icon =
+                            activityConfig[log.action]?.icon || ShieldCheck;
 
-                        return (
-                          <div
-                            className={`
+                          return (
+                            <div
+                              className={`
                               p-3
                               rounded-xl
                               ${activityConfig[log.action]?.iconClass}
                             `}
-                          >
-                            <Icon size={18} />
-                          </div>
-                        );
-                      })()}
+                            >
+                              <Icon size={18} />
+                            </div>
+                          );
+                        })()}
 
-                      <div>
-                        <p className="font-semibold dark:text-white">
-                          {log.userId?.name}
-                        </p>
+                        <div>
+                          <p className="font-semibold dark:text-white">
+                            {log.userId?.name}
+                          </p>
 
-                        <p className="text-sm text-gray-500 mt-1">
-                          {formatAuditDetails(log.details)}
-                        </p>
+                          <p className="text-sm text-gray-500 mt-1">
+                            {formatAuditDetails(log.details)}
+                          </p>
 
-                        <p className="text-xs text-gray-400 mt-2">
-                          {getRelativeTime(log.createdAt)}
-                        </p>
+                          <p className="text-xs text-gray-400 mt-2">
+                            {getRelativeTime(log.createdAt)}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-10">
-                <p className="text-gray-500">No recent activity</p>
-              </div>
-            )}
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-10">
+                  <p className="text-gray-500">No recent activity</p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+        <AvatarGeneratorModal
+          isOpen={showAvatarGenerator}
+          onClose={() => setShowAvatarGenerator(false)}
+          onSelect={generateAvatar}
+          userName={user?.name || "User"}
+        />
+      </DashboardLayout>
+
+      {editingName && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+          <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-800 shadow-2xl p-6">
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-lg font-semibold text-[#0C2B4E] dark:text-white">
+                Edit Name
+              </h3>
+
+              <button
+                type="button"
+                onClick={() => setEditingName(false)}
+                disabled={savingName}
+                className="p-1 text-gray-400 hover:text-gray-700 dark:hover:text-white transition"
+                aria-label="Close"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              autoFocus
+              className="
+                w-full
+                border
+                border-gray-200
+                dark:border-gray-700
+                rounded-xl
+                px-4
+                py-3
+                outline-none
+                bg-white
+                dark:bg-[#1F2937]
+                text-[#0C2B4E]
+                dark:text-white
+                focus:border-[#1D546C]
+              "
+            />
+
+            <button
+              type="button"
+              onClick={updateName}
+              disabled={savingName}
+              className="
+                  w-full
+                  mt-5
+                  px-4
+                  py-3
+                  rounded-xl
+                  bg-[#0C2B4E]
+                  text-white
+                  font-medium
+                  disabled:opacity-50
+                  transition
+                "
+            >
+              {savingName ? "Saving..." : "Confirm"}
+            </button>
           </div>
-        )}
-      </div>
-      <AvatarGeneratorModal
-        isOpen={showAvatarGenerator}
-        onClose={() => setShowAvatarGenerator(false)}
-        onSelect={generateAvatar}
-        userName={user?.name || "User"}
-      />
-    </DashboardLayout>
+        </div>
+      )}
+
+      {showPasswordDialog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+          <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-800 shadow-2xl p-6">
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-lg font-semibold text-[#0C2B4E] dark:text-white">
+                Change Password
+              </h3>
+
+              <button
+                type="button"
+                onClick={() => setShowPasswordDialog(false)}
+                disabled={savingPassword}
+                className="p-1 text-gray-400 hover:text-gray-700 dark:hover:text-white transition"
+                aria-label="Close"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="relative mb-3">
+              <input
+                type={showCurrentPassword ? "text" : "password"}
+                placeholder="Current password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                className="
+                      w-full
+                      border
+                      border-gray-200
+                      dark:border-gray-700
+                      rounded-xl
+                      px-4
+                      py-3
+                      pr-12
+                      outline-none
+                      bg-white
+                      dark:bg-[#1F2937]
+                      text-[#0C2B4E]
+                      dark:text-white
+                      focus:border-[#1D546C]
+                    "
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-white"
+                aria-label={
+                  showCurrentPassword ? "Hide password" : "Show password"
+                }
+              >
+                {showCurrentPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+
+            <div className="relative mb-3">
+              <input
+                type={showNewPassword ? "text" : "password"}
+                placeholder="New password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                className="
+                      w-full
+                      border
+                      border-gray-200
+                      dark:border-gray-700
+                      rounded-xl
+                      px-4
+                      py-3
+                      pr-12
+                      outline-none
+                      bg-white
+                      dark:bg-[#1F2937]
+                      text-[#0C2B4E]
+                      dark:text-white
+                      focus:border-[#1D546C]
+                    "
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowNewPassword(!showNewPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-white"
+                aria-label={showNewPassword ? "Hide password" : "Show password"}
+              >
+                {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+
+            <div className="relative">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Confirm new password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="
+                      w-full
+                      border
+                      border-gray-200
+                      dark:border-gray-700
+                      rounded-xl
+                      px-4
+                      py-3
+                      pr-12
+                      outline-none
+                      bg-white
+                      dark:bg-[#1F2937]
+                      text-[#0C2B4E]
+                      dark:text-white
+                      focus:border-[#1D546C]
+                    "
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-white"
+                aria-label={
+                  showConfirmPassword ? "Hide password" : "Show password"
+                }
+              >
+                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+            <button
+              type="button"
+              onClick={updatePassword}
+              disabled={savingPassword}
+              className="
+                    w-full
+                    mt-5
+                    px-4
+                    py-3
+                    rounded-xl
+                    bg-[#0C2B4E]
+                    text-white
+                    font-medium
+                    disabled:opacity-50
+                    transition
+                  "
+            >
+              {savingPassword ? "Updating..." : "Confirm"}
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
