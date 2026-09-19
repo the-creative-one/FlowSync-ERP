@@ -1,7 +1,7 @@
 import DashboardLayout from "../layouts/DashboardLayout";
 import { useEffect, useState } from "react";
 import api from "../api/axios";
-import { Search } from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
 
 function ActivityLogs() {
   const [logs, setLogs] = useState([]);
@@ -118,41 +118,90 @@ function ActivityLogs() {
         </div>
       ) : (
         <>
-          <div className="mb-6 relative">
-            <Search
-              size={18}
-              className="
-              absolute
-              left-4
-              top-1/2
-              -translate-y-1/2
-              text-gray-400
-            "
-            />
+          <div className="mb-6 flex gap-3 sm:flex-row sm:items-center">
+            <div className="relative flex-1">
+              <Search
+                size={18}
+                className="
+        absolute
+        left-4
+        top-1/2
+        -translate-y-1/2
+        text-gray-400
+      "
+              />
 
-            <input
-              type="text"
-              placeholder="Search user, action, module or order ID..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="
-                  w-full
-                  rounded
-                  border
-                  border-gray-200
-                  dark:border-gray-700
-                  bg-[#F8FAFC]
-                  dark:bg-[#0F172A]
-                  pl-11
-                  pr-4
-                  py-3
-                  dark:text-white
-                  placeholder:text-gray-400
-                  outline-none
-                  focus:border-[#2563EB]
-                  transition
-                "
-            />
+              <input
+                type="text"
+                placeholder="Search for user activities..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="
+        w-full
+        rounded
+        border
+        border-gray-200
+        dark:border-gray-700
+        bg-[#F8FAFC]
+        dark:bg-[#0F172A]
+        pl-11
+        pr-4
+        py-3
+        dark:text-white
+        placeholder:text-gray-400
+        outline-none
+        focus:border-[#2563EB]
+        transition
+      "
+              />
+            </div>
+
+            <div className="flex items-center gap-2 text-md text-gray-500 dark:text-gray-400 shrink-0">
+              <div className="relative">
+                <select
+                  value={logsPerPage}
+                  onChange={(e) => {
+                    setLogsPerPage(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className="
+                    appearance-none
+                    rounded
+                    border
+                    border-gray-200
+                    dark:border-gray-700
+                    bg-white
+                    dark:bg-[#111827]
+                    px-3
+                    pr-8
+                    py-3
+                    text-gray-700
+                    dark:text-white
+                    outline-none
+                    focus:border-[#2563EB]
+                    cursor-pointer
+                  "
+                >
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+                </select>
+
+                <ChevronDown
+                  size={15}
+                  className="
+                    pointer-events-none
+                    absolute
+                    right-2.5
+                    top-1/2
+                    -translate-y-1/2
+                    text-gray-500
+                    dark:text-gray-300
+                  "
+                />
+              </div>
+            </div>
           </div>
           <div className="hidden lg:block overflow-x-auto">
             <table className="w-full dark:bg-[#111827] bg-white">
@@ -336,112 +385,83 @@ function ActivityLogs() {
               </div>
             ))}
           </div>
-          <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-              <span>Show</span>
+          <div className="mt-6 flex flex-col justify-center items-center gap-3">
+            {/* Pagination */}
 
-              <select
-                value={logsPerPage}
-                onChange={(e) => {
-                  setLogsPerPage(Number(e.target.value));
-                  setCurrentPage(1);
-                }}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setCurrentPage((prev) => prev - 1)}
+                disabled={currentPage === 1}
                 className="
-                  rounded
-                  border
-                  border-gray-200
-                  dark:border-gray-700
-                  bg-white
-                  dark:bg-[#111827]
-                  px-3
-                  py-2
-                  text-gray-700
-                  dark:text-white
-                  outline-none
-                  focus:border-[#2563EB]
-                "
+        px-4
+        py-2
+        rounded
+        border
+        border-gray-200
+        dark:border-gray-700
+        text-sm
+        font-medium
+        dark:text-white
+        disabled:opacity-40
+        disabled:cursor-not-allowed
+        hover:bg-gray-50
+        dark:hover:bg-[#1A2438]
+        transition
+      "
               >
-                <option value={10}>10</option>
-                <option value={25}>25</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
-              </select>
+                Previous
+              </button>
 
-              <span>per page</span>
+              <span
+                className="
+        px-4
+        py-2
+        rounded
+        bg-[#0C2B4E]
+        text-white
+        text-sm
+        font-medium
+      "
+              >
+                {currentPage} / {totalPages}
+              </span>
+
+              <button
+                onClick={() => setCurrentPage((prev) => prev + 1)}
+                disabled={currentPage === totalPages}
+                className="
+        px-4
+        py-2
+        rounded
+        border
+        border-gray-200
+        dark:border-gray-700
+        text-sm
+        font-medium
+        dark:text-white
+        disabled:opacity-40
+        disabled:cursor-not-allowed
+        hover:bg-gray-50
+        dark:hover:bg-[#1A2438]
+        transition
+      "
+              >
+                Next
+              </button>
             </div>
 
-            <div className="flex items-center justify-between gap-3 sm:justify-end">
-              <p className="text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">
-                {totalLogs === 0
-                  ? "0 logs"
-                  : `${(currentPage - 1) * logsPerPage + 1}-${Math.min(
-                      currentPage * logsPerPage,
-                      totalLogs,
-                    )} of ${totalLogs}`}
-              </p>
+            {/* Result Count */}
 
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setCurrentPage((prev) => prev - 1)}
-                  disabled={currentPage === 1}
-                  className="
-          px-4
-          py-2
-          rounded
-          border
-          border-gray-200
-          dark:border-gray-700
-          text-sm
-          font-medium
-          dark:text-white
-          disabled:opacity-40
-          disabled:cursor-not-allowed
-          hover:bg-gray-50
-          dark:hover:bg-[#1A2438]
-          transition
-        "
-                >
-                  Previous
-                </button>
+            <p className="sm:hidden text-sm text-gray-500 dark:text-gray-400">
+              Result{" "}
+              {totalLogs === 0
+                ? "0 logs"
+                : `${(currentPage - 1) * logsPerPage + 1}-${Math.min(
+                    currentPage * logsPerPage,
+                    totalLogs,
+                  )} of ${totalLogs}`}
+            </p>
 
-                <span
-                  className="
-          px-4
-          py-2
-          rounded
-          bg-[#0C2B4E]
-          text-white
-          text-sm
-          font-medium
-        "
-                >
-                  {currentPage} of {totalPages}
-                </span>
-
-                <button
-                  onClick={() => setCurrentPage((prev) => prev + 1)}
-                  disabled={currentPage === totalPages}
-                  className="
-          px-4
-          py-2
-          rounded
-          border
-          border-gray-200
-          dark:border-gray-700
-          text-sm
-          font-medium
-          dark:text-white
-          disabled:opacity-40
-          disabled:cursor-not-allowed
-          hover:bg-gray-50
-          dark:hover:bg-[#1A2438]
-          transition
-        "
-                >
-                  Next
-                </button>
-              </div>
-            </div>
           </div>
         </>
       )}
