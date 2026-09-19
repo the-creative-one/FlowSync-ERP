@@ -115,7 +115,7 @@ function Features() {
                   rounded-3xl
                   p-8
                   border
-                  border-gray-100
+                  border-gray-200
                   dark:border-gray-800
                   hover:-translate-y-2
                   transition-all

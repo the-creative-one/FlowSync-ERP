@@ -32,7 +32,7 @@ function DeleteConfirmModal({
           border
           border-gray-100
           dark:border-gray-800
-          rounded-3xl
+          rounded-xl
           shadow-2xl
           md:p-8
           p-6
@@ -86,7 +86,7 @@ function DeleteConfirmModal({
             className="
               flex-1
               py-3
-              rounded-xl
+              rounded
               border
               border-gray-300
               dark:border-gray-700
@@ -105,7 +105,7 @@ function DeleteConfirmModal({
             className="
               flex-1
               py-3
-              rounded-xl
+              rounded
               bg-red-500
               hover:bg-red-600
               text-white

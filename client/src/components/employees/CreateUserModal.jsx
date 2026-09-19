@@ -66,7 +66,7 @@ function CreateUserModal({ isOpen, onClose, onUserCreated, currentUserRole }) {
           border
           border-gray-100
           dark:border-gray-800
-          rounded-3xl
+          rounded-xl
           shadow-2xl
           relative
           overflow-visible
@@ -120,7 +120,7 @@ function CreateUserModal({ isOpen, onClose, onUserCreated, currentUserRole }) {
                       dark:text-white
                       dark:placeholder:text-gray-400
                       p-3
-                      rounded-xl
+                      rounded
                       outline-none
                       transition
                       focus:border-[#1D546C]
@@ -147,7 +147,7 @@ function CreateUserModal({ isOpen, onClose, onUserCreated, currentUserRole }) {
                       dark:text-white
                       dark:placeholder:text-gray-400
                       p-3
-                      rounded-xl
+                      rounded
                       outline-none
                       transition
                       focus:border-[#1D546C]
@@ -172,7 +172,7 @@ function CreateUserModal({ isOpen, onClose, onUserCreated, currentUserRole }) {
           bg-white
           dark:bg-[#1F2937]
           dark:text-white
-          rounded-xl
+          rounded
           px-4
           py-3
           flex
@@ -221,29 +221,9 @@ function CreateUserModal({ isOpen, onClose, onUserCreated, currentUserRole }) {
               </div>
               <div className="flex justify-end gap-3 pt-3">
                 <button
-                  type="button"
-                  onClick={onClose}
-                  className="
-                      px-5
-                      py-3
-                      rounded-xl
-                      border
-                      border-gray-300
-                      dark:border-gray-700
-                      text-gray-700
-                      dark:text-gray-300
-                      hover:bg-gray-100
-                      dark:hover:bg-[#1F2937]
-                      transition
-                    "
-                >
-                  Cancel
-                </button>
-
-                <button
                   type="submit"
                   disabled={loading}
-                  className="px-5 py-3 rounded-xl bg-[#1D546C] text-white"
+                  className="px-5 py-3 rounded bg-[#1D546C] text-white"
                 >
                   {loading ? "Creating..." : "Create User"}
                 </button>

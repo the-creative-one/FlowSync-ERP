@@ -137,7 +137,7 @@ function ActivityLogs() {
               onChange={(e) => setSearch(e.target.value)}
               className="
                   w-full
-                  rounded-2xl
+                  rounded
                   border
                   border-gray-200
                   dark:border-gray-700
@@ -154,7 +154,7 @@ function ActivityLogs() {
                 "
             />
           </div>
-          <div className="hidden xl:block overflow-x-auto">
+          <div className="hidden lg:block overflow-x-auto">
             <table className="w-full dark:bg-[#111827] bg-white">
               <thead
                 className="
@@ -255,7 +255,7 @@ function ActivityLogs() {
           </div>
 
           {/* Mobile Cards Layout */}
-          <div className="xl:hidden space-y-4">
+          <div className="lg:hidden space-y-4">
             {filteredLogs.map((log) => (
               <div
                 key={log._id}
@@ -263,7 +263,7 @@ function ActivityLogs() {
                       border
                       border-gray-100
                       dark:border-gray-800
-                      rounded-2xl
+                      rounded
                       p-4
                       dark:bg-[#0F172A]
                     "
@@ -347,19 +347,19 @@ function ActivityLogs() {
                   setCurrentPage(1);
                 }}
                 className="
-        rounded-xl
-        border
-        border-gray-200
-        dark:border-gray-700
-        bg-white
-        dark:bg-[#111827]
-        px-3
-        py-2
-        text-gray-700
-        dark:text-white
-        outline-none
-        focus:border-[#2563EB]
-      "
+                  rounded
+                  border
+                  border-gray-200
+                  dark:border-gray-700
+                  bg-white
+                  dark:bg-[#111827]
+                  px-3
+                  py-2
+                  text-gray-700
+                  dark:text-white
+                  outline-none
+                  focus:border-[#2563EB]
+                "
               >
                 <option value={10}>10</option>
                 <option value={25}>25</option>
@@ -387,7 +387,7 @@ function ActivityLogs() {
                   className="
           px-4
           py-2
-          rounded-xl
+          rounded
           border
           border-gray-200
           dark:border-gray-700
@@ -408,14 +408,14 @@ function ActivityLogs() {
                   className="
           px-4
           py-2
-          rounded-xl
+          rounded
           bg-[#0C2B4E]
           text-white
           text-sm
           font-medium
         "
                 >
-                  {currentPage} / {totalPages}
+                  {currentPage} of {totalPages}
                 </span>
 
                 <button
@@ -424,7 +424,7 @@ function ActivityLogs() {
                   className="
           px-4
           py-2
-          rounded-xl
+          rounded
           border
           border-gray-200
           dark:border-gray-700

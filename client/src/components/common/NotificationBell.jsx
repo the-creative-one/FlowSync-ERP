@@ -64,7 +64,7 @@ function NotificationBell() {
           relative
           w-11
           h-11
-          rounded-xl
+          rounded-4xl
           flex
           items-center
           justify-center

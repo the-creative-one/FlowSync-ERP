@@ -11,21 +11,19 @@ function ThemeToggle() {
       onClick={() => setTheme(isDark ? "light" : "dark")}
       className="
         w-11 h-11
-        rounded-2xl
+        rounded-full
         border
-        border-gray-200
-        dark:border-gray-700
-        bg-white
-        dark:bg-[#111827]
-        text-[#0C2B4E]
-        dark:text-white
+        border-gray-500
+      dark:border-gray-700
+      bg-[#0F172A]
+      dark:bg-white
+      text-white
+      dark:text-[#183657]
         flex
         items-center
         justify-center
         transition
         hover:scale-105
-        hover:bg-gray-100
-        dark:hover:bg-gray-800
       "
     >
       {isDark ? <Sun size={20} /> : <Moon size={20} />}

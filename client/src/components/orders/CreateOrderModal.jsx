@@ -32,7 +32,7 @@ function CreateOrderModal({
           border
           border-gray-100
           dark:border-gray-800
-          rounded-3xl
+          rounded-xl
           shadow-2xl
           p-6
           md:p-8
@@ -41,7 +41,6 @@ function CreateOrderModal({
         "
       >
         {/* CLOSE BUTTON */}
-
         <button
           onClick={() => setShowModal(false)}
           className="
@@ -94,7 +93,7 @@ function CreateOrderModal({
               dark:text-white
               dark:placeholder:text-gray-400
               p-3
-              rounded-xl
+              rounded
               outline-none
               transition
               focus:border-[#1D546C]
@@ -121,7 +120,7 @@ function CreateOrderModal({
               dark:text-white
               dark:placeholder:text-gray-400
               p-3
-              rounded-xl
+              rounded
               outline-none
               transition
               focus:border-[#1D546C]
@@ -148,7 +147,7 @@ function CreateOrderModal({
               dark:text-white
               dark:placeholder:text-gray-400
               p-3
-              rounded-xl
+              rounded
               outline-none
               transition
               focus:border-[#1D546C]
@@ -175,7 +174,7 @@ function CreateOrderModal({
               dark:text-white
               dark:placeholder:text-gray-400
               p-3
-              rounded-xl
+              rounded
               outline-none
               transition
               focus:border-[#1D546C]
@@ -185,24 +184,6 @@ function CreateOrderModal({
           {/* ACTION BUTTONS */}
 
           <div className="flex justify-end gap-3 pt-4">
-            <button
-              onClick={() => setShowModal(false)}
-              className="
-                px-5
-                py-3
-                rounded-xl
-                border
-                border-gray-300
-                dark:border-gray-700
-                text-gray-700
-                dark:text-gray-300
-                hover:bg-gray-100
-                dark:hover:bg-[#1F2937]
-                transition
-              "
-            >
-              Cancel
-            </button>
 
             <button
               onClick={createOrder}
@@ -212,7 +193,8 @@ function CreateOrderModal({
                 text-white
                 px-5
                 py-3
-                rounded-xl
+                rounded
+                w-full
                 transition
               "
             >

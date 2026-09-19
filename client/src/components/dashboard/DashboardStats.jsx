@@ -73,7 +73,7 @@ function DashboardStats({ stats }) {
               border
               border-gray-100
               dark:border-gray-800
-              rounded-3xl
+              rounded-sm
               p-6
               shadow-sm
               hover:shadow-xl
@@ -103,7 +103,7 @@ function DashboardStats({ stats }) {
                 className={`
                   w-14
                   h-14
-                  rounded-2xl
+                  rounded-full
                   flex
                   items-center
                   justify-center

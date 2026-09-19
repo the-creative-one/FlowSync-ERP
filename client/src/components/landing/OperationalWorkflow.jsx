@@ -121,7 +121,7 @@ function OperationalWorkflow() {
                     w-16
                     h-16
                     mx-auto
-                    rounded-3xl
+                    rounded-full
                     bg-white
                     dark:bg-[#111827]
                     border

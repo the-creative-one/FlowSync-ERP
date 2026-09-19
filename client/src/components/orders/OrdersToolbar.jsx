@@ -22,7 +22,7 @@ function OrdersToolbar({
         border
         border-gray-100
         dark:border-gray-800
-        rounded-3xl
+        rounded-sm
         p-5
         md:p-6
         shadow-sm
@@ -31,20 +31,17 @@ function OrdersToolbar({
     >
       <div className="space-y-5">
         {/* TOP SECTION */}
-
         <div
           className="
             flex
             flex-col
             gap-5
-
             min-[450px]:flex-row
             min-[450px]:items-start
             min-[450px]:justify-between
           "
         >
           {/* LEFT */}
-
           <div className="shrink-0">
             <h2
               className="
@@ -57,7 +54,6 @@ function OrdersToolbar({
             >
               Orders Overview
             </h2>
-
             <p
               className="
                 mt-2
@@ -96,7 +92,7 @@ function OrdersToolbar({
                 className="
                   h-12
                   w-12
-                  rounded-xl
+                  rounded-full
                   bg-[#1D546C]
                   hover:bg-[#16485c]
                   text-white
@@ -145,7 +141,7 @@ function OrdersToolbar({
               className="
                 w-full
                 h-14
-                rounded-2xl
+                rounded-md
                 border
                 border-gray-200
                 dark:border-[#243041]
@@ -227,7 +223,7 @@ function OrdersToolbar({
               className="
                 w-full
                 h-14
-                rounded-2xl
+                rounded-sm
                 border
                 border-gray-200
                 dark:border-[#243041]
@@ -312,7 +308,6 @@ function OrdersToolbar({
                   className="
                     h-12
                     w-12                   
-                    rounded-2xl
                     bg-[#1D546C]
                     hover:bg-[#16485c]
                     text-white

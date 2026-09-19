@@ -101,7 +101,7 @@ function ContactFAQ() {
                 delay: index * 0.08,
               }}
               className="
-                rounded-3xl
+                rounded-sm
                 border
                 border-slate-200
                 dark:border-slate-800

@@ -503,7 +503,7 @@ function Analytics() {
             className="
               bg-white
               dark:bg-[#111827]
-              rounded-3xl
+              rounded-sm
               p-5
               md:p-6
               shadow-sm
@@ -541,7 +541,7 @@ function Analytics() {
             className="
               bg-white
               dark:bg-[#111827]
-              rounded-3xl
+              rounded-sm
               p-5
               md:p-6
               shadow-sm
@@ -579,7 +579,7 @@ function Analytics() {
             className="
               bg-white
               dark:bg-[#111827]
-              rounded-3xl
+              rounded-sm
               p-5
               md:p-6
               shadow-sm
@@ -617,7 +617,7 @@ function Analytics() {
             className="
               bg-white
               dark:bg-[#111827]
-              rounded-3xl
+              rounded-sm
               p-5
               md:p-6
               shadow-sm
@@ -661,7 +661,7 @@ function Analytics() {
             className="
               bg-white
               dark:bg-[#111827]
-              rounded-3xl
+              rounded-sm
               p-5
               md:p-6
               shadow-sm
@@ -768,7 +768,7 @@ function Analytics() {
                     <Bar
                       dataKey="revenue"
                       fill="#1D546C"
-                      radius={[12, 12, 0, 0]}
+                      radius={[4, 4, 0, 0]}
                       activeBar={false}
                     />
                   </BarChart>
@@ -872,7 +872,7 @@ function Analytics() {
             className="
               bg-white
               dark:bg-[#111827]
-              rounded-3xl
+              rounded-sm
               p-5
               md:p-6
               shadow-sm
@@ -979,7 +979,7 @@ function Analytics() {
           className="
             bg-white
             dark:bg-[#111827]
-            rounded-3xl
+            rounded-sm
             shadow-sm
             border
             border-gray-100
@@ -1064,7 +1064,7 @@ function Analytics() {
                   className="
           w-full
           h-11
-          rounded-2xl
+          rounded-sm
           border
           border-gray-200
           dark:border-gray-700
@@ -1282,7 +1282,7 @@ function Analytics() {
                   key={order._id}
                   className="
                     border
-                    border-gray-100
+                    border-gray-200
                     dark:border-gray-800
                     rounded-2xl
                     p-4

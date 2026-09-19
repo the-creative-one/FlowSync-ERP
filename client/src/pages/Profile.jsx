@@ -474,7 +474,7 @@ function Profile() {
               border
               border-gray-100
               dark:border-gray-800
-              rounded-3xl
+              rounded-xl
               p-8
               text-center
               shadow-sm
@@ -685,7 +685,7 @@ function Profile() {
                 <div
                   key={key}
                   className="
-                  rounded-2xl
+                  rounded
                   border
                   border-gray-200
                   dark:border-gray-800
@@ -760,7 +760,7 @@ function Profile() {
         border
         border-gray-100
         dark:border-gray-800
-        rounded-3xl
+        rounded-xl
         p-6
       "
             >
@@ -827,7 +827,7 @@ function Profile() {
         border
         border-gray-100
         dark:border-gray-800
-        rounded-3xl
+        rounded-xl
         p-6
       "
             >
@@ -852,7 +852,7 @@ function Profile() {
                 border
                 border-gray-100
                 dark:border-gray-800
-                rounded-2xl
+                rounded-xl
                 p-5
                 flex
                 items-center
@@ -932,7 +932,7 @@ function Profile() {
               border
               border-gray-100
               dark:border-gray-800
-              rounded-3xl
+              rounded-xl
               p-6
             "
             >
@@ -967,7 +967,7 @@ function Profile() {
                       border
                       border-gray-200
                       dark:border-gray-800
-                      rounded-2xl
+                      rounded
                       p-4
                     "
                     >
@@ -980,7 +980,7 @@ function Profile() {
                             <div
                               className={`
                               p-3
-                              rounded-xl
+                              rounded-full
                               ${activityConfig[log.action]?.iconClass}
                             `}
                             >
@@ -1024,7 +1024,7 @@ function Profile() {
 
       {editingName && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-          <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-800 shadow-2xl p-6">
+          <div className="w-full max-w-sm rounded-xl bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-800 shadow-2xl p-6">
             <div className="flex items-center justify-between mb-5">
               <h3 className="text-lg font-semibold text-[#0C2B4E] dark:text-white">
                 Edit Name
@@ -1051,7 +1051,7 @@ function Profile() {
                 border
                 border-gray-200
                 dark:border-gray-700
-                rounded-xl
+                rounded
                 px-4
                 py-3
                 outline-none
@@ -1072,7 +1072,7 @@ function Profile() {
                   mt-5
                   px-4
                   py-3
-                  rounded-xl
+                  rounded
                   bg-[#0C2B4E]
                   text-white
                   font-medium
@@ -1088,7 +1088,7 @@ function Profile() {
 
       {showPasswordDialog && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-          <div className="w-full max-w-md rounded-2xl bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-800 shadow-2xl p-6">
+          <div className="w-full max-w-md rounded-xl bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-800 shadow-2xl p-6">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-xl font-bold text-[#0C2B4E] dark:text-white">
                 Change Password
@@ -1126,7 +1126,7 @@ function Profile() {
                 border
                 border-gray-300
                 dark:border-gray-700
-                rounded-xl
+                rounded
                 py-3
                 px-4
                 pr-12
@@ -1185,7 +1185,7 @@ function Profile() {
         border
         border-gray-300
         dark:border-gray-700
-        rounded-xl
+        rounded
         py-3
         px-4
         pr-12
@@ -1226,7 +1226,7 @@ function Profile() {
                   <div
                     className="
       mt-2
-      rounded-2xl
+      rounded
       bg-gray-50
       dark:bg-[#0F172A]
       border
@@ -1301,7 +1301,7 @@ function Profile() {
                 border
                 border-gray-300
                 dark:border-gray-700
-                rounded-xl
+                rounded
                 py-3
                 px-4
                 pr-12
@@ -1357,7 +1357,7 @@ function Profile() {
           dark:hover:bg-blue-500
           text-white
           py-3
-          rounded-xl
+          rounded
           font-semibold
           transition
           duration-300

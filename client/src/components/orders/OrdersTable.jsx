@@ -100,7 +100,7 @@ function OrdersTable({
         border
         border-gray-100
         dark:border-gray-800
-        rounded-3xl
+        rounded
         shadow-sm
         overflow-hidden
         transition-colors

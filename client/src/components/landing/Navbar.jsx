@@ -31,7 +31,7 @@ function Navbar() {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0C2B4E]/95 backdrop-blur-md border-b border-[#1D546C] dark:bg-[#020817]/95 dark:border-[#111827] transition-colors">
-      <div className="mx-auto px-4 md:px-12 h-20 flex items-center justify-between">
+      <div className="mx-auto  px-4 md:ps-12 md:pe-8 h-20 flex items-center justify-between">
         {/* Logo */}
 
         <Link to="/">
@@ -96,18 +96,16 @@ function Navbar() {
         {/* Desktop Buttons */}
 
         <div className="hidden lg:flex items-center gap-3">
-          <ThemeToggle />
-
           {!loading &&
             (user ? (
               <Link
                 to="/dashboard"
                 title="Dashboard"
                 className="
-        hover:scale-105
-        transition-transform
-        duration-200
-      "
+                    hover:scale-105
+                    transition-transform
+                    duration-200
+                  "
               >
                 <UserAvatar user={user} size="sm" iconClassName="text-white" />
               </Link>
@@ -116,45 +114,25 @@ function Navbar() {
                 <Link
                   to="/login"
                   className="
-          px-5
-          py-2
-          rounded-xl
-          border
-          border-white/30
-          text-white
-          hover:bg-white
-          hover:text-[#0C2B4E]
-          transition
-        "
+                      mt-0.5
+                      px-6
+                      py-2
+                      rounded-sm
+                      border
+                      border-gray-400
+                      text-white
+                      hover:bg-white
+                      hover:text-[#0C2B4E]
+                      hover:border-white
+                      transition-all
+                      duration-300
+                    "
                 >
                   Login
                 </Link>
-
-                <Link
-                  to="/register"
-                  className="
-          px-5
-          py-2
-          rounded-xl
-          bg-white
-          text-[#0C2B4E]
-          font-medium
-          hover:bg-[#0C2B4E]
-          hover:text-white
-          hover:border
-          hover:border-white/40
-          transition
-          dark:bg-white
-          dark:text-[#020817]
-          dark:hover:bg-[#020817]
-          dark:hover:text-white
-          dark:hover:border-white/40
-        "
-                >
-                  Register
-                </Link>
               </>
             ))}
+          <ThemeToggle />
         </div>
 
         {/* Mobile Button */}
@@ -264,24 +242,6 @@ function Navbar() {
                       onClick={() => setMobileOpen(false)}
                       className="
                         text-center
-                        border
-                        border-white/30
-                        text-white
-                        py-3
-                        rounded-xl
-                        hover:bg-white
-                        hover:text-[#0C2B4E]
-                        transition
-                      "
-                    >
-                      Login
-                    </Link>
-
-                    <Link
-                      to="/register"
-                      onClick={() => setMobileOpen(false)}
-                      className="
-                        text-center
                         bg-white
                         text-[#0C2B4E]
                         py-3
@@ -291,7 +251,7 @@ function Navbar() {
                         transition
                       "
                     >
-                      Register
+                      Login
                     </Link>
                   </>
                 ))}

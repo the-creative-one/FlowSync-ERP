@@ -101,7 +101,7 @@ function Workflow() {
                   rounded-3xl
                   p-8
                   border
-                  border-gray-100
+                  border-gray-200
                   dark:border-gray-800
                   text-center
                 "
@@ -111,7 +111,7 @@ function Workflow() {
                     w-16
                     h-16
                     mx-auto
-                    rounded-2xl
+                    rounded-full
                     bg-[#0C2B4E]
                     flex
                     items-center

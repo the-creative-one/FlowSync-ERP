@@ -46,7 +46,7 @@ function ExportDropdown({
                 relative
                 h-12
                 w-12
-                rounded-xl
+                rounded-full
                 bg-[#1D546C]
                 hover:bg-[#16485c]
                 text-white
@@ -64,7 +64,7 @@ function ExportDropdown({
                 items-center
                 justify-center
                 gap-2
-                rounded-xl
+                rounded-sm
                 border
                 border-gray-200
                 dark:border-gray-700

@@ -44,7 +44,7 @@ function WelcomeHero({ user }) {
       className="
         relative
         overflow-hidden
-        rounded-3xl
+        rounded-sm
         bg-gradient-to-r
         from-[#0f2d40]
         via-[#164766]

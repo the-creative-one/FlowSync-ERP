@@ -7,9 +7,7 @@ import {
   Pencil,
   X,
   Receipt,
-  ShoppingCart,
   Wallet,
-  Package,
   ClipboardList,
   ChevronDown,
 } from "lucide-react";
@@ -110,7 +108,7 @@ function Settings() {
           border
           border-gray-100
           dark:border-gray-800
-          rounded-3xl
+          rounded-xl
           overflow-hidden
         "
         >
@@ -129,7 +127,7 @@ function Settings() {
               -mt-12
               w-24
               h-24
-              rounded-3xl
+              rounded-xl
               bg-white
               dark:bg-[#1F2937]
               border-4
@@ -170,7 +168,7 @@ function Settings() {
                         text-white
                         px-5
                         py-3
-                        rounded-xl
+                        rounded
                         items-center
                         gap-2
                         transition
@@ -193,7 +191,7 @@ function Settings() {
                         right-3
                         w-11
                         h-11
-                        rounded-xl
+                        rounded-full
                         bg-[#1D546C]
                         hover:bg-[#16485c]
                         text-white
@@ -222,7 +220,7 @@ function Settings() {
                   className="
                   bg-[#F8FAFC]
                   dark:bg-[#1F2937]
-                  rounded-2xl
+                  rounded
                   p-5
                 "
                 >
@@ -241,7 +239,7 @@ function Settings() {
                   className="
                   bg-[#F8FAFC]
                   dark:bg-[#1F2937]
-                  rounded-2xl
+                  rounded
                   p-5
                 "
                 >
@@ -260,7 +258,7 @@ function Settings() {
                   className="
                   bg-[#F8FAFC]
                   dark:bg-[#1F2937]
-                  rounded-2xl
+                  rounded
                   p-5
                   md:col-span-2
                 "
@@ -289,7 +287,7 @@ function Settings() {
             border
             border-gray-100
             dark:border-gray-800
-            rounded-3xl
+            rounded-xl
             md:p-6
             p-4
           "
@@ -324,7 +322,7 @@ function Settings() {
                     text-white
                     px-5
                     py-3
-                    rounded-xl
+                    rounded
                     items-center
                     gap-2
                     transition
@@ -343,7 +341,7 @@ function Settings() {
                     md:hidden
                     w-11
                     h-11
-                    rounded-xl
+                    rounded-full
                     bg-[#1D546C]
                     text-white
                     flex
@@ -362,7 +360,7 @@ function Settings() {
               className="
                 bg-[#F8FAFC]
                 dark:bg-[#1F2937]
-                rounded-2xl
+                rounded
                 p-5
               "
             >
@@ -387,7 +385,7 @@ function Settings() {
               className="
                 bg-[#F8FAFC]
                 dark:bg-[#1F2937]
-                rounded-2xl
+                rounded
                 p-5
               "
             >
@@ -420,7 +418,7 @@ function Settings() {
               className="
               bg-white
               dark:bg-[#111827]
-              rounded-3xl
+              rounded-xl
               w-full
               max-w-2xl
               p-6
@@ -453,7 +451,7 @@ function Settings() {
                   }
                   className="
                   w-full
-                  rounded-2xl
+                  rounded
                   border
                   border-gray-200
                   dark:border-gray-700
@@ -477,7 +475,7 @@ function Settings() {
                   }
                   className="
                   w-full
-                  rounded-2xl
+                  rounded
                   border
                   border-gray-200
                   dark:border-gray-700
@@ -501,7 +499,7 @@ function Settings() {
                   }
                   className="
                   w-full
-                  rounded-2xl
+                  rounded
                   border
                   border-gray-200
                   dark:border-gray-700
@@ -525,7 +523,7 @@ function Settings() {
                   }
                   className="
                   w-full
-                  rounded-2xl
+                  rounded
                   border
                   border-gray-200
                   dark:border-gray-700
@@ -539,24 +537,7 @@ function Settings() {
               </div>
 
               <div className="mt-6 flex justify-end gap-3">
-                <button
-                  onClick={() => {
-                    setEditSettings({ ...settings });
-                    setShowEditModal(false);
-                  }}
-                  className="
-                  px-5
-                  py-3
-                  rounded-xl
-                  border
-                  border-gray-300
-                  dark:border-gray-600
-                "
-                >
-                  Cancel
-                </button>
-
-                <button
+                  <button
                   onClick={async () => {
                     await saveSettings();
                     setShowEditModal(false);
@@ -567,7 +548,7 @@ function Settings() {
                   text-white
                   px-6
                   py-3
-                  rounded-xl
+                  rounded
                 "
                 >
                   Save Changes
@@ -593,7 +574,7 @@ function Settings() {
               className="
                 bg-white
                 dark:bg-[#111827]
-                rounded-3xl
+                rounded-xl
                 w-full
                 max-w-xl
                 p-6
@@ -635,7 +616,7 @@ function Settings() {
                         border
                         border-gray-300
                         dark:border-gray-700
-                        rounded-xl
+                        rounded
                         px-4
                         py-3
                         flex
@@ -668,7 +649,7 @@ function Settings() {
                           border
                           border-gray-200
                           dark:border-gray-700
-                          rounded-2xl
+                          rounded
                           shadow-xl
                           overflow-hidden
                         "
@@ -723,7 +704,7 @@ function Settings() {
                     placeholder="ORD"
                     className="
                       w-full
-                      rounded-2xl
+                      rounded
                       border
                       border-gray-200
                       dark:border-gray-700
@@ -738,24 +719,7 @@ function Settings() {
               </div>
 
               <div className="mt-6 flex justify-end gap-3">
-                <button
-                  onClick={() => {
-                    setEditSettings({ ...settings });
-                    setShowBusinessModal(false);
-                  }}
-                  className="
-                    px-5
-                    py-3
-                    rounded-xl
-                    border
-                    border-gray-300
-                    dark:border-gray-600
-                  "
-                >
-                  Cancel
-                </button>
-
-                <button
+                            <button
                   onClick={async () => {
                     if (!editSettings.orderPrefix.trim()) {
                       return toast.error("Order Prefix is required");
@@ -771,7 +735,7 @@ function Settings() {
                     text-white
                     px-6
                     py-3
-                    rounded-xl
+                    rounded
                   "
                 >
                   Save Changes

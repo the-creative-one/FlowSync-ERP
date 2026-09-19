@@ -65,7 +65,7 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
           <NavLink
             to="/dashboard"
             className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-3 rounded-xl transition ${
+              `flex items-center gap-3 px-4 py-3 rounded-full transition ${
                 isActive ? "bg-[#1D546C]" : "hover:bg-[#1A3D64]"
               }`
             }
@@ -78,7 +78,7 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
           <NavLink
             to="/orders"
             className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-3 rounded-xl transition ${
+              `flex items-center gap-3 px-4 py-3 rounded-full transition ${
                 isActive ? "bg-[#1D546C]" : "hover:bg-[#1A3D64]"
               }`
             }
@@ -92,7 +92,7 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
             <NavLink
               to="/analytics"
               className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-3 rounded-xl transition ${
+                `flex items-center gap-3 px-4 py-3 rounded-full transition ${
                   isActive ? "bg-[#1D546C]" : "hover:bg-[#1A3D64]"
                 }`
               }
@@ -107,7 +107,7 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
             <NavLink
               to="/employees"
               className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-3 rounded-xl transition ${
+                `flex items-center gap-3 px-4 py-3 rounded-full transition ${
                   isActive ? "bg-[#1D546C]" : "hover:bg-[#1A3D64]"
                 }`
               }
@@ -122,7 +122,7 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
             <NavLink
               to="/settings"
               className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-3 rounded-xl transition ${
+                `flex items-center gap-3 px-4 py-3 rounded-full transition ${
                   isActive ? "bg-[#1D546C]" : "hover:bg-[#1A3D64]"
                 }`
               }
@@ -136,7 +136,7 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
             <NavLink
               to="/activity-logs"
               className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-3 rounded-xl transition ${
+                `flex items-center gap-3 px-4 py-3 rounded-full transition ${
                   isActive ? "bg-[#1D546C]" : "hover:bg-[#1A3D64]"
                 }`
               }
@@ -150,7 +150,7 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
         <div className="border-t border-[#1D546C] pt-4">
           <button
             onClick={() => navigate("/profile")}
-            className={`flex items-center gap-3 w-full py-3 rounded-xl transition cursor-pointer ${
+            className={`flex items-center gap-3 w-full py-3 rounded-full transition cursor-pointer ${
               collapsed ? "justify-center hover:scale-94" : "hover:scale-98"
             }`}
           >
@@ -168,7 +168,7 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
 
           <button
             onClick={handleLogout}
-            className="mt-3 w-full bg-[#1D546C] hover:bg-[#16485c] py-3 rounded-xl transition flex items-center justify-center gap-2"
+            className="mt-3 w-full bg-[#1D546C] hover:bg-[#16485c] py-3 rounded-full transition flex items-center justify-center gap-2"
           >
             <LogOut size={18} />
 

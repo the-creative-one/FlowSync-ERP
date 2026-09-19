@@ -147,7 +147,7 @@ function SmartDropdown({
             z-50
            overflow-auto
             max-h-72
-            rounded-3xl
+            rounded-sm
             border
             border-gray-200
             dark:border-[#2A3A52]

@@ -9,7 +9,7 @@ function EmptyOrdersState() {
         border
         border-gray-100
         dark:border-gray-800
-        rounded-3xl
+        rounded-xl
         p-10
         flex
         flex-col

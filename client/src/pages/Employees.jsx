@@ -289,7 +289,7 @@ function Employees() {
               dark:border-gray-700
               px-4
               py-3
-              rounded-xl
+              rounded
               flex
               items-center
               justify-center
@@ -356,8 +356,7 @@ function Employees() {
                 text-white
                 px-5
                 py-3
-                rounded-xl
-                font-medium
+                rounded-sm               font-medium
                 transition
                 flex
                 items-center
@@ -545,7 +544,7 @@ function Employees() {
               {employees.map((employee, index) => (
                 <div
                   key={employee._id}
-                  className="bg-white dark:bg-[#111827] rounded-3xl shadow p-5 border border-gray-100 dark:border-gray-800"
+                  className="bg-white dark:bg-[#111827] rounded-sm shadow p-5 border border-gray-100 dark:border-gray-800"
                 >
                   <div className="flex justify-between items-start">
                     <div className="space-y-5 flex-1">

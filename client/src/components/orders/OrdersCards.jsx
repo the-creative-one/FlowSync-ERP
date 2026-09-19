@@ -26,7 +26,7 @@ function OrdersCards({
             border
             border-gray-100
             dark:border-gray-800
-            rounded-3xl
+            rounded-xl
             shadow-sm
             p-5
             transition-colors

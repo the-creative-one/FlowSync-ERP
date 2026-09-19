@@ -57,7 +57,7 @@ function FilterDropdown({
           h-14
           min-w-[140px]
           px-5
-          rounded-2xl
+          rounded-sm
           border
           border-gray-200
           dark:border-[#294061]
@@ -98,7 +98,7 @@ function FilterDropdown({
             z-[999]
            min-w-[180px]
             overflow-hidden
-            rounded-[28px]
+            rounded-lg
             border
             border-gray-200
             dark:border-[#243041]

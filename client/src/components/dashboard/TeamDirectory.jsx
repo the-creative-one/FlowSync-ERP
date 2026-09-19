@@ -53,7 +53,7 @@ function TeamDirectory() {
   };
 
   return (
-    <div className=" xl:col-span-2 rounded-3xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm p-6  ">
+    <div className=" xl:col-span-2 rounded-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm p-6  ">
       {/* Header */}
 
       <div className="flex items-center justify-between mb-6">
@@ -67,7 +67,7 @@ function TeamDirectory() {
           </h2>
         </div>
 
-        <div className="w-12 h-12 rounded-2xl bg-[#1D546C]/10 flex items-center justify-center">
+        <div className="w-12 h-12 rounded-full bg-[#1D546C]/10 flex items-center justify-center">
           <Users size={24} className="text-[#1D546C]" />
         </div>
       </div>

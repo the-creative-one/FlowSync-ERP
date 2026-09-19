@@ -27,7 +27,7 @@ function EditOrderModal({
         className="
           w-full
           max-w-2xl
-          rounded-3xl
+          rounded-xl
           bg-white
           dark:bg-[#111827]
           border
@@ -39,7 +39,6 @@ function EditOrderModal({
         "
       >
         {/* CLOSE */}
-
         <button
           onClick={() => setShowEditModal(false)}
           className="
@@ -56,7 +55,6 @@ function EditOrderModal({
         </button>
 
         {/* TITLE */}
-
         <h2
           className="
             text-3xl
@@ -107,7 +105,7 @@ function EditOrderModal({
                 mt-2
                 w-full
                 h-12
-                rounded-xl
+                rounded
                 border
                 border-gray-200
                 dark:border-[#243041]
@@ -147,7 +145,7 @@ function EditOrderModal({
                 mt-2
                 w-full
                 h-12
-                rounded-xl
+                rounded
                 border
                 border-gray-200
                 dark:border-[#243041]
@@ -187,7 +185,7 @@ function EditOrderModal({
                 mt-2
                 w-full
                 h-12
-                rounded-xl
+                rounded
                 border
                 border-gray-200
                 dark:border-[#243041]
@@ -227,7 +225,7 @@ function EditOrderModal({
                 mt-2
                 w-full
                 h-12
-                rounded-xl
+                rounded
                 border
                 border-gray-200
                 dark:border-[#243041]
@@ -246,25 +244,11 @@ function EditOrderModal({
 
         <div className="flex justify-end gap-3 mt-8">
           <button
-            onClick={() => setShowEditModal(false)}
-            className="
-              px-5
-              h-12
-              rounded-xl
-              border
-              border-gray-200
-              dark:border-[#243041]
-            "
-          >
-            Cancel
-          </button>
-
-          <button
             onClick={updateOrder}
             className="
               px-6
               h-12
-              rounded-xl
+              rounded
               bg-[#1D546C]
               hover:bg-[#16485c]
               text-white
