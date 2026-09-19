@@ -115,7 +115,7 @@ function TeamDirectory() {
                     "
               >
                 <div className="flex items-center gap-4 min-w-0">
-                  <UserAvatar user={employee} size="md" />
+                  <UserAvatar user={employee} size="md" iconClassName="text-[#0C2B4E] dark:text-white"/>
 
                   <div className="min-w-0">
                     <h3 className="font-semibold text-gray-900 dark:text-white truncate">

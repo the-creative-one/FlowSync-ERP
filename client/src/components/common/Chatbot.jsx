@@ -22,7 +22,6 @@ const welcomeMessage = {
 
 function Chatbot() {
   const { user } = useAuth();
-
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -33,17 +32,19 @@ function Chatbot() {
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    const lastNudge = localStorage.getItem("flowsync_chatbot_nudge");
-
-    if (!lastNudge || Date.now() - Number(lastNudge) > 10 * 60 * 1000) {
-      const timer = setTimeout(() => {
+    const checkNudge = () => {
+      const lastNudge = localStorage.getItem("flowsync_chatbot_nudge");
+      if (!lastNudge || Date.now() - Number(lastNudge) > 10 * 60 * 1000) {
         setShowNudge(true);
-
         localStorage.setItem("flowsync_chatbot_nudge", Date.now().toString());
-      }, 2500);
-
-      return () => clearTimeout(timer);
-    }
+      }
+    };
+    const initialTimer = setTimeout(checkNudge, 2500);
+    const interval = setInterval(checkNudge, 60 * 1000);
+    return () => {
+      clearTimeout(initialTimer);
+      clearInterval(interval);
+    };
   }, []);
 
   useEffect(() => {
@@ -61,17 +62,22 @@ function Chatbot() {
   useEffect(() => {
     if (!isOpen) return;
 
+    if (!user) {
+      setMessages([
+        {
+          ...welcomeMessage,
+          timestamp: new Date(),
+        },
+      ]);
+      setHistoryLoading(false);
+      return;
+    }
+
     const fetchHistory = async () => {
       try {
         setHistoryLoading(true);
 
-        const token = localStorage.getItem("token");
-
-        const response = await api.get("/chatbot/history", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await api.get("/chatbot/history");
 
         const history = response.data.map((item) => ({
           id: item._id,
@@ -96,24 +102,13 @@ function Chatbot() {
         setHistoryLoading(false);
       }
     };
-
     fetchHistory();
-  }, [isOpen]);
+  }, [isOpen, user]);
 
   const getBotResponse = async (userMessage) => {
-    const token = localStorage.getItem("token");
-
-    const response = await api.post(
-      "/chatbot",
-      {
-        message: userMessage,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    );
+    const response = await api.post("/chatbot", {
+      message: userMessage,
+    });
 
     return response.data.reply;
   };
@@ -209,14 +204,19 @@ function Chatbot() {
   const clearConversation = async () => {
     if (loading) return;
 
-    try {
-      const token = localStorage.getItem("token");
-
-      await api.delete("/chatbot/history", {
-        headers: {
-          Authorization: `Bearer ${token}`,
+    if (!user) {
+      setMessages([
+        {
+          ...welcomeMessage,
+          id: `welcome-${Date.now()}`,
+          timestamp: new Date(),
         },
-      });
+      ]);
+      return;
+    }
+
+    try {
+      await api.delete("/chatbot/history");
 
       setMessages([
         {
@@ -285,13 +285,12 @@ function Chatbot() {
       <button
         onClick={() => setIsOpen((prev) => !prev)}
         aria-label="Open FlowSync Assistant"
-        className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-[#2563EB] text-white shadow-lg flex items-center justify-center hover:scale-105 transition-transform"
+        className="fixed bottom-6 right-6 z-[60] w-14 h-14 rounded-full bg-[#2563EB] text-white shadow-lg flex items-center justify-center hover:scale-105 transition-transform"
       >
         {isOpen ? <X size={24} /> : <MessageCircle size={24} />}
       </button>
-
       {isOpen && (
-        <div className="fixed z-50 left-3 right-3 bottom-3 sm:left-auto sm:right-6 sm:bottom-24 w-auto sm:w-[calc(100%-3rem)] max-w-md h-[calc(100vh-6rem)] sm:h-[600px] max-h-[700px] bg-white dark:bg-[#0F172A] border border-gray-200 dark:border-gray-700 rounded-3xl shadow-2xl flex flex-col overflow-hidden">
+        <div className="fixed z-50 left-3 right-3 bottom-20 sm:left-auto sm:right-6 sm:bottom-24 w-auto sm:w-[calc(100%-3rem)] max-w-md sm:h-[600px] lg:h-[560px] bg-white dark:bg-[#0F172A] border border-gray-200 dark:border-gray-700 rounded-3xl shadow-2xl flex flex-col overflow-hidden">
           <div className="px-4 sm:px-5 py-4 bg-[#0C2B4E] text-white">
             <div className="flex items-center gap-3">
               <div className="relative w-10 h-10 shrink-0 rounded-full bg-white/15 flex items-center justify-center">
@@ -308,14 +307,16 @@ function Chatbot() {
                 </p>
               </div>
 
-              <button
-                onClick={clearConversation}
-                disabled={loading || historyLoading}
-                title="Clear conversation"
-                className="w-9 h-9 rounded-xl flex items-center justify-center text-white/70 hover:bg-white/10 hover:text-white transition-colors disabled:opacity-40"
-              >
-                <Trash2 size={17} />
-              </button>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={clearConversation}
+                  disabled={loading || historyLoading}
+                  title="Clear conversation"
+                  className="w-9 h-9 rounded-xl flex items-center justify-center text-white/70  hover:text-white transition-colors disabled:opacity-40"
+                >
+                  <Trash2 size={17} />
+                </button>
+              </div>
             </div>
           </div>
 
@@ -432,7 +433,7 @@ function Chatbot() {
                         <div className="w-8 h-8 shrink-0">
                           <UserAvatar
                             user={user}
-                            size="md"
+                            size="sm"
                             iconClassName="text-[#0C2B4E] dark:text-white"
                           />
                         </div>

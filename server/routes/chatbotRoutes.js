@@ -2,7 +2,8 @@ const express = require("express");
 
 const router = express.Router();
 
-const { protect } = require("../middleware/authMiddleware");
+const { protect, optionalProtect } = require("../middleware/authMiddleware");
+
 const { getChatbotResponse } = require("../utils/chatbot");
 const ChatMessage = require("../models/ChatMessage");
 
@@ -56,7 +57,7 @@ router.delete("/history", protect, async (req, res) => {
 });
 
 // SEND MESSAGE
-router.post("/", protect, async (req, res) => {
+router.post("/", optionalProtect, async (req, res) => {
   try {
     const { message } = req.body;
 
@@ -66,44 +67,57 @@ router.post("/", protect, async (req, res) => {
       });
     }
 
-    const permissions = req.user.permissions || {};
+    const isAuthenticated = !!req.user;
 
-    const userPermissions = {};
+    let userPermissions = {};
+    let conversationHistory = [];
 
-    for (const permission of allowedPermissions) {
-      userPermissions[permission] = !!permissions[permission];
+    if (isAuthenticated) {
+      const permissions = req.user.permissions || {};
+
+      for (const permission of allowedPermissions) {
+        userPermissions[permission] = !!permissions[permission];
+      }
+
+      const previousMessages = await ChatMessage.find({
+        userId: req.user._id,
+      })
+        .sort({ createdAt: -1 })
+        .limit(10)
+        .select("role content");
+
+      conversationHistory = previousMessages.reverse();
     }
-
-    const previousMessages = await ChatMessage.find({
-      userId: req.user._id,
-    })
-      .sort({ createdAt: -1 })
-      .limit(10)
-      .select("role content");
-
-    const conversationHistory = previousMessages.reverse();
 
     const reply = await getChatbotResponse(
       message.trim(),
-      {
-        role: req.user.role,
-        permissions: userPermissions,
-      },
+      isAuthenticated
+        ? {
+            role: req.user.role,
+            permissions: userPermissions,
+          }
+        : {
+            role: "guest",
+            permissions: {},
+          },
       conversationHistory,
     );
 
-    await ChatMessage.create([
-      {
-        userId: req.user._id,
-        role: "user",
-        content: message.trim(),
-      },
-      {
-        userId: req.user._id,
-        role: "assistant",
-        content: reply,
-      },
-    ]);
+    // Save chat history only for logged-in users.
+    if (isAuthenticated) {
+      await ChatMessage.create([
+        {
+          userId: req.user._id,
+          role: "user",
+          content: message.trim(),
+        },
+        {
+          userId: req.user._id,
+          role: "assistant",
+          content: reply,
+        },
+      ]);
+    }
 
     res.json({
       reply,

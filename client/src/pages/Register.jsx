@@ -382,8 +382,7 @@ function Register() {
           flex-1
           flex
           justify-center
-          lg:items-center
-          items-start
+          items-center
           pt-24
           pb-10
           md:pt-16
@@ -396,13 +395,12 @@ function Register() {
         "
       >
         {/* Mobile logo */}
-
         <div className="lg:hidden fixed top-5 left-5 z-20">
           <Link to="/">
             <img
               src="/White-Logo.png"
               alt="FlowSync"
-              className="w-10 h-10 object-contain opacity-90"
+              className="w-40 h-10 object-contain opacity-90"
             />
           </Link>
         </div>

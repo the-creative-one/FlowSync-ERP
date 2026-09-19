@@ -6,7 +6,6 @@ import {
   Clock,
   User,
   MessageSquare,
-  FileText,
   Loader2,
 } from "lucide-react";
 import toast from "react-hot-toast";
@@ -141,7 +140,7 @@ function ContactFormSection() {
           transition={{ duration: 0.7 }}
           className="mx-auto max-w-3xl text-center"
         >
-          <h2 className="mt-6 text-3xl font-semibold text-slate-900 dark:text-white sm:text-4xl">
+          <h2 className="mt-2 text-3xl font-semibold text-slate-900 dark:text-white sm:text-4xl">
             Ready to talk about your workflow goals?
           </h2>
           <p className="mt-4 text-base leading-8 text-slate-600 dark:text-slate-400">
@@ -400,12 +399,16 @@ function ContactFormSection() {
                 </ul>
               </div>
               <div className="rounded-3xl border border-slate-200/80 bg-white dark:border-slate-800 dark:bg-[#08101F] p-5">
-                <h4 className="text-slate-900 dark:text-white font-semibold mb-3">Availability</h4>
+                <h4 className="text-slate-900 dark:text-white font-semibold mb-3">
+                  Availability
+                </h4>
 
                 <div className="flex items-center gap-3">
                   <div className="h-3 w-3 rounded-full bg-green-500 animate-pulse"></div>
 
-                  <span className="text-slate-400 dark:text-slate-500">Accepting new projects</span>
+                  <span className="text-slate-400 dark:text-slate-500">
+                    Accepting new projects
+                  </span>
                 </div>
 
                 <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">

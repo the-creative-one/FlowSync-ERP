@@ -7,13 +7,8 @@ const protect = async (req, res, next) => {
     let token;
 
     // Check Authorization Header
-    if (
-      req.headers.authorization?.startsWith(
-        "Bearer"
-      )
-    ) {
-      token =
-        req.headers.authorization.split(" ")[1];
+    if (req.headers.authorization?.startsWith("Bearer")) {
+      token = req.headers.authorization.split(" ")[1];
     }
 
     // No Token
@@ -24,15 +19,10 @@ const protect = async (req, res, next) => {
     }
 
     // Verify Token
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET
-    );
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // Get User
-    const user = await User.findById(
-      decoded.id
-    ).select("-password");
+    const user = await User.findById(decoded.id).select("-password");
 
     if (!user) {
       return res.status(401).json({
@@ -50,12 +40,32 @@ const protect = async (req, res, next) => {
   }
 };
 
+// Optional Authentication
+const optionalProtect = async (req, res, next) => {
+  try {
+    let token;
+    if (req.headers.authorization?.startsWith("Bearer")) {
+      token = req.headers.authorization.split(" ")[1];
+    }
+    // No token = guest user
+    if (!token) {
+      return next();
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id).select("-password");
+    if (user) {
+      req.user = user;
+    }
+    next();
+  } catch (error) {
+    // Invalid/expired token = continue as guest
+    next();
+  }
+};
+
 // Admin Only
 const adminOnly = (req, res, next) => {
-  if (
-    req.user &&
-    req.user.role === "admin"
-  ) {
+  if (req.user && req.user.role === "admin") {
     next();
   } else {
     res.status(403).json({
@@ -65,41 +75,24 @@ const adminOnly = (req, res, next) => {
 };
 
 // Admin + Manager
-const managerOrAdmin = (
-  req,
-  res,
-  next
-) => {
-  if (
-    req.user &&
-    ["admin", "manager"].includes(
-      req.user.role
-    )
-  ) {
+const managerOrAdmin = (req, res, next) => {
+  if (req.user && ["admin", "manager"].includes(req.user.role)) {
     next();
   } else {
     res.status(403).json({
-      message:
-        "Manager/Admin access only",
+      message: "Manager/Admin access only",
     });
   }
 };
 
 // Permission Middleware
-const checkPermission = (
-  permission
-) => {
+const checkPermission = (permission) => {
   return (req, res, next) => {
-    if (
-      req.user?.permissions?.[
-        permission
-      ]
-    ) {
+    if (req.user?.permissions?.[permission]) {
       next();
     } else {
       res.status(403).json({
-        message:
-          "Permission denied",
+        message: "Permission denied",
       });
     }
   };
@@ -107,6 +100,7 @@ const checkPermission = (
 
 module.exports = {
   protect,
+  optionalProtect,
   adminOnly,
   managerOrAdmin,
   checkPermission,

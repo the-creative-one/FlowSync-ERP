@@ -189,11 +189,9 @@ function Login() {
           flex-1
           flex
           justify-center
-          lg:items-center
-          items-start
-          pt-24
+          items-center
           pb-10
-          md:pt-16
+          pt-16
           md:pb-10
           lg:py-0
           px-4
@@ -203,13 +201,12 @@ function Login() {
         "
       >
         {/* MOBILE LOGO */}
-
         <div className="lg:hidden fixed top-5 left-5 z-20">
           <Link to="/">
             <img
               src="/White-Logo.png"
               alt="FlowSync"
-              className="w-10 h-10 object-contain opacity-90"
+              className="w-40 h-10 object-contain opacity-90"
             />
           </Link>
         </div>
