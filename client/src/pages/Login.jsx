@@ -137,7 +137,7 @@ function Login() {
                 backdrop-blur-md
                 border
                 border-white/10
-                rounded-2xl
+                rounded-xl
                 p-5
                 hover:translate-x-2
                 transition
@@ -153,7 +153,7 @@ function Login() {
                 backdrop-blur-md
                 border
                 border-white/10
-                rounded-2xl
+                rounded-xl
                 p-5
                 hover:translate-x-2
                 transition
@@ -169,7 +169,7 @@ function Login() {
                 backdrop-blur-md
                 border
                 border-white/10
-                rounded-2xl
+                rounded-xl
                 p-5
                 hover:translate-x-2
                 transition
@@ -219,7 +219,7 @@ function Login() {
             max-w-md
             bg-white
             dark:bg-[#111827]
-            rounded-3xl
+            rounded-xl
             shadow-xl
             border
             border-gray-100
@@ -291,7 +291,7 @@ function Login() {
                   className={`
                     w-full
                     border
-                    rounded-xl
+                    rounded
                     py-3
                     pl-12
                     pr-4
@@ -352,7 +352,7 @@ function Login() {
                   className={`
                     w-full
                     border
-                    rounded-xl
+                    rounded
                     py-3
                     pl-12
                     pr-12
@@ -430,7 +430,7 @@ function Login() {
                 dark:hover:bg-blue-500
                 text-white
                 py-3
-                rounded-xl
+                rounded
                 font-semibold
                 flex
                 items-center

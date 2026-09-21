@@ -330,7 +330,7 @@ function Register() {
                 backdrop-blur-md
                 border
                 border-white/10
-                rounded-2xl
+                rounded-xl
                 p-5
                 hover:translate-x-2
                 transition
@@ -346,7 +346,7 @@ function Register() {
                 backdrop-blur-md
                 border
                 border-white/10
-                rounded-2xl
+                rounded-xl
                 p-5
                 hover:translate-x-2
                 transition
@@ -362,7 +362,7 @@ function Register() {
                 backdrop-blur-md
                 border
                 border-white/10
-                rounded-2xl
+                rounded-xl
                 p-5
                 hover:translate-x-2
                 transition
@@ -413,7 +413,7 @@ function Register() {
             max-w-md
             bg-white
             dark:bg-[#111827]
-            rounded-3xl
+            rounded-xl
             shadow-xl
             border
             border-gray-100
@@ -481,7 +481,7 @@ function Register() {
                       className={`
                         w-full
                         border
-                        rounded-xl
+                        rounded
                         py-3
                         pl-12
                         pr-4
@@ -538,7 +538,7 @@ function Register() {
                       className={`
                         w-full
                         border
-                        rounded-xl
+                        rounded
                         py-3
                         pl-12
                         pr-4
@@ -595,7 +595,7 @@ function Register() {
                       className={`
                         w-full
                         border
-                        rounded-xl
+                        rounded
                         py-3
                         pl-12
                         pr-12
@@ -648,7 +648,7 @@ function Register() {
                         grid-cols-1
                         sm:grid-cols-2
                         gap-2
-                        rounded-xl
+                        rounded
                         bg-gray-50
                         dark:bg-[#0F172A]
                         border
@@ -716,7 +716,7 @@ function Register() {
                       className={`
                         w-full
                         border
-                        rounded-xl
+                        rounded
                         py-3
                         pl-12
                         pr-12
@@ -784,7 +784,7 @@ function Register() {
                     dark:hover:bg-blue-500
                     text-white
                     py-3
-                    rounded-xl
+                    rounded
                     font-semibold
                     flex
                     items-center

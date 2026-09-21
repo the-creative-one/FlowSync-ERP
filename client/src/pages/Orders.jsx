@@ -489,7 +489,7 @@ function Orders() {
             className="
               bg-white
               dark:bg-[#111827]
-              rounded-3xl
+              rounded
               p-10
               text-center
               border

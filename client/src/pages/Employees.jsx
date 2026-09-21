@@ -373,7 +373,7 @@ function Employees() {
           )}
         </div>
         {loading ? (
-          <div className="bg-white  dark:bg-[#111827]  rounded-2xl  shadow  p-8  text-center  border  border-gray-100  dark:border-gray-800">
+          <div className="bg-white  dark:bg-[#111827]  rounded  shadow  p-8  text-center  border  border-gray-100  dark:border-gray-800">
             <p className="text-gray-500 dark:text-gray-400">
               Loading employees...
             </p>
