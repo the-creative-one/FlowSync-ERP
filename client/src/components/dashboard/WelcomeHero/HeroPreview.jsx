@@ -15,7 +15,7 @@ function HeroPreview({ modules }) {
       <div className="grid grid-cols-2 gap-4">
         {/* Orders */}
         {hasModule("orders") && (
-          <div className="col-span-2 rounded-2xl bg-white/10 backdrop-blur-lg border border-white/10 p-5 shadow-xl transition-all duration-300 hover:-translate-y-1">
+          <div className="col-span-2 rounded-xl bg-white/10 backdrop-blur-lg border border-white/10 p-5 shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-semibold text-cyan-100">Orders</h3>
 
@@ -34,7 +34,7 @@ function HeroPreview({ modules }) {
 
         {/* Analytics */}
         {hasModule("analytics") && (
-          <div className="rounded-2xl bg-white/10 backdrop-blur-lg border border-white/10 p-5 shadow-xl transition-all duration-300 hover:-translate-y-1">
+          <div className="rounded-xl bg-white/10 backdrop-blur-lg border border-white/10 p-5 shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div className="flex justify-between items-center">
               <span className="text-sm font-semibold text-cyan-100">
                 Analytics
@@ -57,7 +57,7 @@ function HeroPreview({ modules }) {
 
         {/* Team */}
         {hasModule("employees") && (
-          <div className="rounded-2xl bg-white/10 backdrop-blur-lg border border-white/10 p-5 shadow-xl transition-all duration-300 hover:-translate-y-1">
+          <div className="rounded-xl bg-white/10 backdrop-blur-lg border border-white/10 p-5 shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div className="flex justify-between items-center">
               <span className="text-sm font-semibold text-cyan-100">Team</span>
 
@@ -78,7 +78,7 @@ function HeroPreview({ modules }) {
 
         {/* Reports */}
         {hasModule("reports") && (
-          <div className="rounded-2xl bg-white/10 backdrop-blur-lg border border-white/10 p-5 shadow-xl transition-all duration-300 hover:-translate-y-1">
+          <div className="rounded-xl bg-white/10 backdrop-blur-lg border border-white/10 p-5 shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div className="flex justify-between items-center">
               <span className="text-sm font-semibold text-cyan-100">
                 Reports
@@ -101,7 +101,7 @@ function HeroPreview({ modules }) {
 
         {/* Settings */}
         {hasModule("settings") && (
-          <div className="rounded-2xl bg-white/10 backdrop-blur-lg border border-white/10 p-5 shadow-xl transition-all duration-300 hover:-translate-y-1">
+          <div className="rounded-xl bg-white/10 backdrop-blur-lg border border-white/10 p-5 shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div className="flex justify-between items-center">
               <span className="text-sm font-semibold text-cyan-100">
                 Settings

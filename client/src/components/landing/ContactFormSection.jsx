@@ -43,7 +43,7 @@ function ContactFormSection() {
 
   const inputClass = `
     w-full
-    rounded-2xl
+    rounded
     border
     border-slate-200
     dark:border-slate-800
@@ -156,7 +156,7 @@ function ContactFormSection() {
             whileInView="visible"
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.7 }}
-            className="min-w-0 relative rounded-[1.25rem] sm:rounded-[2rem] border border-slate-200/80 bg-white/95 shadow-[0_40px_120px_-80px_rgba(15,23,42,0.25)] dark:border-slate-800 dark:bg-[#0b1121]"
+            className="min-w-0 relative rounded border border-slate-200/80 bg-white/95 shadow-[0_40px_120px_-80px_rgba(15,23,42,0.25)] dark:border-slate-800 dark:bg-[#0b1121]"
           >
             <div className="hidden sm:block absolute -left-10 top-10 h-28 w-28 rounded-full bg-sky-400/10 blur-3xl" />
             <div className="hidden sm:block absolute right-8 top-8 h-20 w-20 rounded-full border border-sky-300/40 bg-white/30 blur-xl dark:border-sky-500/30 dark:bg-slate-900/50" />
@@ -257,7 +257,7 @@ function ContactFormSection() {
                             inquiryType: item,
                           }))
                         }
-                        className={`rounded-2xl border px-4 py-3 text-left text-sm font-medium transition-all duration-100 ${
+                        className={`rounded border px-4 py-3 text-left text-sm font-medium transition-all duration-100 ${
                           formData.inquiryType === item
                             ? "border-sky-500 bg-sky-500 text-white shadow-lg shadow-sky-500/15"
                             : "border-slate-200 bg-white text-slate-700 hover:border-sky-400 hover:bg-slate-50 dark:border-slate-700 dark:bg-[#08101F] dark:text-slate-200 dark:hover:border-slate-500 dark:hover:bg-slate-900/60 dark:hover:text-slate-100"
@@ -304,7 +304,7 @@ function ContactFormSection() {
                   disabled={submitting}
                   whileHover={{ scale: submitting ? 1 : 1.01 }}
                   whileTap={{ scale: submitting ? 1 : 0.98 }}
-                  className="inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-[#0C2B4E] via-[#123963] to-[#1A568E] px-6 py-4 text-base font-semibold text-white shadow-lg shadow-[#0C2B4E]/25 transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-70"
+                  className="inline-flex w-full items-center justify-center gap-3 rounded bg-gradient-to-r from-[#0C2B4E] via-[#123963] to-[#1A568E] px-6 py-4 text-base font-semibold text-white shadow-lg shadow-[#0C2B4E]/25 transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-70"
                 >
                   {submitting ? (
                     <span className="flex items-center justify-center gap-2">
@@ -324,7 +324,7 @@ function ContactFormSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.75, delay: 0.12 }}
-            className="min-w-0 space-y-7 rounded-[1.25rem] sm:rounded-[2rem] border border-slate-200/80 bg-slate-50/90 p-6 sm:p-8 shadow-[0_24px_80px_-40px_rgba(15,23,42,0.2)] dark:border-slate-800 dark:bg-[#07111f]/90"
+            className="min-w-0 space-y-7 rounded border border-slate-200/80 bg-slate-50/90 p-6 sm:p-8 shadow-[0_24px_80px_-40px_rgba(15,23,42,0.2)] dark:border-slate-800 dark:bg-[#07111f]/90"
           >
             <div className="space-y-3">
               <h3 className="text-2xl font-semibold text-slate-900 dark:text-white">
@@ -337,7 +337,7 @@ function ContactFormSection() {
             </div>
 
             <div className="space-y-5">
-              <div className="flex items-start gap-4 rounded-3xl border border-slate-200/80 bg-white p-5 shadow-sm shadow-slate-900/5 dark:border-slate-800 dark:bg-[#08101F]">
+              <div className="flex items-start gap-4 rounded border border-slate-200/80 bg-white p-5 shadow-sm shadow-slate-900/5 dark:border-slate-800 dark:bg-[#08101F]">
                 <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-sky-500/10 text-sky-500">
                   <Mail size={18} />
                 </div>
@@ -360,7 +360,7 @@ function ContactFormSection() {
                 </div>
               </div>
 
-              <div className="flex items-start gap-4 rounded-3xl border border-slate-200/80 bg-white p-5 shadow-sm shadow-slate-900/5 dark:border-slate-800 dark:bg-[#08101F]">
+              <div className="flex items-start gap-4 rounded border border-slate-200/80 bg-white p-5 shadow-sm shadow-slate-900/5 dark:border-slate-800 dark:bg-[#08101F]">
                 <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-sky-500/10 text-sky-500">
                   <MapPin size={18} />
                 </div>
@@ -372,7 +372,7 @@ function ContactFormSection() {
                 </div>
               </div>
 
-              <div className="flex items-start gap-4 rounded-3xl border border-slate-200/80 bg-white p-5 shadow-sm shadow-slate-900/5 dark:border-slate-800 dark:bg-[#08101F]">
+              <div className="flex items-start gap-4 rounded border border-slate-200/80 bg-white p-5 shadow-sm shadow-slate-900/5 dark:border-slate-800 dark:bg-[#08101F]">
                 <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-sky-500/10 text-sky-500">
                   <Clock size={18} />
                 </div>
@@ -385,7 +385,7 @@ function ContactFormSection() {
                   </p>
                 </div>
               </div>
-              <div className="mt-8 rounded-3xl border border-slate-200/80 bg-white dark:border-slate-800 dark:bg-[#08101F] p-5">
+              <div className="mt-8 rounded border border-slate-200/80 bg-white dark:border-slate-800 dark:bg-[#08101F] p-5">
                 <h4 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
                   Why FlowSync?
                 </h4>
@@ -398,7 +398,7 @@ function ContactFormSection() {
                   <li>✓ Modern responsive interface</li>
                 </ul>
               </div>
-              <div className="rounded-3xl border border-slate-200/80 bg-white dark:border-slate-800 dark:bg-[#08101F] p-5">
+              <div className="rounded border border-slate-200/80 bg-white dark:border-slate-800 dark:bg-[#08101F] p-5">
                 <h4 className="text-slate-900 dark:text-white font-semibold mb-3">
                   Availability
                 </h4>

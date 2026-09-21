@@ -16,7 +16,7 @@ function HeroMobileModules({ modules }) {
               key={module.id}
               className="
                 flex items-center gap-2
-                rounded-xl
+                rounded-md
                 border border-white/10
                 bg-white/10
                 backdrop-blur-md

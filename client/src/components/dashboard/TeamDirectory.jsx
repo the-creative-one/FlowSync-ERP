@@ -102,7 +102,7 @@ function TeamDirectory() {
                     sm:items-center
                     sm:justify-between
                     gap-4
-                    rounded-2xl
+                    rounded-lg
                     border
                     border-gray-100
                     dark:border-gray-700

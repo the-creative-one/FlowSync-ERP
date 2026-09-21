@@ -543,7 +543,7 @@ function Profile() {
                     border
                     border-gray-200
                     dark:border-gray-700
-                    rounded-2xl
+                    rounded-xl
                     shadow-xl
                     overflow-hidden
                     z-50

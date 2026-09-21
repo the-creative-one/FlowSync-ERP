@@ -21,6 +21,14 @@ const getDashboardStats = async (req, res) => {
 
     const currentYearTotalOrders = currentYearOrders.length;
 
+    const currentYearPendingOrders = currentYearOrders.filter(
+      (order) => order.status?.toLowerCase() === "pending",
+    ).length;
+
+    const currentYearDeliveredOrders = currentYearOrders.filter(
+      (order) => order.status?.toLowerCase() === "delivered",
+    ).length;
+
     const currentYearRevenue = currentYearOrders.reduce(
       (total, order) => total + Number(order.amount || 0),
       0,
@@ -42,6 +50,8 @@ const getDashboardStats = async (req, res) => {
       0,
     );
 
+    // REVENUE GROWTH
+
     const revenueGrowth =
       previousYearRevenue > 0
         ? ((currentYearRevenue - previousYearRevenue) / previousYearRevenue) *
@@ -51,6 +61,8 @@ const getDashboardStats = async (req, res) => {
     res.status(200).json({
       currentYear: {
         totalOrders: currentYearTotalOrders,
+        pendingOrders: currentYearPendingOrders,
+        deliveredOrders: currentYearDeliveredOrders,
         totalRevenue: currentYearRevenue,
       },
 

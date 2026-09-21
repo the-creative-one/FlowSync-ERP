@@ -36,7 +36,7 @@ function AvatarGeneratorModal({ isOpen, onClose, onSelect, userName }) {
             border
             border-gray-200
             dark:border-gray-700
-            rounded-3xl
+            rounded
             shadow-2xl
             overflow-hidden
           "
@@ -82,7 +82,7 @@ function AvatarGeneratorModal({ isOpen, onClose, onSelect, userName }) {
                   onClick={() => onSelect(style)}
                   className="
                     p-3 md:p-4
-                    rounded-2xl
+                    rounded
                     border
                     border-gray-200
                     dark:border-gray-700
