@@ -97,7 +97,7 @@ function ResetPassword() {
           max-w-md
           bg-white
           dark:bg-[#111827]
-          rounded-3xl
+          rounded-xl
           shadow-xl
           border
           border-gray-100
@@ -162,7 +162,7 @@ function ResetPassword() {
                 border
                 border-gray-300
                 dark:border-gray-700
-                rounded-xl
+                rounded
                 py-3
                 pl-12
                 pr-12
@@ -229,7 +229,7 @@ function ResetPassword() {
                 border
                 border-gray-300
                 dark:border-gray-700
-                rounded-xl
+                rounded
                 py-3
                 pl-12
                 pr-12
@@ -273,7 +273,7 @@ function ResetPassword() {
               hover:bg-[#16485c]
               text-white
               py-3
-              rounded-xl
+              rounded
               font-semibold
               flex
               items-center

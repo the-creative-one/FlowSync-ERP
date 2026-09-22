@@ -7,7 +7,7 @@ import {
   FileSpreadsheet,
   Bell,
   Activity,
-  Mail,
+  BotIcon,
 } from "lucide-react";
 
 function CoreFeatures() {
@@ -16,56 +16,57 @@ function CoreFeatures() {
       icon: ShoppingCart,
       title: "Order Management",
       description:
-        "Create, update, track and manage customer orders from a centralized dashboard.",
+        "Create, update and manage orders through a structured workflow from one centralized workspace.",
     },
     {
       icon: BarChart3,
       title: "Analytics Dashboard",
       description:
-        "Visualize business performance through reports, trends and key metrics.",
+        "Turn order and revenue data into useful insights with flexible time-based analytics and performance views.",
     },
     {
       icon: Users,
       title: "User Management",
       description:
-        "Manage employees, roles and account access across the organization.",
+        "Manage employee accounts, roles and access as responsibilities change across the organization.",
     },
     {
       icon: ShieldCheck,
       title: "Role Permissions",
       description:
-        "Fine-grained permission control for Admins, Managers, Analysts and Employees.",
+        "Give every user the right level of access with roles and granular permissions built around their responsibilities.",
+    },
+    {
+      icon: BotIcon,
+      title: "AI-Powered Assistant",
+      description:
+        "Get contextual help with FlowSync features, workflows and available capabilities through an assistant built into the platform.",
     },
     {
       icon: Activity,
-      title: "Activity Logs",
+      title: "Real-Time Updates",
       description:
-        "Track system actions including order updates, exports and operational activity.",
+        "Keep teams in sync with live updates across orders, employees, permissions and other operational changes.",
     },
     {
       icon: FileSpreadsheet,
-      title: "Excel Export",
+      title: "Reports & Data Export",
       description:
-        "Export orders and reports into structured spreadsheets for further analysis.",
-    },
-    {
-      icon: Mail,
-      title: "Email Notifications",
-      description:
-        "Automated email workflows powered by Resend for operational communication.",
+        "Export operational data in practical formats for further analysis, sharing and record keeping.",
     },
     {
       icon: Bell,
       title: "Audit Tracking",
       description:
-        "Maintain visibility into administrative actions and permission changes.",
+        "Keep a clear record of important actions, administrative changes, permission updates and report exports.",
     },
   ];
 
   return (
     <section
       className="
-        py-24
+      py-16
+        md:py-24
         bg-white
         dark:bg-[#020817]
       "

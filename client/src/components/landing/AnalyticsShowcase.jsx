@@ -5,7 +5,8 @@ function AnalyticsShowcase() {
   return (
     <section
       className="
-        py-24
+        py-16
+        md:py-24
         bg-white
         dark:bg-[#020817]
         transition-colors
@@ -24,27 +25,8 @@ function AnalyticsShowcase() {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <span
-              className="
-                inline-flex
-                items-center
-                gap-2
-                px-4
-                py-2
-                rounded-full
-                bg-blue-100
-                text-blue-700
-                dark:bg-blue-500/10
-                dark:text-blue-300
-              "
-            >
-              <TrendingUp size={16} />
-              Analytics & Reporting
-            </span>
-
             <h2
               className="
-                mt-6
                 text-4xl
                 font-bold
                 text-[#0C2B4E]

@@ -52,7 +52,8 @@ function Features() {
     <section
       id="features"
       className="
-        py-24
+      py-16
+        md:py-24
         bg-white
         dark:bg-[#020817]
         transition-colors

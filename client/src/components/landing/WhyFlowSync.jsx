@@ -5,27 +5,27 @@ function WhyFlowSync() {
   const benefits = [
     {
       icon: Database,
-      title: "Centralized Operations",
+      title: "One Connected Workspace",
       description:
-        "Manage orders, employees, analytics and workflows from a single platform instead of multiple disconnected tools.",
+        "Keep day-to-day operations, team management and business insights connected instead of scattered across separate workflows.",
     },
     {
       icon: BarChart3,
-      title: "Actionable Analytics",
+      title: "Built Around Real Workflows",
       description:
-        "Transform operational data into meaningful insights through dashboards, reports and performance metrics.",
+        "From creating an order to tracking its progress and reviewing performance, FlowSync follows the way teams actually work.",
     },
     {
       icon: ShieldCheck,
-      title: "Secure Access Control",
+      title: "Access With Purpose",
       description:
-        "Role-based permissions ensure users only access the information and actions relevant to their responsibilities.",
+        "Roles and permissions give teams the access they need while keeping sensitive actions under control.",
     },
     {
       icon: Eye,
-      title: "Operational Transparency",
+      title: "Visibility That Goes Beyond Numbers",
       description:
-        "Activity logs and audit tracking provide visibility into critical actions across the organization.",
+        "Analytics, activity records and audit trails help teams understand not just what happened, but how the platform is being used.",
     },
   ];
 

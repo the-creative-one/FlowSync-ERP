@@ -4,6 +4,7 @@ import FeaturesHero from "../components/landing/FeaturesHero";
 import CoreFeatures from "../components/landing/CoreFeatures";
 import OperationalWorkflow from "../components/landing/OperationalWorkflow";
 import SecurityAccess from "../components/landing/SecurityAccess";
+import AIAssistant from "../components/landing/AIAssistant";
 import ContactCTA from "../components/landing/ContactCTA";
 
 function FeaturesPage() {
@@ -13,6 +14,7 @@ function FeaturesPage() {
       <FeaturesHero />
       <CoreFeatures />
       <OperationalWorkflow />
+      <AIAssistant />
       <SecurityAccess />
       <ContactCTA />
       <Footer hasCTA />

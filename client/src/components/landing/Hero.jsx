@@ -19,26 +19,7 @@ function Hero() {
               ease: [0.22, 1, 0.36, 1],
             }}
           >
-            <div
-              className="
-                inline-flex
-                items-center
-                gap-2
-                px-4
-                py-2
-                rounded-full
-                bg-blue-100
-                dark:bg-blue-500/10
-                text-[#0C2B4E]
-                dark:text-blue-300
-                mb-5
-              "
-            >
-              <Sparkles size={16} />
-              <span>Modern ERP Platform</span>
-            </div>
-
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[#0C2B4E] dark:text-white leading-[1.08] tracking-tight">
+            <h1 className="mt-10 md:mt-0 text-4xl sm:text-5xl lg:text-6xl font-bold text-[#0C2B4E] dark:text-white leading-[1.08] tracking-tight">
               Streamline Your Business Operations With One Powerful ERP Platform
             </h1>
 

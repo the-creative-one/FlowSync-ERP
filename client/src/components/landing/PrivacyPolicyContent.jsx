@@ -5,7 +5,7 @@ import {
   Database,
   Lock,
   Cookie,
- Mail,
+  Mail,
   RefreshCcw,
 } from "lucide-react";
 
@@ -14,37 +14,37 @@ const sections = [
     icon: ShieldCheck,
     title: "Introduction",
     content:
-      "FlowSync ERP values your privacy and is committed to protecting your information. This Privacy Policy explains what information we collect, how we use it, and the measures we take to keep it secure while you use the application.",
+      "FlowSync respects your privacy and is committed to protecting the information you provide while using the application. This Privacy Policy explains what information may be collected, how it is used, and the steps taken to keep it secure.",
   },
   {
     icon: Database,
     title: "Information We Collect",
     content:
-      "We may collect information that you voluntarily provide during account registration, authentication, profile updates, and contact form submissions. Basic application usage information may also be collected to improve the platform and enhance the overall user experience.",
+      "FlowSync may collect information you provide when creating an account, verifying your email address, managing your profile, using application features, or submitting a contact request. This may include account details, profile information, and information required to provide and secure the application's features.",
   },
   {
     icon: Lock,
     title: "How We Use Your Information",
     content:
-      "Your information is used to authenticate users, manage application features, personalize the user experience, respond to inquiries, improve application performance, and maintain platform security.",
+      "Information is used to authenticate accounts, provide access to application features, manage user profiles and permissions, respond to inquiries, maintain application security, and operate the platform. We only use information where it is necessary for these purposes.",
   },
   {
     icon: Cookie,
     title: "Third-Party Services",
     content:
-      "FlowSync ERP integrates trusted third-party services including Cloudinary for media storage and Web3Forms for contact form submissions. These providers process information according to their own privacy policies.",
+      "FlowSync uses selected third-party services to support specific application functionality, such as media storage and contact form submissions. Information shared with these services is handled according to their respective privacy policies and the purpose for which the service is used.",
   },
   {
     icon: RefreshCcw,
     title: "Policy Updates",
     content:
-      "As FlowSync ERP continues to evolve, this Privacy Policy may be updated from time to time. Any future modifications will be reflected on this page with an updated revision date.",
+      "As FlowSync evolves, this Privacy Policy may be updated to reflect changes to the application, its features, or how information is handled. Any changes will be published on this page along with an updated revision date.",
   },
   {
     icon: Mail,
     title: "Contact Us",
     content:
-      "If you have any questions regarding this Privacy Policy or how your information is handled, you can reach us through the Contact page available on this website.",
+      "If you have questions about this Privacy Policy, your information, or how FlowSync handles data, you can reach us through the Contact page. We will do our best to address your concerns and provide the relevant information.",
   },
 ];
 
@@ -56,33 +56,14 @@ const lastUpdated = new Date().toLocaleDateString("en-IN", {
 function PrivacyPolicyContent() {
   return (
     <section className="bg-slate-50 dark:bg-[#020817] pt-28 pb-20">
-      <div className="px-16">
+      <div className="px-6 md:px-16">
         {/* Hero */}
-
         <motion.div
           initial={{ opacity: 0, y: 25 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="text-center mx-auto"
         >
-          <span
-            className="
-              inline-flex
-              items-center
-              rounded-full
-              bg-slate-100
-              dark:bg-slate-800
-              px-4
-              py-1
-              text-sm
-              font-semibold
-              text-slate-700
-              dark:text-slate-200
-            "
-          >
-            Privacy & Security
-          </span>
-
           <h1
             className="
               mt-6
@@ -106,7 +87,7 @@ function PrivacyPolicyContent() {
             "
           >
             We believe transparency builds trust. This page explains how
-            FlowSync ERP collects, uses, and safeguards your information.
+            FlowSync collects, uses, and safeguards your information.
           </p>
 
           <p
@@ -122,7 +103,6 @@ function PrivacyPolicyContent() {
         </motion.div>
 
         {/* Divider */}
-
         <div className="mt-16 border-t border-slate-200 dark:border-slate-800" />
 
         {/* Sections */}
@@ -142,43 +122,96 @@ function PrivacyPolicyContent() {
                   delay: index * 0.08,
                 }}
                 className="
-                  py-10
-                  border-b
-                  border-slate-200
-                  dark:border-slate-800
-                "
+          py-10
+          border-b
+          border-slate-200
+          dark:border-slate-800
+        "
               >
-                <div className="flex items-start gap-5">
+                {/* Mobile: Icon + Title */}
+                <div className="flex items-center gap-4 md:hidden">
                   <div
                     className="
-                      flex
-                      h-12
-                      w-12
-                      shrink-0
-                      items-center
-                      justify-center
-                      rounded-xl
-                      bg-gradient-to-br
-                      from-[#0C2B4E]
-                      to-[#1A568E]
-                      text-white
-                    "
+              flex
+              h-12
+              w-12
+              shrink-0
+              items-center
+              justify-center
+              rounded-xl
+              bg-gradient-to-br
+              from-[#0C2B4E]
+              to-[#1A568E]
+              text-white
+            "
+                  >
+                    <Icon size={22} />
+                  </div>
+
+                  <h2
+                    className="
+              text-2xl
+              font-semibold
+              text-slate-900
+              dark:text-white
+            "
+                  >
+                    {section.title}
+                  </h2>
+                </div>
+
+                {/* Mobile: Paragraph */}
+                <p
+                  className="
+            mt-5
+            leading-8
+            text-slate-600
+            dark:text-slate-400
+            md:hidden
+          "
+                >
+                  {section.content}
+                </p>
+
+                {/* Desktop / Tablet */}
+                <div className="hidden md:flex items-start gap-5">
+                  <div
+                    className="
+              flex
+              h-12
+              w-12
+              shrink-0
+              items-center
+              justify-center
+              rounded-xl
+              bg-gradient-to-br
+              from-[#0C2B4E]
+              to-[#1A568E]
+              text-white
+            "
                   >
                     <Icon size={22} />
                   </div>
 
                   <div className="flex-1">
-                    <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">
+                    <h2
+                      className="
+                text-2xl
+                font-semibold
+                text-slate-900
+                dark:text-white
+              "
+                    >
                       {section.title}
                     </h2>
 
                     <p
                       className="
-                        mt-5
-                        leading-8
-                        text-slate-600
-                        dark:text-slate-400
-                      "
+                mt-5
+                leading-8
+                text-slate-600
+                dark:text-slate-400
+              "
                     >
                       {section.content}
                     </p>
@@ -190,7 +223,6 @@ function PrivacyPolicyContent() {
         </div>
 
         {/* Footer */}
-
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -198,11 +230,17 @@ function PrivacyPolicyContent() {
           transition={{ duration: 0.6 }}
           className="
             mt-16
-            dark:border-slate-800
             text-center
           "
         >
-          <h3 className="text-2xl font-semibold text-slate-900 dark:text-white">
+          <h3
+            className="
+              text-2xl
+              font-semibold
+              text-slate-900
+              dark:text-white
+            "
+          >
             Still Have Questions?
           </h3>
 
@@ -216,7 +254,7 @@ function PrivacyPolicyContent() {
               dark:text-slate-400
             "
           >
-            If you'd like to know more about how FlowSync ERP handles your data,
+            If you'd like to know more about how FlowSync handles your data,
             feel free to reach out through our contact page. We'll be happy to
             answer any questions you may have.
           </p>

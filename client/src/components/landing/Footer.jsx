@@ -1,6 +1,6 @@
 import { Link, Links } from "react-router-dom";
-import { FaGithub, FaLinkedin } from "react-icons/fa";
-import { HiGlobeAlt } from "react-icons/hi";
+import { FaCode, FaGithub, FaLinkedin } from "react-icons/fa";
+import { HiGlobeAlt, HiHeart } from "react-icons/hi";
 
 function Footer({ hasCTA = false }) {
   return (
@@ -63,9 +63,8 @@ function Footer({ hasCTA = false }) {
 
           <div>
             <Link to="/">
-             <img src="/White-Logo.png" alt="FlowSync ERP" className="h-14" />
+              <img src="/White-Logo.png" alt="FlowSync" className="h-14" />
             </Link>
-            
 
             <p
               className="
@@ -75,8 +74,8 @@ function Footer({ hasCTA = false }) {
                   leading-relaxed
                 "
             >
-              Centralized ERP platform for managing orders, analytics, employee
-              administration and business operations from a single dashboard.
+              A unified ERP platform for managing orders, teams, analytics and
+              everyday business operations.
             </p>
 
             <div className="flex items-center gap-4 mt-6">
@@ -142,12 +141,9 @@ function Footer({ hasCTA = false }) {
 
             <ul className="space-y-3 text-gray-400">
               <li>Orders Management</li>
-
-              <li>Analytics Dashboard</li>
-
-              <li>User Management</li>
-
-              <li>Role Permissions</li>
+              <li>Analytics & Reporting</li>
+              <li>User & Role Management</li>
+              <li>Activity & Audit Tracking</li>
               <li>AI Assistant</li>
             </ul>
           </div>
@@ -196,10 +192,13 @@ function Footer({ hasCTA = false }) {
           "
         >
           <p className="text-gray-500 text-sm">
-            © 2026 FlowSync ERP. All rights reserved.
+            © 2026 FlowSync. All rights reserved.
           </p>
 
-          <p className="text-gray-500 text-sm">Smart. Fast. Connected.</p>
+          <p className="text-gray-500 text-sm flex gap-1">
+            
+            Built by <HiHeart size={13} className="mt-[3.5px]" /> Shruti
+          </p>
         </div>
       </div>
     </footer>

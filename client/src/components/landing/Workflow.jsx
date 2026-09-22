@@ -37,7 +37,8 @@ function Workflow() {
   return (
     <section
       className="
-        py-24
+        py-16
+        md:py-24
         bg-[#F8FAFC]
         dark:bg-[#0B1120]
         transition-colors

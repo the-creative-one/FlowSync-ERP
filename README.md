@@ -1,4 +1,4 @@
-# FlowSync ERP
+# FlowSync
 
 A modern full-stack ERP (Enterprise Resource Planning) system built using the MERN stack with Role-Based Access Control (RBAC), employee management, analytics permissions, responsive dashboard UI, and secure authentication workflows.
 

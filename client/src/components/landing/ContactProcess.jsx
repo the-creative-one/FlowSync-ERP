@@ -6,7 +6,7 @@ const steps = [
     number: "01",
     title: "Submit Your Message",
     description:
-      "Share your question, feedback, feature request, or anything you'd like to discuss about FlowSync ERP.",
+      "Share your question, feedback, feature request, or anything you'd like to discuss about FlowSync.",
     icon: Send,
   },
   {
@@ -18,7 +18,7 @@ const steps = [
   },
   {
     number: "03",
-    title: "Response Within 24–48 Hours",
+    title: "Response Within 24 Hours",
     description:
       "If your inquiry requires a reply, we'll get back to you through the email address you provided.",
     icon: Clock3,
@@ -27,7 +27,7 @@ const steps = [
     number: "04",
     title: "Continue The Conversation",
     description:
-      "We'll answer your questions and continue the discussion about FlowSync ERP or your feedback.",
+      "We'll answer your questions and continue the discussion about FlowSync or your feedback.",
     icon: MessagesSquare,
   },
 ];

@@ -64,24 +64,6 @@ function ContactHero() {
           }}
           className="text-center"
         >
-          <span
-            className="
-              inline-flex
-              items-center
-              px-4
-              py-2
-              rounded-full
-              bg-blue-100
-              text-blue-700
-              dark:bg-blue-500/10
-              dark:text-blue-300
-              text-sm
-              font-medium
-            "
-          >
-            Contact FlowSync ERP
-          </span>
-
           <h1
             className="
               mt-6
@@ -108,7 +90,7 @@ function ContactHero() {
               dark:text-gray-400
             "
           >
-            Have questions about FlowSync ERP, feature
+            Have questions about FlowSync, feature
             requests, feedback or partnership opportunities?
             Reach out and we'll get back to you as soon as possible.
           </p>

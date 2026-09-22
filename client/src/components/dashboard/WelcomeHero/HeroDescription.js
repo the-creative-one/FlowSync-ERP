@@ -74,5 +74,5 @@ export const getHeroDescription = (permissions = {}) => {
     return "Configure your workspace, manage system preferences and keep your environment running exactly the way you need.";
   }
 
-  return "Welcome back to FlowSync ERP. Stay productive and keep your work organized from one centralized dashboard.";
+  return "Welcome back to FlowSync. Stay productive and keep your work organized from one centralized dashboard.";
 };

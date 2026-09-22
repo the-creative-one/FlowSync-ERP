@@ -16,7 +16,7 @@ import { useAuth } from "../../context/AuthContext";
 const welcomeMessage = {
   id: "welcome",
   role: "assistant",
-  content: "Hi! I'm the FlowSync ERP Assistant. How can I help you?",
+  content: "Hi! I'm the FlowSync Assistant. How can I help you?",
   timestamp: new Date(),
 };
 

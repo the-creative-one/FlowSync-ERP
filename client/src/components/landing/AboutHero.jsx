@@ -64,23 +64,6 @@ function AboutHero() {
           }}
           className="text-center"
         >
-          <span
-            className="
-              inline-flex
-              items-center
-              px-4
-              py-2
-              rounded-full
-              bg-blue-100
-              text-blue-700
-              dark:bg-blue-500/10
-              dark:text-blue-300
-              text-sm
-              font-medium
-            "
-          >
-            About FlowSync ERP
-          </span>
 
           <h1
             className="
@@ -108,10 +91,9 @@ function AboutHero() {
               dark:text-gray-400
             "
           >
-            FlowSync ERP centralizes order management,
-            analytics, employee administration and
-            operational workflows into a unified platform
-            designed for modern businesses.
+            FlowSync was built to bring everyday business operations into one
+            connected workspace, giving teams a clearer view of their work,
+            better control over access, and the tools to act on what matters.
           </p>
         </motion.div>
       </div>

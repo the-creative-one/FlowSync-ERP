@@ -35,7 +35,7 @@ function Navbar() {
         {/* Logo */}
 
         <Link to="/">
-          <img src="/White-Logo.png" alt="FlowSync ERP" className="h-10" />
+          <img src="/White-Logo.png" alt="FlowSync" className="h-10" />
         </Link>
 
         {/* Desktop Menu */}
@@ -245,7 +245,7 @@ function Navbar() {
                         bg-white
                         text-[#0C2B4E]
                         py-3
-                        rounded-xl
+                        rounded
                         font-medium
                         hover:bg-gray-100
                         transition

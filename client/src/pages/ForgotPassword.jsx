@@ -59,7 +59,7 @@ function ForgotPassword() {
           max-w-md
           bg-white
           dark:bg-[#111827]
-          rounded-3xl
+          rounded-xl
           shadow-xl
           border
           border-gray-100
@@ -118,7 +118,7 @@ function ForgotPassword() {
                 border
                 border-gray-300
                 dark:border-gray-700
-                rounded-xl
+                rounded
                 py-3
                 pl-12
                 pr-4
@@ -140,7 +140,7 @@ function ForgotPassword() {
               hover:bg-[#16485c]
               text-white
               py-3
-              rounded-xl
+              rounded
               font-semibold
               flex
               items-center
@@ -165,7 +165,7 @@ function ForgotPassword() {
         >
           Remember your password?{" "}
           <Link
-            to="/"
+            to="/login"
             className="
               text-[#1D546C]
               dark:text-blue-400

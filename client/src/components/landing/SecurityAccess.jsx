@@ -4,15 +4,16 @@ import {
   Users,
   Lock,
   Activity,
+  ShieldUser,
 } from "lucide-react";
 
 function SecurityAccess() {
   const items = [
     {
-      icon: Users,
-      title: "Role-Based Access",
+      icon: ShieldUser,
+      title: "Secure Authentication",
       description:
-        "Control platform access through Admin, Manager, Analyst, Operations and Employee roles.",
+        "Protected accounts with authenticated access, verified email addresses and secure password recovery.",
     },
     {
       icon: Lock,
@@ -37,7 +38,8 @@ function SecurityAccess() {
   return (
     <section
       className="
-        py-24
+      py-16
+        md:py-24
         bg-white
         dark:bg-[#020817]
         pb-80

@@ -15,9 +15,9 @@ const permissionLabels = {
 };
 
 const flowSyncKnowledge = `
-You are the FlowSync ERP Assistant.
+You are the FlowSync Assistant.
 
-FlowSync ERP is a MERN-based ERP application.
+FlowSync is a MERN-based ERP application.
 
 CURRENTLY AVAILABLE FEATURES:
 

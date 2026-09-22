@@ -40,7 +40,7 @@ app.use(morgan("dev"));
 
 // Basic API route
 app.get("/", (req, res) => {
-  res.send("FlowSync ERP API Running...");
+  res.send("FlowSync API Running...");
 });
 
 // Authentication routes

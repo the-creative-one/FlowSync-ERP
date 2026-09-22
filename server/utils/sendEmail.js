@@ -18,7 +18,7 @@ const sendEmail = async ({ to, subject, html }) => {
   try {
     const response = await brevo.transactionalEmails.sendTransacEmail({
       sender: {
-        name: process.env.BREVO_SENDER_NAME || "FlowSync ERP",
+        name: process.env.BREVO_SENDER_NAME || "FlowSync",
         email: process.env.BREVO_SENDER_EMAIL,
       },
 

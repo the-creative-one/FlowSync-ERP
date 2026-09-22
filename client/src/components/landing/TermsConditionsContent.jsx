@@ -16,7 +16,7 @@ const sections = [
     icon: FileText,
     title: "Acceptance of Terms",
     content:
-      "By accessing or using FlowSync ERP, you agree to comply with these Terms and Conditions. If you do not agree with any part of these terms, please discontinue the use of this application.",
+      "By accessing or using FlowSync, you agree to comply with these Terms and Conditions. If you do not agree with any part of these terms, please discontinue the use of this application.",
   },
   {
     icon: UserCheck,
@@ -28,13 +28,13 @@ const sections = [
     icon: Shield,
     title: "Account Security",
     content:
-      "You are responsible for maintaining the confidentiality of your account credentials. FlowSync ERP cannot be held responsible for unauthorized access resulting from compromised login information.",
+      "You are responsible for maintaining the confidentiality of your account credentials. FlowSync cannot be held responsible for unauthorized access resulting from compromised login information.",
   },
   {
     icon: Copyright,
     title: "Intellectual Property",
     content:
-      "All source code, branding, user interface designs, graphics, documentation, and content associated with FlowSync ERP remain the intellectual property of the project owner unless otherwise stated.",
+      "All source code, branding, user interface designs, graphics, documentation, and content associated with FlowSync remain the intellectual property of the project owner unless otherwise stated.",
   },
   {
     icon: Ban,
@@ -46,7 +46,7 @@ const sections = [
     icon: AlertTriangle,
     title: "Disclaimer",
     content:
-      "FlowSync ERP is a learning and portfolio project developed to demonstrate modern full-stack application development. While every effort has been made to ensure reliability, no guarantees are provided regarding uninterrupted availability or complete accuracy.",
+      "FlowSync is a learning and portfolio project developed to demonstrate modern full-stack application development. While every effort has been made to ensure reliability, no guarantees are provided regarding uninterrupted availability or complete accuracy.",
   },
   {
     icon: RefreshCcw,
@@ -70,8 +70,7 @@ const lastUpdated = new Date().toLocaleDateString("en-IN", {
 function TermsConditionsContent() {
   return (
     <section className="bg-slate-50 dark:bg-[#020817] pt-28 pb-20">
-      <div className="px-16">
-
+      <div className="px-6 md:px-16">
         {/* Hero */}
 
         <motion.div
@@ -80,24 +79,6 @@ function TermsConditionsContent() {
           transition={{ duration: 0.6 }}
           className="text-center mx-auto"
         >
-          <span
-            className="
-              inline-flex
-              items-center
-              rounded-full
-              bg-slate-100
-              dark:bg-slate-800
-              px-4
-              py-1
-              text-sm
-              font-semibold
-              text-slate-700
-              dark:text-slate-200
-            "
-          >
-            Legal Information
-          </span>
-
           <h1
             className="
               mt-6
@@ -121,7 +102,7 @@ function TermsConditionsContent() {
             "
           >
             These Terms and Conditions outline the rules, responsibilities, and
-            expectations for using FlowSync ERP. By using this application, you
+            expectations for using FlowSync. By using this application, you
             agree to abide by the terms described below.
           </p>
 
@@ -158,43 +139,100 @@ function TermsConditionsContent() {
                   delay: index * 0.08,
                 }}
                 className="
-                  py-10
-                  border-b
-                  border-slate-200
-                  dark:border-slate-800
-                "
+          py-10
+          border-b
+          border-slate-200
+          dark:border-slate-800
+        "
               >
-                <div className="flex items-start gap-5">
+                {/* Mobile */}
+                <div className="md:hidden">
+                  {/* Icon + Title */}
+                  <div className="flex items-center gap-4">
+                    <div
+                      className="
+                flex
+                h-12
+                w-12
+                shrink-0
+                items-center
+                justify-center
+                rounded-xl
+                bg-gradient-to-br
+                from-[#0C2B4E]
+                to-[#1A568E]
+                text-white
+              "
+                    >
+                      <Icon size={22} />
+                    </div>
+
+                    <h2
+                      className="
+                text-2xl
+                font-semibold
+                text-slate-900
+                dark:text-white
+              "
+                    >
+                      {section.title}
+                    </h2>
+                  </div>
+
+                  {/* Paragraph */}
+                  <p
+                    className="
+              mt-5
+              leading-8
+              text-slate-600
+              dark:text-slate-400
+            "
+                  >
+                    {section.content}
+                  </p>
+                </div>
+
+                {/* Tablet / Desktop */}
+                <div className="hidden md:flex items-start gap-5">
+                  {/* Icon */}
                   <div
                     className="
-                      flex
-                      h-12
-                      w-12
-                      shrink-0
-                      items-center
-                      justify-center
-                      rounded-xl
-                      bg-gradient-to-br
-                      from-[#0C2B4E]
-                      to-[#1A568E]
-                      text-white
-                    "
+              flex
+              h-12
+              w-12
+              shrink-0
+              items-center
+              justify-center
+              rounded-xl
+              bg-gradient-to-br
+              from-[#0C2B4E]
+              to-[#1A568E]
+              text-white
+            "
                   >
                     <Icon size={22} />
                   </div>
 
+                  {/* Content */}
                   <div className="flex-1">
-                    <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">
+                    <h2
+                      className="
+                text-2xl
+                font-semibold
+                text-slate-900
+                dark:text-white
+              "
+                    >
                       {section.title}
                     </h2>
 
                     <p
                       className="
-                        mt-5
-                        leading-8
-                        text-slate-600
-                        dark:text-slate-400
-                      "
+                mt-5
+                leading-8
+                text-slate-600
+                dark:text-slate-400
+              "
                     >
                       {section.content}
                     </p>

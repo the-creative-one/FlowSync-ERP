@@ -283,7 +283,7 @@ function ContactFormSection() {
                   <div className="relative">
                     <MessageSquare
                       size={18}
-                      className="pointer-events-none absolute left-4 top-4 text-slate-400"
+                      className="pointer-events-none absolute left-4 top-5.5 text-slate-400"
                     />
                     <textarea
                       id="message"
@@ -331,8 +331,9 @@ function ContactFormSection() {
                 Get In Touch
               </h3>
               <p className="text-slate-600 dark:text-slate-400">
-                We’re here to help you move faster with reliable ERP support,
-                product demos and backend integration guidance.
+                Have a question, want to share some feedback, or just curious
+                about how it works? Feel free to reach out - I’d be happy to
+                hear from you.
               </p>
             </div>
 
@@ -346,17 +347,21 @@ function ContactFormSection() {
                     Email
                   </h4>
 
-                  <p
+                  <a
+                    href="mailto:shruti.kashyap.dubey@gmail.com"
                     className="
-                      text-slate-500
-                      dark:text-slate-400
-                      break-all
-                      text-sm
-                      sm:text-base
-                    "
+                    text-slate-500
+                    dark:text-slate-400
+                    hover:text-sky-500
+                    dark:hover:text-sky-400
+                    break-all
+                    text-sm
+                    sm:text-base
+                    transition-colors
+                  "
                   >
                     shruti.kashyap.dubey@gmail.com
-                  </p>
+                  </a>
                 </div>
               </div>
 
@@ -391,11 +396,11 @@ function ContactFormSection() {
                 </h4>
 
                 <ul className="space-y-3 text-sm text-slate-500 dark:text-slate-400">
-                  <li>✓ Role-based employee management</li>
-                  <li>✓ Real-time workflow tracking</li>
-                  <li>✓ Analytics & reporting dashboard</li>
-                  <li>✓ Secure JWT authentication</li>
-                  <li>✓ Modern responsive interface</li>
+                  <li>✓ Role-based access management</li>
+                  <li>✓ Real-time updates across the platform</li>
+                  <li>✓ Analytics, reporting and operational insights</li>
+                  <li>✓ Secure authentication and account verification</li>
+                  <li>✓ AI-powered assistance built into the platform</li>
                 </ul>
               </div>
               <div className="rounded border border-slate-200/80 bg-white dark:border-slate-800 dark:bg-[#08101F] p-5">

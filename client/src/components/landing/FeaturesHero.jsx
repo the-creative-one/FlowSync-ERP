@@ -1,10 +1,5 @@
 import { motion } from "framer-motion";
-import {
-  ShoppingCart,
-  BarChart3,
-  ShieldCheck,
-  Mail,
-} from "lucide-react";
+import { ShoppingCart, BarChart3, ShieldCheck, BotIcon } from "lucide-react";
 
 function FeaturesHero() {
   const badges = [
@@ -18,11 +13,11 @@ function FeaturesHero() {
     },
     {
       icon: ShieldCheck,
-      label: "Permissions",
+      label: "Role-Based Access",
     },
     {
-      icon: Mail,
-      label: "Email Notifications",
+      icon: BotIcon,
+      label: "AI Assistant",
     },
   ];
 
@@ -33,7 +28,7 @@ function FeaturesHero() {
         overflow-hidden
         pt-28
         md:pt-40
-        pb-24
+        pb-20
         bg-[#F8FAFC]
         dark:bg-[#020817]
       "
@@ -89,24 +84,6 @@ function FeaturesHero() {
           }}
           className="text-center"
         >
-          <span
-            className="
-              inline-flex
-              items-center
-              px-4
-              py-2
-              rounded-full
-              bg-blue-100
-              text-blue-700
-              dark:bg-blue-500/10
-              dark:text-blue-300
-              text-sm
-              font-medium
-            "
-          >
-            Everything FlowSync Offers
-          </span>
-
           <h1
             className="
               mt-6
@@ -133,9 +110,9 @@ function FeaturesHero() {
               dark:text-gray-400
             "
           >
-            Manage orders, employees, analytics,
-            permissions, notifications and business
-            workflows from one centralized ERP platform.
+            From managing orders and teams to understanding performance and
+            controlling access, FlowSync brings everyday operations together in
+            one workspace.
           </p>
 
           {/* Badges */}
@@ -161,7 +138,7 @@ function FeaturesHero() {
                     gap-2
                     px-4
                     py-3
-                    rounded-2xl
+                    rounded
                     bg-white
                     dark:bg-[#111827]
                     border

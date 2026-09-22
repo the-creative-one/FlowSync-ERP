@@ -7,13 +7,13 @@ function BuiltWithPurpose() {
       icon: Target,
       title: "Why We Built FlowSync",
       description:
-        "Business operations often become fragmented across spreadsheets, emails and disconnected tools. FlowSync brings orders, analytics, employees and workflows together in one centralized platform to improve visibility and efficiency.",
+        "Managing operations shouldn't mean jumping between disconnected tools or losing track of who can access what. FlowSync brings orders, people, analytics and operational activity together so the bigger picture is easier to understand.",
     },
     {
       icon: Compass,
       title: "Our Long-Term Direction",
       description:
-        "FlowSync is designed to evolve with modern business needs by providing scalable operational workflows, stronger collaboration and data-driven decision making across teams.",
+        "FlowSync is designed around a modular foundation that can grow with the needs of a business, from everyday order management and team access to analytics, reporting and intelligent assistance.",
     },
   ];
 
@@ -38,7 +38,7 @@ function BuiltWithPurpose() {
               dark:text-white
             "
           >
-            Built With Purpose
+            Behind The Build
           </h2>
 
           <p
@@ -51,7 +51,7 @@ function BuiltWithPurpose() {
               dark:text-gray-400
             "
           >
-            FlowSync ERP is designed to simplify business
+            FlowSync is designed to simplify business
             operations while providing the visibility and
             control teams need to work effectively.
           </p>

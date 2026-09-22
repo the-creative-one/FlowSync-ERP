@@ -104,7 +104,7 @@ const verificationEmailTemplate = (verificationCode, isResend = false) => {
             >
               <img
                 src="https://res.cloudinary.com/dsbwtn2lu/image/upload/v1781344316/White-Logo_vpyxsw.png"
-                alt="FlowSync ERP"
+                alt="FlowSync"
                 width="220"
               />
 
@@ -155,8 +155,8 @@ const verificationEmailTemplate = (verificationCode, isResend = false) => {
               >
                 ${
                   isResend
-                    ? "You requested a new verification code for your FlowSync ERP account."
-                    : "Welcome to FlowSync ERP!"
+                    ? "You requested a new verification code for your FlowSync account."
+                    : "Welcome to FlowSync!"
                 }
               </p>
 
@@ -251,7 +251,7 @@ const verificationEmailTemplate = (verificationCode, isResend = false) => {
                     margin:0;
                   "
                 >
-                  If you did not attempt to create a FlowSync ERP
+                  If you did not attempt to create a FlowSync
                   account, you can safely ignore this email.
                 </p>
               </div>
@@ -275,7 +275,7 @@ const verificationEmailTemplate = (verificationCode, isResend = false) => {
                   font-weight:bold;
                 "
               >
-                FlowSync ERP
+                FlowSync
               </p>
 
               <p
@@ -295,7 +295,7 @@ const verificationEmailTemplate = (verificationCode, isResend = false) => {
                   font-size:13px;
                 "
               >
-                © ${new Date().getFullYear()} FlowSync ERP.
+                © ${new Date().getFullYear()} FlowSync.
                 All rights reserved.
               </p>
             </td>
@@ -366,7 +366,7 @@ const passwordResetEmailTemplate = (resetUrl) => {
             >
               <img
                 src="https://res.cloudinary.com/dsbwtn2lu/image/upload/v1781344316/White-Logo_vpyxsw.png"
-                alt="FlowSync ERP"
+                alt="FlowSync"
                 width="220"
               />
 
@@ -416,7 +416,7 @@ const passwordResetEmailTemplate = (resetUrl) => {
                 "
               >
                 We received a request to reset the password
-                for your FlowSync ERP account.
+                for your FlowSync account.
               </p>
 
               <p
@@ -522,7 +522,7 @@ const passwordResetEmailTemplate = (resetUrl) => {
                   font-weight:bold;
                 "
               >
-                FlowSync ERP
+                FlowSync
               </p>
 
               <p
@@ -542,7 +542,7 @@ const passwordResetEmailTemplate = (resetUrl) => {
                   font-size:13px;
                 "
               >
-                © ${new Date().getFullYear()} FlowSync ERP.
+                © ${new Date().getFullYear()} FlowSync.
                 All rights reserved.
               </p>
             </td>
@@ -656,7 +656,7 @@ const registerUser = async (req, res) => {
     // Send the email before changing the database.
     await sendEmail({
       to: normalizedEmail,
-      subject: "Verify Your FlowSync ERP Account",
+      subject: "Verify Your FlowSync Account",
       html: verificationEmailTemplate(verificationCode),
     });
 
@@ -893,7 +893,7 @@ const resendVerificationCode = async (req, res) => {
     // Send the email before updating the database.
     await sendEmail({
       to: normalizedEmail,
-      subject: "Your New FlowSync ERP Verification Code",
+      subject: "Your New FlowSync Verification Code",
       html: verificationEmailTemplate(verificationCode, true),
     });
 
@@ -1041,7 +1041,7 @@ const forgotPassword = async (req, res) => {
 
     await sendEmail({
       to: user.email,
-      subject: "Reset Your FlowSync ERP Password",
+      subject: "Reset Your FlowSync Password",
       html: passwordResetEmailTemplate(resetUrl),
     });
 

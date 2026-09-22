@@ -4,34 +4,39 @@ import { ChevronDown } from "lucide-react";
 
 const faqs = [
   {
-    question: "What is FlowSync ERP?",
+    question: "What is FlowSync?",
     answer:
-      "FlowSync ERP is a MERN-stack enterprise resource planning application built to manage business operations such as authentication, order management, analytics, employee management, and role-based access control.",
+      "FlowSync is a MERN-based ERP platform built to bring everyday business operations into one place, including order management, employee management, analytics, permissions, reporting and activity tracking.",
   },
   {
-    question: "Can I explore FlowSync ERP?",
+    question: "Can I explore FlowSync?",
     answer:
-      "Yes. You can register and explore the available modules and workflows implemented within the application.",
+      "Yes. You can create an account and explore the workflows and features available in the application. Some capabilities are controlled by your assigned role and permissions.",
   },
   {
-    question: "Which features are currently available?",
+    question: "What can I do with FlowSync?",
     answer:
-      "FlowSync currently includes secure authentication, role-based access, dashboards, order management, analytics, activity logs, responsive UI, image uploads, email services, and profile management.",
+      "FlowSync includes order management, analytics, employee management, role-based permissions, activity and audit tracking, report exports, profile management, real-time updates and an AI-powered assistant.",
   },
   {
-    question: "Can I share feedback or suggest new features?",
+    question: "How does access control work?",
     answer:
-      "Simply use the contact form above and select the appropriate inquiry type. We'd love to hear your suggestions and feedback.",
+      "FlowSync uses role-based access with granular permissions. Different users can have different capabilities, while sensitive actions remain restricted to authorized users.",
   },
   {
-    question: "Will new features continue to be added?",
+    question: "What can the FlowSync Assistant do?",
     answer:
-      "Absolutely. The application is designed with scalability in mind, making it easier to extend with additional modules and capabilities over time.",
+      "The FlowSync Assistant can help users understand features, workflows and platform capabilities. For signed-in users, it can also provide answers based on their role and assigned permissions.",
   },
   {
-    question: "How quickly can I expect a response?",
+    question: "How does FlowSync keep accounts secure?",
     answer:
-      "We usually respond within 24–48 hours depending on the nature of the inquiry.",
+      "FlowSync uses secure authentication with account verification and password recovery workflows. Access to protected areas is also enforced through authentication, roles and permissions.",
+  },
+  {
+    question: "Can I share feedback or suggest a feature?",
+    answer:
+      "Absolutely. Use the contact form to share feedback, report an issue, ask a question or suggest an idea for FlowSync.",
   },
 ];
 
@@ -85,8 +90,7 @@ function ContactFAQ() {
                 dark:text-slate-400
                 "
           >
-            Everything you need to know before getting started with FlowSync
-            ERP.
+            Everything you need to know before getting started with FlowSync.
           </p>
         </motion.div>
         <div className="mt-14 space-y-5">

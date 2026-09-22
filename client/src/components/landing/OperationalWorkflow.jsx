@@ -1,10 +1,5 @@
 import { motion } from "framer-motion";
-import {
-  ShoppingCart,
-  Settings,
-  BarChart3,
-  Activity,
-} from "lucide-react";
+import { ShoppingCart, Settings, BarChart3, Activity } from "lucide-react";
 
 function OperationalWorkflow() {
   const steps = [
@@ -37,7 +32,8 @@ function OperationalWorkflow() {
   return (
     <section
       className="
-        py-24
+      py-16
+        md:py-24
         bg-[#F8FAFC]
         dark:bg-[#0B1120]
       "
@@ -68,8 +64,8 @@ function OperationalWorkflow() {
               dark:text-gray-400
             "
           >
-            Streamline operations through a structured workflow
-            that keeps teams aligned and business processes efficient.
+            From creating an order to understanding what happened, FlowSync
+            keeps the operational cycle connected.
           </p>
         </div>
 

@@ -319,7 +319,7 @@ function Register() {
           </div>
 
           <p className="text-lg text-gray-300 leading-relaxed max-w-lg">
-            Join FlowSync ERP and streamline your business operations with a
+            Join FlowSync and streamline your business operations with a
             modern and scalable platform.
           </p>
 
@@ -450,7 +450,7 @@ function Register() {
                     text-center
                   "
                 >
-                  Create your FlowSync ERP account.
+                  Create your FlowSync account.
                 </p>
               </div>
 
