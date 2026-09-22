@@ -1,4 +1,4 @@
-//Register page with account creation and email verification
+// Register page with account creation and email verification
 
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -15,6 +15,8 @@ import {
   RefreshCw,
   Check,
   X,
+  LayoutDashboard,
+  Workflow,
 } from "lucide-react";
 import ThemeToggle from "../components/ThemeToggle";
 import { useAuth } from "../context/AuthContext";
@@ -22,7 +24,8 @@ import { useAuth } from "../context/AuthContext";
 function Register() {
   const navigate = useNavigate();
   const { login } = useAuth();
-  //Register state
+
+  // Register state
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -35,7 +38,7 @@ function Register() {
     confirmPassword: "",
   });
 
-  //Verification state
+  // Verification state
 
   const [showVerification, setShowVerification] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
@@ -44,7 +47,7 @@ function Register() {
   const [resending, setResending] = useState(false);
   const [timeLeft, setTimeLeft] = useState(180);
 
-  //Password validation
+  // Password validation
 
   const passwordRequirements = {
     minLength: formData.password.length >= 8,
@@ -61,7 +64,7 @@ function Register() {
     passwordRequirements.number &&
     passwordRequirements.special;
 
-  //Handle input
+  // Handle input
 
   const handleChange = (e) => {
     setFormData({
@@ -75,7 +78,7 @@ function Register() {
     }));
   };
 
-  //Validate form
+  // Validate form
 
   const validateForm = () => {
     const newErrors = {};
@@ -107,7 +110,7 @@ function Register() {
     return Object.keys(newErrors).length === 0;
   };
 
-  //Verification timer
+  // Verification timer
 
   useEffect(() => {
     if (!showVerification || timeLeft <= 0) {
@@ -128,7 +131,7 @@ function Register() {
     return () => clearInterval(timer);
   }, [showVerification, timeLeft]);
 
-  //Format verification timer
+  // Format verification timer
 
   const formatTime = () => {
     const minutes = Math.floor(timeLeft / 60);
@@ -137,7 +140,7 @@ function Register() {
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
-  //Register user
+  // Register user
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -164,7 +167,8 @@ function Register() {
     }
   };
 
-  //Verify email
+  // Verify email
+
   const handleVerify = async (e) => {
     e.preventDefault();
 
@@ -195,13 +199,13 @@ function Register() {
         code: verificationCode.trim(),
       });
 
-      //Login the user immediately after email verification
+      // Login the user immediately after email verification
 
       login(response.data.token, response.data.user);
 
       toast.success("Email verified successfully");
 
-      //Send the user directly to the dashboard
+      // Send the user directly to the dashboard
 
       navigate("/dashboard");
     } catch (error) {
@@ -214,7 +218,7 @@ function Register() {
     }
   };
 
-  //Resend verification code
+  // Resend verification code
 
   const handleResendCode = async () => {
     if (timeLeft > 0 || resending) {
@@ -242,7 +246,7 @@ function Register() {
     }
   };
 
-  //Go back to registration
+  // Go back to registration
 
   const handleBackToRegister = () => {
     setShowVerification(false);
@@ -251,7 +255,7 @@ function Register() {
     setTimeLeft(180);
   };
 
-  //Password requirement item
+  // Password requirement item
 
   const PasswordRequirement = ({ valid, children }) => {
     return (
@@ -262,7 +266,11 @@ function Register() {
             : "text-gray-500 dark:text-gray-400"
         }`}
       >
-        {valid ? <Check size={13} /> : <X size={13} />}
+        {valid ? (
+          <Check size={13} aria-hidden="true" />
+        ) : (
+          <X size={13} aria-hidden="true" />
+        )}
 
         <span>{children}</span>
       </div>
@@ -308,6 +316,8 @@ function Register() {
         <div className="absolute top-0 left-0 w-72 h-72 bg-[#1D546C]/20 rounded-full blur-3xl" />
 
         <div className="relative z-10">
+          {/* Logo */}
+
           <div className="flex justify-center lg:justify-start mb-8">
             <Link to="/">
               <img
@@ -318,27 +328,17 @@ function Register() {
             </Link>
           </div>
 
+          {/* Text */}
+
           <p className="text-lg text-gray-300 leading-relaxed max-w-lg">
-            Join FlowSync and streamline your business operations with a
-            modern and scalable platform.
+            Create your FlowSync account and bring orders, teams, analytics
+            and everyday operations together in one place.
           </p>
 
+          {/* Features */}
+
           <div className="mt-10 space-y-4">
-            <div
-              className="
-                bg-white/10
-                backdrop-blur-md
-                border
-                border-white/10
-                rounded-xl
-                p-5
-                hover:translate-x-2
-                transition
-                duration-300
-              "
-            >
-              🚀 Modern ERP Experience
-            </div>
+            {/* CENTRALIZED OPERATIONS */}
 
             <div
               className="
@@ -346,15 +346,26 @@ function Register() {
                 backdrop-blur-md
                 border
                 border-white/10
-                rounded-xl
+                rounded
                 p-5
+                flex
+                items-center
+                gap-3
                 hover:translate-x-2
                 transition
                 duration-300
               "
             >
-              🔒 Secure Authentication
+              <LayoutDashboard
+                size={21}
+                className="text-sky-400 shrink-0"
+                aria-hidden="true"
+              />
+
+              <span>Centralized Operations</span>
             </div>
+
+            {/* SECURE ACCESS */}
 
             <div
               className="
@@ -362,14 +373,50 @@ function Register() {
                 backdrop-blur-md
                 border
                 border-white/10
-                rounded-xl
+                rounded
                 p-5
+                flex
+                items-center
+                gap-3
                 hover:translate-x-2
                 transition
                 duration-300
               "
             >
-              📱 Fully Responsive UI
+              <ShieldCheck
+                size={21}
+                className="text-emerald-400 shrink-0"
+                aria-hidden="true"
+              />
+
+              <span>Secure Access</span>
+            </div>
+
+            {/* BUILT FOR YOUR WORKFLOW */}
+
+            <div
+              className="
+                bg-white/10
+                backdrop-blur-md
+                border
+                border-white/10
+                rounded
+                p-5
+                flex
+                items-center
+                gap-3
+                hover:translate-x-2
+                transition
+                duration-300
+              "
+            >
+              <Workflow
+                size={21}
+                className="text-purple-400 shrink-0"
+                aria-hidden="true"
+              />
+
+              <span>Built For Your Workflow</span>
             </div>
           </div>
         </div>
@@ -395,6 +442,7 @@ function Register() {
         "
       >
         {/* Mobile logo */}
+
         <div className="lg:hidden fixed top-5 left-5 z-20">
           <Link to="/">
             <img
@@ -460,9 +508,14 @@ function Register() {
                 {/* Name */}
 
                 <div>
+                  <label htmlFor="name" className="sr-only">
+                    Full name
+                  </label>
+
                   <div className="relative">
                     <User
                       size={18}
+                      aria-hidden="true"
                       className="
                         absolute
                         left-4
@@ -473,11 +526,17 @@ function Register() {
                     />
 
                     <input
+                      id="name"
                       type="text"
                       name="name"
                       placeholder="Enter name"
                       value={formData.name}
                       onChange={handleChange}
+                      autoComplete="name"
+                      aria-invalid={!!errors.name}
+                      aria-describedby={
+                        errors.name ? "name-error" : undefined
+                      }
                       className={`
                         w-full
                         border
@@ -508,7 +567,10 @@ function Register() {
                   </div>
 
                   {errors.name && (
-                    <p className="text-red-500 text-sm mt-2 ml-1">
+                    <p
+                      id="name-error"
+                      className="text-red-500 text-sm mt-2 ml-1"
+                    >
                       {errors.name}
                     </p>
                   )}
@@ -517,9 +579,14 @@ function Register() {
                 {/* Email */}
 
                 <div>
+                  <label htmlFor="email" className="sr-only">
+                    Email address
+                  </label>
+
                   <div className="relative">
                     <Mail
                       size={18}
+                      aria-hidden="true"
                       className="
                         absolute
                         left-4
@@ -530,11 +597,18 @@ function Register() {
                     />
 
                     <input
+                      id="email"
                       type="email"
                       name="email"
                       placeholder="Enter email"
                       value={formData.email}
                       onChange={handleChange}
+                      autoComplete="email"
+                      inputMode="email"
+                      aria-invalid={!!errors.email}
+                      aria-describedby={
+                        errors.email ? "email-error" : undefined
+                      }
                       className={`
                         w-full
                         border
@@ -565,7 +639,10 @@ function Register() {
                   </div>
 
                   {errors.email && (
-                    <p className="text-red-500 text-sm mt-2 ml-1">
+                    <p
+                      id="email-error"
+                      className="text-red-500 text-sm mt-2 ml-1"
+                    >
                       {errors.email}
                     </p>
                   )}
@@ -574,9 +651,14 @@ function Register() {
                 {/* Password */}
 
                 <div>
+                  <label htmlFor="password" className="sr-only">
+                    Password
+                  </label>
+
                   <div className="relative">
                     <Lock
                       size={18}
+                      aria-hidden="true"
                       className="
                         absolute
                         left-4
@@ -587,11 +669,21 @@ function Register() {
                     />
 
                     <input
+                      id="password"
                       type={showPassword ? "text" : "password"}
                       name="password"
                       placeholder="Enter password"
                       value={formData.password}
                       onChange={handleChange}
+                      autoComplete="new-password"
+                      aria-invalid={!!errors.password}
+                      aria-describedby={
+                        errors.password
+                          ? "password-error"
+                          : formData.password
+                            ? "password-requirements"
+                            : undefined
+                      }
                       className={`
                         w-full
                         border
@@ -623,6 +715,10 @@ function Register() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
+                      aria-label={
+                        showPassword ? "Hide password" : "Show password"
+                      }
+                      aria-pressed={showPassword}
                       className="
                         absolute
                         right-4
@@ -634,7 +730,11 @@ function Register() {
                         transition
                       "
                     >
-                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      {showPassword ? (
+                        <EyeOff size={18} aria-hidden="true" />
+                      ) : (
+                        <Eye size={18} aria-hidden="true" />
+                      )}
                     </button>
                   </div>
 
@@ -642,6 +742,7 @@ function Register() {
 
                   {formData.password && (
                     <div
+                      id="password-requirements"
                       className="
                         mt-3
                         grid
@@ -675,18 +776,25 @@ function Register() {
                         One lowercase letter
                       </PasswordRequirement>
 
-                      <PasswordRequirement valid={passwordRequirements.number}>
+                      <PasswordRequirement
+                        valid={passwordRequirements.number}
+                      >
                         One number
                       </PasswordRequirement>
 
-                      <PasswordRequirement valid={passwordRequirements.special}>
+                      <PasswordRequirement
+                        valid={passwordRequirements.special}
+                      >
                         One special character
                       </PasswordRequirement>
                     </div>
                   )}
 
                   {errors.password && (
-                    <p className="text-red-500 text-sm mt-2 ml-1">
+                    <p
+                      id="password-error"
+                      className="text-red-500 text-sm mt-2 ml-1"
+                    >
                       {errors.password}
                     </p>
                   )}
@@ -695,9 +803,14 @@ function Register() {
                 {/* Confirm password */}
 
                 <div>
+                  <label htmlFor="confirmPassword" className="sr-only">
+                    Confirm password
+                  </label>
+
                   <div className="relative">
                     <Lock
                       size={18}
+                      aria-hidden="true"
                       className="
                         absolute
                         left-4
@@ -708,11 +821,19 @@ function Register() {
                     />
 
                     <input
+                      id="confirmPassword"
                       type={showConfirmPassword ? "text" : "password"}
                       name="confirmPassword"
                       placeholder="Confirm password"
                       value={formData.confirmPassword}
                       onChange={handleChange}
+                      autoComplete="new-password"
+                      aria-invalid={!!errors.confirmPassword}
+                      aria-describedby={
+                        errors.confirmPassword
+                          ? "confirm-password-error"
+                          : undefined
+                      }
                       className={`
                         w-full
                         border
@@ -746,6 +867,12 @@ function Register() {
                       onClick={() =>
                         setShowConfirmPassword(!showConfirmPassword)
                       }
+                      aria-label={
+                        showConfirmPassword
+                          ? "Hide confirm password"
+                          : "Show confirm password"
+                      }
+                      aria-pressed={showConfirmPassword}
                       className="
                         absolute
                         right-4
@@ -758,15 +885,18 @@ function Register() {
                       "
                     >
                       {showConfirmPassword ? (
-                        <EyeOff size={18} />
+                        <EyeOff size={18} aria-hidden="true" />
                       ) : (
-                        <Eye size={18} />
+                        <Eye size={18} aria-hidden="true" />
                       )}
                     </button>
                   </div>
 
                   {errors.confirmPassword && (
-                    <p className="text-red-500 text-sm mt-2 ml-1">
+                    <p
+                      id="confirm-password-error"
+                      className="text-red-500 text-sm mt-2 ml-1"
+                    >
                       {errors.confirmPassword}
                     </p>
                   )}
@@ -797,7 +927,7 @@ function Register() {
                   "
                 >
                   Register
-                  <ArrowRight size={18} />
+                  <ArrowRight size={18} aria-hidden="true" />
                 </button>
               </form>
 
@@ -846,6 +976,7 @@ function Register() {
                 >
                   <ShieldCheck
                     size={32}
+                    aria-hidden="true"
                     className="text-[#1D546C] dark:text-blue-400"
                   />
                 </div>
@@ -889,9 +1020,14 @@ function Register() {
 
               <form onSubmit={handleVerify} className="space-y-5">
                 <div>
+                  <label htmlFor="verificationCode" className="sr-only">
+                    Email verification code
+                  </label>
+
                   <div className="relative">
                     <ShieldCheck
                       size={18}
+                      aria-hidden="true"
                       className="
                         absolute
                         left-4
@@ -902,9 +1038,13 @@ function Register() {
                     />
 
                     <input
+                      id="verificationCode"
+                      name="verificationCode"
                       type="text"
                       inputMode="numeric"
+                      autoComplete="one-time-code"
                       maxLength={6}
+                      pattern="[0-9]{6}"
                       placeholder="Enter 6-digit code"
                       value={verificationCode}
                       onChange={(e) => {
@@ -915,6 +1055,12 @@ function Register() {
                         setVerificationCode(value);
                         setVerificationError("");
                       }}
+                      aria-invalid={!!verificationError}
+                      aria-describedby={
+                        verificationError
+                          ? "verification-error"
+                          : "verification-help"
+                      }
                       className={`
                         w-full
                         border
@@ -948,15 +1094,29 @@ function Register() {
                   </div>
 
                   {verificationError && (
-                    <p className="text-red-500 text-sm mt-2 ml-1">
+                    <p
+                      id="verification-error"
+                      role="alert"
+                      className="text-red-500 text-sm mt-2 ml-1"
+                    >
                       {verificationError}
+                    </p>
+                  )}
+
+                  {!verificationError && (
+                    <p
+                      id="verification-help"
+                      className="sr-only"
+                    >
+                      Enter the 6-digit verification code sent to your email
+                      address.
                     </p>
                   )}
                 </div>
 
                 {/* Verification timer */}
 
-                <div className="text-center">
+                <div className="text-center" aria-live="polite">
                   {timeLeft > 0 ? (
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                       Code expires in{" "}
@@ -1000,7 +1160,9 @@ function Register() {
                 >
                   {verifying ? "Verifying..." : "Verify Email"}
 
-                  {!verifying && <ArrowRight size={18} />}
+                  {!verifying && (
+                    <ArrowRight size={18} aria-hidden="true" />
+                  )}
                 </button>
 
                 {/* Resend verification code */}
@@ -1014,6 +1176,11 @@ function Register() {
                     type="button"
                     onClick={handleResendCode}
                     disabled={resending || timeLeft > 0}
+                    aria-label={
+                      timeLeft > 0
+                        ? `Resend verification code available in ${formatTime()}`
+                        : "Resend verification code"
+                    }
                     className="
                       mt-2
                       inline-flex
@@ -1029,6 +1196,7 @@ function Register() {
                   >
                     <RefreshCw
                       size={15}
+                      aria-hidden="true"
                       className={resending ? "animate-spin" : ""}
                     />
 

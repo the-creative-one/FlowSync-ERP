@@ -246,7 +246,7 @@ function Chatbot() {
     <>
       {showNudge && !isOpen && (
         <div className="fixed bottom-24 right-6 z-40 w-[calc(100%-3rem)] max-w-xs">
-          <div className="relative bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-700 rounded-2xl shadow-xl px-4 py-3">
+          <div className="relative bg-white dark:bg-[#111827] rounded-2xl shadow-xl px-4 py-3">
             <button
               onClick={() => setShowNudge(false)}
               className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 flex items-center justify-center shadow-sm"
@@ -290,7 +290,7 @@ function Chatbot() {
         {isOpen ? <X size={24} /> : <MessageCircle size={24} />}
       </button>
       {isOpen && (
-        <div className="fixed z-50 left-3 right-3 bottom-20 sm:left-auto sm:right-6 sm:bottom-24 w-auto sm:w-[calc(100%-3rem)] max-w-md sm:h-[600px] lg:h-[560px] bg-white dark:bg-[#0F172A] border border-gray-200 dark:border-gray-700 rounded-3xl shadow-2xl flex flex-col overflow-hidden">
+        <div className="fixed z-50 left-3 right-3 bottom-20 sm:left-auto sm:right-6 sm:bottom-24 w-auto sm:w-[calc(100%-3rem)] max-w-md sm:h-[600px] lg:h-[560px] bg-white dark:bg-[#0F172A] rounded-4xl shadow-2xl flex flex-col overflow-hidden">
           <div className="px-4 sm:px-5 py-4 bg-[#0C2B4E] text-white">
             <div className="flex items-center gap-3">
               <div className="relative w-10 h-10 shrink-0 rounded-full bg-white/15 flex items-center justify-center">
@@ -342,7 +342,7 @@ function Chatbot() {
                         <button
                           key={question}
                           onClick={() => askQuestion(question)}
-                          className="text-left text-xs px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                          className="text-left text-xs px-3 py-2.5 rounded-full border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                         >
                           {question}
                         </button>
@@ -473,7 +473,7 @@ function Chatbot() {
             onSubmit={sendMessage}
             className="p-3 border-t border-gray-200 dark:border-gray-700"
           >
-            <div className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 rounded-2xl px-2 py-2">
+            <div className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 rounded-full px-2 py-2">
               <input
                 type="text"
                 value={message}
@@ -486,7 +486,7 @@ function Chatbot() {
               <button
                 type="submit"
                 disabled={loading || historyLoading || !message.trim()}
-                className="w-10 h-10 shrink-0 rounded-xl bg-[#2563EB] text-white flex items-center justify-center disabled:opacity-40 transition-opacity"
+                className="w-10 h-10 shrink-0 rounded-full bg-[#2563EB] text-white flex items-center justify-center disabled:opacity-40 transition-opacity"
               >
                 <Send size={17} />
               </button>

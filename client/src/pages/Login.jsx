@@ -1,7 +1,16 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api/axios";
-import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
+import {
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  ArrowRight,
+  Package,
+  BarChart3,
+  ShieldCheck,
+} from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 import ThemeToggle from "../components/ThemeToggle";
@@ -19,10 +28,7 @@ function Login() {
 
   const { login } = useAuth();
 
-  //
   // VALIDATION
-  //
-
   const validateForm = () => {
     const newErrors = {};
 
@@ -43,10 +49,7 @@ function Login() {
     return Object.keys(newErrors).length === 0;
   };
 
-  //
   // LOGIN
-  //
-
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -131,21 +134,7 @@ function Login() {
           {/* FEATURES */}
 
           <div className="mt-10 space-y-4">
-            <div
-              className="
-                bg-white/10
-                backdrop-blur-md
-                border
-                border-white/10
-                rounded-xl
-                p-5
-                hover:translate-x-2
-                transition
-                duration-300
-              "
-            >
-              📦 Smart Order Management
-            </div>
+            {/* ORDER MANAGEMENT */}
 
             <div
               className="
@@ -153,15 +142,22 @@ function Login() {
                 backdrop-blur-md
                 border
                 border-white/10
-                rounded-xl
+                rounded
                 p-5
+                flex
+                items-center
+                gap-3
                 hover:translate-x-2
                 transition
                 duration-300
               "
             >
-              📊 Real-Time Analytics
+              <Package size={21} className="text-orange-400 shrink-0" />
+
+              <span>Order Management</span>
             </div>
+
+            {/* ANALYTICS */}
 
             <div
               className="
@@ -169,14 +165,42 @@ function Login() {
                 backdrop-blur-md
                 border
                 border-white/10
-                rounded-xl
+                rounded
                 p-5
+                flex
+                items-center
+                gap-3
                 hover:translate-x-2
                 transition
                 duration-300
               "
             >
-              ⚡ Fast & Responsive Dashboard
+              <BarChart3 size={21} className="text-purple-400 shrink-0" />
+
+              <span>Analytics & Reporting</span>
+            </div>
+
+            {/* ROLE-BASED ACCESS */}
+
+            <div
+              className="
+                bg-white/10
+                backdrop-blur-md
+                border
+                border-white/10
+                rounded
+                p-5
+                flex
+                items-center
+                gap-3
+                hover:translate-x-2
+                transition
+                duration-300
+              "
+            >
+              <ShieldCheck size={21} className="text-emerald-400 shrink-0" />
+
+              <span>Role-Based Access</span>
             </div>
           </div>
         </div>
@@ -201,6 +225,7 @@ function Login() {
         "
       >
         {/* MOBILE LOGO */}
+
         <div className="lg:hidden fixed top-5 left-5 z-20">
           <Link to="/">
             <img

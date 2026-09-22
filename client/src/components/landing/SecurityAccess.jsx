@@ -38,8 +38,8 @@ function SecurityAccess() {
   return (
     <section
       className="
-      py-16
-        md:py-24
+      pt-16
+        md:pt-24
         bg-white
         dark:bg-[#020817]
         pb-80

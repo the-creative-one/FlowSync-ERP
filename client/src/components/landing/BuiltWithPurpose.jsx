@@ -22,7 +22,7 @@ function BuiltWithPurpose() {
       className="
         pt-15
         pb-20
-        md:py-24
+        lg:py-24
         bg-white
         dark:bg-[#020817]
       "
