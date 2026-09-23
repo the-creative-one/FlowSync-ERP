@@ -1,17 +1,102 @@
-import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { motion, useInView } from "framer-motion";
 import { TrendingUp, ShoppingCart, Users, IndianRupee } from "lucide-react";
 
+function Counter({ value, prefix = "", suffix = "", decimals = 0 }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, {
+    once: true,
+    amount: 0.4,
+  });
+
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!isInView) return;
+
+    const duration = 1400;
+    const startTime = performance.now();
+
+    let animationFrame;
+
+    const animate = (currentTime) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+
+      // Ease-out effect
+      const easedProgress = 1 - Math.pow(1 - progress, 3);
+
+      setCount(value * easedProgress);
+
+      if (progress < 1) {
+        animationFrame = requestAnimationFrame(animate);
+      } else {
+        setCount(value);
+      }
+    };
+
+    animationFrame = requestAnimationFrame(animate);
+
+    return () => cancelAnimationFrame(animationFrame);
+  }, [isInView, value]);
+
+  const formattedValue =
+    decimals > 0
+      ? count.toFixed(decimals)
+      : Math.floor(count).toLocaleString("en-IN");
+
+  return (
+    <span ref={ref}>
+      {prefix}
+      {formattedValue}
+      {suffix}
+    </span>
+  );
+}
+
 function AnalyticsShowcase() {
+  const stats = [
+    {
+      label: "Orders",
+      value: 1245,
+      icon: ShoppingCart,
+      iconClass: "text-sky-400",
+    },
+    {
+      label: "Revenue",
+      value: 8.5,
+      prefix: "₹",
+      suffix: "L",
+      decimals: 1,
+      icon: IndianRupee,
+      iconClass: "text-emerald-400",
+    },
+    {
+      label: "Employees",
+      value: 42,
+      icon: Users,
+      iconClass: "text-purple-400",
+    },
+    {
+      label: "Growth",
+      value: 24,
+      prefix: "+",
+      suffix: "%",
+      icon: TrendingUp,
+      iconClass: "text-orange-400",
+    },
+  ];
+
   return (
     <section
       className="
-        py-16
-        md:py-24
+        pt-28
+        pb-[350px]
+        md:pt-24
+        md:pb-80
         bg-white
         dark:bg-[#020817]
         transition-colors
-        md:pb-80
-        pb-[350px]
         overflow-x-hidden
       "
     >
@@ -50,17 +135,29 @@ function AnalyticsShowcase() {
 
             <div className="mt-8 space-y-4">
               <div className="flex items-center gap-3">
-                <TrendingUp size={18} className="text-green-500" />
+                <TrendingUp
+                  size={18}
+                  className="text-green-500"
+                  aria-hidden="true"
+                />
                 Performance Trends
               </div>
 
               <div className="flex items-center gap-3">
-                <ShoppingCart size={18} className="text-blue-500" />
+                <ShoppingCart
+                  size={18}
+                  className="text-blue-500"
+                  aria-hidden="true"
+                />
                 Order Monitoring
               </div>
 
               <div className="flex items-center gap-3">
-                <Users size={18} className="text-purple-500" />
+                <Users
+                  size={18}
+                  className="text-purple-500"
+                  aria-hidden="true"
+                />
                 Team Insights
               </div>
             </div>
@@ -75,101 +172,89 @@ function AnalyticsShowcase() {
             viewport={{ once: true }}
             className="relative"
           >
-            {/* Main Dashboard Card */}
-
             {/* Desktop */}
+
             <div
               className="
                 bg-[#0C2B4E]
                 rounded-3xl
                 p-8
                 shadow-2xl
-                hidden md:block
+                hidden
+                md:block
               "
             >
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-white/10 rounded-2xl p-5">
-                  <ShoppingCart className="text-white" size={24} />
+                {stats.map((item) => {
+                  const Icon = item.icon;
 
-                  <p className="text-white/70 mt-3">Orders</p>
+                  return (
+                    <div
+                      key={item.label}
+                      className="
+                        bg-white/10
+                        rounded-2xl
+                        p-5
+                      "
+                    >
+                      <Icon
+                        className={item.iconClass}
+                        size={24}
+                        aria-hidden="true"
+                      />
 
-                  <h3 className="text-white text-3xl font-bold">1,245</h3>
-                </div>
+                      <p className="text-white/70 mt-3">{item.label}</p>
 
-                <div className="bg-white/10 rounded-2xl p-5">
-                  <IndianRupee className="text-white" size={24} />
-
-                  <p className="text-white/70 mt-3">Revenue</p>
-
-                  <h3 className="text-white text-3xl font-bold">8.5L</h3>
-                </div>
-
-                <div className="bg-white/10 rounded-2xl p-5">
-                  <Users className="text-white" size={24} />
-
-                  <p className="text-white/70 mt-3">Employees</p>
-
-                  <h3 className="text-white text-3xl font-bold">42</h3>
-                </div>
-
-                <div className="bg-white/10 rounded-2xl p-5">
-                  <TrendingUp className="text-white" size={24} />
-
-                  <p className="text-white/70 mt-3">Growth</p>
-
-                  <h3 className="text-white text-3xl font-bold">+24%</h3>
-                </div>
+                      <h3 className="text-white text-3xl font-bold">
+                        <Counter
+                          value={item.value}
+                          prefix={item.prefix}
+                          suffix={item.suffix}
+                          decimals={item.decimals}
+                        />
+                      </h3>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
             {/* Mobile */}
 
             <div className="md:hidden space-y-4">
-              {[
-                {
-                  label: "Orders",
-                  value: "1,245",
-                  icon: ShoppingCart,
-                },
-                {
-                  label: "Revenue",
-                  value: "₹8.5L",
-                  icon: IndianRupee,
-                },
-                {
-                  label: "Employees",
-                  value: "42",
-                  icon: Users,
-                },
-                {
-                  label: "Growth",
-                  value: "+24%",
-                  icon: TrendingUp,
-                },
-              ].map((item) => {
+              {stats.map((item) => {
                 const Icon = item.icon;
 
                 return (
                   <div
                     key={item.label}
                     className="
-          bg-[#0C2B4E]
-          rounded-2xl
-          p-5
-          flex
-          items-center
-          justify-between
-        "
+                      bg-[#0C2B4E]
+                      rounded-2xl
+                      p-5
+                      flex
+                      items-center
+                      justify-between
+                    "
                   >
                     <div>
                       <p className="text-white/70">{item.label}</p>
 
                       <h3 className="text-white text-3xl font-bold">
-                        {item.value}
+                        <Counter
+                          value={item.value}
+                          prefix={item.prefix}
+                          suffix={item.suffix}
+                          decimals={item.decimals}
+                        />
                       </h3>
                     </div>
 
-                    <Icon size={30} className="text-white" />
+                    <Icon
+                      size={30}
+                      className={item.iconClass}
+                      aria-hidden="true"
+                    />
                   </div>
                 );
               })}
