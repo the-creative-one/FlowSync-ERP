@@ -965,7 +965,7 @@ function Register() {
                     mx-auto
                     w-16
                     h-16
-                    rounded-2xl
+                    rounded-xl
                     bg-[#1D546C]/10
                     dark:bg-blue-500/10
                     flex
@@ -1064,7 +1064,7 @@ function Register() {
                       className={`
                         w-full
                         border
-                        rounded-xl
+                        rounded
                         py-3
                         pl-12
                         pr-4
@@ -1146,7 +1146,7 @@ function Register() {
                     disabled:cursor-not-allowed
                     text-white
                     py-3
-                    rounded-xl
+                    rounded
                     font-semibold
                     flex
                     items-center

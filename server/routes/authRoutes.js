@@ -1,5 +1,5 @@
 const express = require("express");
-
+const rateLimit = require("express-rate-limit");
 const router = express.Router();
 
 const {
@@ -13,11 +13,19 @@ const {
 } = require("../controllers/authController");
 
 const { protect, adminOnly } = require("../middleware/authMiddleware");
-
+const registrationLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 5,
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+  message: {
+    message: "Too many registration attempts. Please try again later.",
+  },
+});
 // AUTH ROUTES
 
 // Register
-router.post("/register", registerUser);
+router.post("/register", registrationLimiter, registerUser);
 
 // Email verification
 router.post("/verify-email", verifyEmail);

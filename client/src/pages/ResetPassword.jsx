@@ -1,12 +1,7 @@
 import { useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 
-import {
-  Lock,
-  Eye,
-  EyeOff,
-  ArrowRight,
-} from "lucide-react";
+import { Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
 
 import toast from "react-hot-toast";
 
@@ -19,46 +14,48 @@ function ResetPassword() {
   const navigate = useNavigate();
 
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-  const [confirmPassword, setConfirmPassword] =
-    useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
-  const [showPassword, setShowPassword] =
-    useState(false);
-
-  const [showConfirmPassword, setShowConfirmPassword] =
-    useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    setError("");
+
     if (!password.trim()) {
       return toast.error("Password is required");
     }
 
-    if (password.length < 6) {
-      return toast.error(
-        "Password must be at least 6 characters",
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
+
+    if (!passwordRegex.test(password)) {
+      setError(
+        "Password must be at least 8 characters and include an uppercase letter, lowercase letter, number, and special character.",
       );
+      return;
+    }
+
+    if (!confirmPassword.trim()) {
+      return toast.error("Please confirm your password");
     }
 
     if (password !== confirmPassword) {
-      return toast.error(
-        "Passwords do not match",
-      );
+      return toast.error("Passwords do not match");
     }
 
     try {
       setLoading(true);
 
-      const response = await api.post(
-        `/auth/reset-password/${token}`,
-        {
-          password,
-        },
-      );
+      const response = await api.post(`/auth/reset-password/${token}`, {
+        password,
+      });
 
       toast.success(response.data.message);
 
@@ -66,10 +63,7 @@ function ResetPassword() {
         navigate("/");
       }, 1500);
     } catch (error) {
-      toast.error(
-        error.response?.data?.message ||
-          "Failed to reset password",
-      );
+      toast.error(error.response?.data?.message || "Failed to reset password");
     } finally {
       setLoading(false);
     }
@@ -128,15 +122,17 @@ function ResetPassword() {
           Enter your new password below.
         </p>
 
-        <form
-          onSubmit={handleSubmit}
-          className="mt-8 space-y-4"
-        >
+        <form onSubmit={handleSubmit} className="mt-8 space-y-4">
           {/* NEW PASSWORD */}
 
           <div className="relative">
+            <label htmlFor="new-password" className="sr-only">
+              New Password
+            </label>
+
             <Lock
               size={18}
+              aria-hidden="true"
               className="
                 absolute
                 left-4
@@ -147,16 +143,19 @@ function ResetPassword() {
             />
 
             <input
-              type={
-                showPassword
-                  ? "text"
-                  : "password"
-              }
+              id="new-password"
+              name="newPassword"
+              type={showPassword ? "text" : "password"}
               placeholder="New Password"
               value={password}
-              onChange={(e) =>
-                setPassword(e.target.value)
-              }
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setError("");
+              }}
+              minLength={8}
+              autoComplete="new-password"
+              aria-invalid={Boolean(error)}
+              aria-describedby={error ? "password-error" : undefined}
               className="
                 w-full
                 border
@@ -176,11 +175,9 @@ function ResetPassword() {
 
             <button
               type="button"
-              onClick={() =>
-                setShowPassword(
-                  !showPassword,
-                )
-              }
+              onClick={() => setShowPassword(!showPassword)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              aria-pressed={showPassword}
               className="
                 absolute
                 right-4
@@ -189,19 +186,30 @@ function ResetPassword() {
                 text-gray-400
               "
             >
-              {showPassword ? (
-                <EyeOff size={18} />
-              ) : (
-                <Eye size={18} />
-              )}
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
+
+          {error && (
+            <p
+              id="password-error"
+              role="alert"
+              className="text-sm text-red-500"
+            >
+              {error}
+            </p>
+          )}
 
           {/* CONFIRM PASSWORD */}
 
           <div className="relative">
+            <label htmlFor="confirm-password" className="sr-only">
+              Confirm Password
+            </label>
+
             <Lock
               size={18}
+              aria-hidden="true"
               className="
                 absolute
                 left-4
@@ -212,18 +220,14 @@ function ResetPassword() {
             />
 
             <input
-              type={
-                showConfirmPassword
-                  ? "text"
-                  : "password"
-              }
+              id="confirm-password"
+              name="confirmPassword"
+              type={showConfirmPassword ? "text" : "password"}
               placeholder="Confirm Password"
               value={confirmPassword}
-              onChange={(e) =>
-                setConfirmPassword(
-                  e.target.value,
-                )
-              }
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              minLength={8}
+              autoComplete="new-password"
               className="
                 w-full
                 border
@@ -243,11 +247,13 @@ function ResetPassword() {
 
             <button
               type="button"
-              onClick={() =>
-                setShowConfirmPassword(
-                  !showConfirmPassword,
-                )
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              aria-label={
+                showConfirmPassword
+                  ? "Hide confirm password"
+                  : "Show confirm password"
               }
+              aria-pressed={showConfirmPassword}
               className="
                 absolute
                 right-4
@@ -256,11 +262,7 @@ function ResetPassword() {
                 text-gray-400
               "
             >
-              {showConfirmPassword ? (
-                <EyeOff size={18} />
-              ) : (
-                <Eye size={18} />
-              )}
+              {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
 
@@ -280,13 +282,13 @@ function ResetPassword() {
               justify-center
               gap-2
               transition
+              disabled:opacity-60
+              disabled:cursor-not-allowed
             "
           >
-            {loading
-              ? "Resetting..."
-              : "Reset Password"}
+            {loading ? "Resetting..." : "Reset Password"}
 
-            <ArrowRight size={18} />
+            <ArrowRight size={18} aria-hidden="true" />
           </button>
         </form>
 

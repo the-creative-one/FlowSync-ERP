@@ -561,7 +561,7 @@ const passwordResetEmailTemplate = (resetUrl) => {
 // Register a new user or restart verification for an unverified user.
 const registerUser = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({
@@ -620,30 +620,19 @@ const registerUser = async (req, res) => {
       }
     }
 
-    // Set permissions based on the selected role.
-    let defaultPermissions = {};
+    // Public registration always creates a basic employee account.
+    // Roles and permissions can only be changed through protected employee management.
+    const defaultRole = "employee";
 
-    if (role === "admin" || role === "manager") {
-      defaultPermissions = {
-        canCreateOrders: true,
-        canUpdateOrders: true,
-        canDeleteOrders: true,
-        canManageEmployees: true,
-        canViewAdvancedAnalytics: true,
-        canExportReports: true,
-        canAccessSettings: true,
-      };
-    } else {
-      defaultPermissions = {
-        canCreateOrders: false,
-        canUpdateOrders: false,
-        canDeleteOrders: false,
-        canManageEmployees: false,
-        canViewAdvancedAnalytics: false,
-        canExportReports: false,
-        canAccessSettings: false,
-      };
-    }
+    const defaultPermissions = {
+      canCreateOrders: false,
+      canUpdateOrders: false,
+      canDeleteOrders: false,
+      canManageEmployees: false,
+      canViewAdvancedAnalytics: false,
+      canExportReports: false,
+      canAccessSettings: false,
+    };
 
     // Generate a new verification code.
     const verificationCode = generateVerificationCode();
@@ -664,7 +653,7 @@ const registerUser = async (req, res) => {
     if (user) {
       user.name = name.trim();
       user.password = await bcrypt.hash(password, 10);
-      user.role = role || user.role;
+      user.role = defaultRole;
       user.permissions = defaultPermissions;
 
       user.emailVerificationCode = hashedVerificationCode;
@@ -697,7 +686,7 @@ const registerUser = async (req, res) => {
       name: name.trim(),
       email: normalizedEmail,
       password: await bcrypt.hash(password, 10),
-      role,
+      role: defaultRole,
       permissions: defaultPermissions,
 
       isEmailVerified: false,
@@ -723,7 +712,7 @@ const registerUser = async (req, res) => {
     console.error("Registration Error:", error);
 
     return res.status(500).json({
-      message: error.message || "Unable to complete registration",
+      message: "Unable to complete registration",
     });
   }
 };
@@ -825,7 +814,7 @@ const verifyEmail = async (req, res) => {
     console.error("Email Verification Error:", error);
 
     return res.status(500).json({
-      message: error.message || "Unable to verify email",
+      message:"Unable to verify email",
     });
   }
 };
@@ -922,7 +911,7 @@ const resendVerificationCode = async (req, res) => {
     console.error("Resend Verification Error:", error);
 
     return res.status(500).json({
-      message: error.message || "Unable to resend verification code",
+      message: "Unable to resend verification code",
     });
   }
 };
@@ -996,7 +985,7 @@ const loginUser = async (req, res) => {
     console.error("Login Error:", error);
 
     return res.status(500).json({
-      message: error.message || "Unable to login",
+      message: "Unable to login",
     });
   }
 };
@@ -1019,8 +1008,9 @@ const forgotPassword = async (req, res) => {
     });
 
     if (!user) {
-      return res.status(404).json({
-        message: "User not found",
+      return res.status(200).json({
+        message:
+          "If an account exists with this email, a password reset link has been sent.",
       });
     }
 
@@ -1052,7 +1042,7 @@ const forgotPassword = async (req, res) => {
     console.error("Forgot Password Error:", error);
 
     return res.status(500).json({
-      message: error.message || "Unable to send password reset email",
+      message: "Unable to send password reset email",
     });
   }
 };
@@ -1108,7 +1098,7 @@ const resetPassword = async (req, res) => {
     console.error("Reset Password Error:", error);
 
     return res.status(500).json({
-      message: error.message || "Unable to reset password",
+      message: "Unable to reset password",
     });
   }
 };

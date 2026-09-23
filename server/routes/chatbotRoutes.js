@@ -1,7 +1,6 @@
 const express = require("express");
-
 const router = express.Router();
-
+const rateLimit = require("express-rate-limit");
 const { protect, optionalProtect } = require("../middleware/authMiddleware");
 
 const { getChatbotResponse } = require("../utils/chatbot");
@@ -16,6 +15,15 @@ const allowedPermissions = [
   "canExportReports",
   "canAccessSettings",
 ];
+const chatbotLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 30,
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+  message: {
+    message: "Too many chatbot requests. Please try again later.",
+  },
+});
 
 // GET CHAT HISTORY
 router.get("/history", protect, async (req, res) => {
@@ -57,7 +65,7 @@ router.delete("/history", protect, async (req, res) => {
 });
 
 // SEND MESSAGE
-router.post("/", optionalProtect, async (req, res) => {
+router.post("/", chatbotLimiter, optionalProtect, async (req, res) => {
   try {
     const { message } = req.body;
 
