@@ -334,31 +334,22 @@ function Profile() {
 
   const handleAvatarSelect = async (e) => {
     const file = e.target.files?.[0];
-
     if (!file) return;
-
     try {
       const token = localStorage.getItem("token");
-
       const formData = new FormData();
-
       formData.append("avatar", file);
-
       const response = await api.post("/profile/avatar", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
+          "Content-Type": false,
         },
       });
-
       await fetchUser();
-
       toast.success("Avatar updated");
-
-      console.log(response.data);
+      console.log(response.data.message);
     } catch (error) {
       console.log(error.response?.data);
-
       toast.error("Failed to upload avatar");
     }
   };

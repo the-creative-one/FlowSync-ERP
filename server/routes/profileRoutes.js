@@ -54,11 +54,7 @@ router.put("/name", protect, async (req, res) => {
 // CHANGE PASSWORD
 router.put("/password", protect, async (req, res) => {
   try {
-    const {
-      currentPassword,
-      newPassword,
-      confirmPassword,
-    } = req.body;
+    const { currentPassword, newPassword, confirmPassword } = req.body;
     if (!currentPassword || !newPassword || !confirmPassword) {
       return res.status(400).json({
         message: "All password fields are required",
@@ -112,19 +108,24 @@ router.put("/password", protect, async (req, res) => {
 router.post(
   "/avatar",
   protect,
+  (req, res, next) => {
+    next();
+  },
   uploadAvatar.single("avatar"),
   async (req, res) => {
     try {
       const user = await User.findById(req.user._id);
-
       if (!user) {
         return res.status(404).json({
           message: "User not found",
         });
       }
-
+      if (!req.file) {
+        return res.status(400).json({
+          message: "No avatar file was uploaded",
+        });
+      }
       user.avatar = req.file.path;
-
       // Clear generated avatar
       user.avatarType = "";
       user.avatarSeed = "";

@@ -20,7 +20,6 @@ const activityLogRoutes = require("./routes/activityLogRoutes");
 const chatbotRoutes = require("./routes/chatbotRoutes");
 const User = require("./models/User");
 const { syncUserRooms, loadSocketUser } = require("./utils/socketRooms");
-const rateLimit = require("express-rate-limit");
 
 const app = express();
 // Connect to MongoDB
@@ -38,15 +37,6 @@ app.use(express.json());
 app.use(morgan("dev"));
 
 // Limiters
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 20,
-  standardHeaders: "draft-8",
-  legacyHeaders: false,
-  message: {
-    message: "Too many requests. Please try again later.",
-  },
-});
 
 // Basic API route
 app.get("/", (req, res) => {
@@ -54,7 +44,7 @@ app.get("/", (req, res) => {
 });
 
 // Authentication routes
-app.use("/api/auth", authLimiter, authRoutes);
+app.use("/api/auth", authRoutes);
 // Order routes
 app.use("/api/orders", orderRoutes);
 // Dashboard routes
