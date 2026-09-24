@@ -19,7 +19,7 @@ const settingsRoutes = require("./routes/settingsRoutes");
 const activityLogRoutes = require("./routes/activityLogRoutes");
 const chatbotRoutes = require("./routes/chatbotRoutes");
 const User = require("./models/User");
-const { syncUserRooms, loadSocketUser } = require("./utils/socketRooms");
+const { syncUserRooms } = require("./utils/socketRooms");
 
 const app = express();
 // Connect to MongoDB
