@@ -783,7 +783,7 @@ function Profile() {
                       onClick={() => requestPermission(key)}
                       className="
                 text-left
-                rounded-2xl
+                rounded
                 border
                 border-gray-200
                 dark:border-gray-700
