@@ -39,7 +39,7 @@ function NotFound() {
           {/* Button */}
           <Link
             to="/"
-            className="inline-flex items-center justify-center rounded-xl bg-[#0C2B4E] px-8 py-4 text-white font-semibold hover:bg-[#16406d] transition-all duration-300 hover:-translate-y-1 hover:scale-101 shadow-lg"
+            className="inline-flex items-center justify-center rounded bg-[#0C2B4E] px-8 py-4 text-white font-semibold hover:bg-[#16406d] transition-all duration-300 hover:-translate-y-1 hover:scale-101 shadow-lg"
           >
             Back to Home
           </Link>
