@@ -14,62 +14,54 @@ import {
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 import ThemeToggle from "../components/ThemeToggle";
+import { useTheme } from "next-themes";
 
 function Login() {
   const [email, setEmail] = useState("");
-
   const [password, setPassword] = useState("");
-
   const [showPassword, setShowPassword] = useState(false);
-
   const [errors, setErrors] = useState({});
-
   const navigate = useNavigate();
-
   const { login } = useAuth();
 
   // VALIDATION
   const validateForm = () => {
     const newErrors = {};
-
     if (!email.trim()) {
       newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(email)) {
       newErrors.email = "Enter valid email";
     }
-
     if (!password.trim()) {
       newErrors.password = "Password is required";
     } else if (password.length < 6) {
       newErrors.password = "Password must be at least 6 characters";
     }
-
     setErrors(newErrors);
-
     return Object.keys(newErrors).length === 0;
   };
 
   // LOGIN
   const handleLogin = async (e) => {
     e.preventDefault();
-
     if (!validateForm()) return;
-
     try {
       const response = await api.post("/auth/login", {
         email,
         password,
       });
-
       login(response.data.token, response.data.user);
-
       toast.success("Login successful");
-
       navigate("/dashboard");
     } catch (error) {
       toast.error(error.response?.data?.message || "Login failed");
     }
   };
+
+  const { resolvedTheme } = useTheme();
+
+  const logoSrc =
+    resolvedTheme === "dark" ? "/White-Logo.png" : "/Color-Logo.png";
 
   return (
     <div
@@ -117,7 +109,7 @@ function Login() {
           <div className="flex justify-center lg:justify-start mb-4">
             <Link to="/">
               <img
-                src="/White-Logo.png"
+                src={logoSrc}
                 alt="FlowSync Logo"
                 className="h-20 object-contain"
               />
@@ -229,7 +221,7 @@ function Login() {
         <div className="lg:hidden fixed top-5 left-5 z-20">
           <Link to="/">
             <img
-              src="/White-Logo.png"
+               src={logoSrc}
               alt="FlowSync"
               className="w-40 h-10 object-contain opacity-90"
             />
