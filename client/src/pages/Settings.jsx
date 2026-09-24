@@ -15,6 +15,7 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
+import PageSEO from "../seo/PageSEO";
 
 function Settings() {
   const { user } = useAuth();
@@ -96,13 +97,19 @@ function Settings() {
   }, []);
 
   return (
-    <DashboardLayout
-      title="Settings"
-      subtitle="Manage company information and system settings"
-    >
-      <div className="space-y-6">
-        <div
-          className="
+    <>
+      <PageSEO
+        title="Settings | FlowSync"
+        description="Manage your FlowSync workspace settings, preferences, and system configuration."
+        keywords="FlowSync settings, workspace settings, system settings, account preferences"
+      />
+      <DashboardLayout
+        title="Settings"
+        subtitle="Manage company information and system settings"
+      >
+        <div className="space-y-6">
+          <div
+            className="
           bg-white
           dark:bg-[#111827]
           border
@@ -111,19 +118,19 @@ function Settings() {
           rounded-xl
           overflow-hidden
         "
-        >
-          <div
-            className="h-20
+          >
+            <div
+              className="h-20
             md:h-32
             bg-gradient-to-r
             from-[#1D546C]
             to-[#2B6F8A]
           "
-          />
+            />
 
-          <div className="px-4 md:px-8 pb-8">
-            <div
-              className="
+            <div className="px-4 md:px-8 pb-8">
+              <div
+                className="
               -mt-12
               w-24
               h-24
@@ -138,29 +145,29 @@ function Settings() {
               justify-center
               shadow-lg
             "
-            >
-              <Building2 size={38} className="text-[#1D546C]" />
-            </div>
+              >
+                <Building2 size={38} className="text-[#1D546C]" />
+              </div>
 
-            <div className="mt-3 md:mt-6 relative">
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <div>
-                  <h2 className="text-3xl font-bold dark:text-white">
-                    {settings.companyName || "Company Name"}
-                  </h2>
+              <div className="mt-3 md:mt-6 relative">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                  <div>
+                    <h2 className="text-3xl font-bold dark:text-white">
+                      {settings.companyName || "Company Name"}
+                    </h2>
 
-                  <p className="text-gray-500 mt-2">Organization Settings</p>
-                </div>
+                    <p className="text-gray-500 mt-2">Organization Settings</p>
+                  </div>
 
-                {isAdmin && (
-                  <>
-                    {/* Desktop */}
-                    <button
-                      onClick={() => {
-                        setEditSettings({ ...settings });
-                        setShowEditModal(true);
-                      }}
-                      className="
+                  {isAdmin && (
+                    <>
+                      {/* Desktop */}
+                      <button
+                        onClick={() => {
+                          setEditSettings({ ...settings });
+                          setShowEditModal(true);
+                        }}
+                        className="
                         hidden
                         md:flex
                         bg-[#1D546C]
@@ -173,18 +180,18 @@ function Settings() {
                         gap-2
                         transition
                       "
-                    >
-                      <Pencil size={18} />
-                      Edit Company Information
-                    </button>
+                      >
+                        <Pencil size={18} />
+                        Edit Company Information
+                      </button>
 
-                    {/* Mobile */}
-                    <button
-                      onClick={() => {
-                        setEditSettings({ ...settings });
-                        setShowEditModal(true);
-                      }}
-                      className="
+                      {/* Mobile */}
+                      <button
+                        onClick={() => {
+                          setEditSettings({ ...settings });
+                          setShowEditModal(true);
+                        }}
+                        className="
                         md:hidden
                         absolute
                         top-0
@@ -200,88 +207,92 @@ function Settings() {
                         justify-center
                         transition
                       "
-                    >
-                      <Pencil size={18} />
-                    </button>
-                  </>
-                )}
-              </div>
+                      >
+                        <Pencil size={18} />
+                      </button>
+                    </>
+                  )}
+                </div>
 
-              <div
-                className="
+                <div
+                  className="
                 mt-8
                 grid
                 grid-cols-1
                 md:grid-cols-2
                 gap-6
               "
-              >
-                <div
-                  className="
+                >
+                  <div
+                    className="
                   bg-[#F8FAFC]
                   dark:bg-[#1F2937]
                   rounded
                   p-5
                 "
-                >
-                  <div className="flex items-center gap-3 mb-2">
-                    <Mail size={18} className="text-[#1D546C]" />
+                  >
+                    <div className="flex items-center gap-3 mb-2">
+                      <Mail size={18} className="text-[#1D546C]" />
 
-                    <span className="text-sm text-gray-500">Company Email</span>
+                      <span className="text-sm text-gray-500">
+                        Company Email
+                      </span>
+                    </div>
+
+                    <p className="font-medium dark:text-white">
+                      {settings.companyEmail || "-"}
+                    </p>
                   </div>
 
-                  <p className="font-medium dark:text-white">
-                    {settings.companyEmail || "-"}
-                  </p>
-                </div>
-
-                <div
-                  className="
+                  <div
+                    className="
                   bg-[#F8FAFC]
                   dark:bg-[#1F2937]
                   rounded
                   p-5
                 "
-                >
-                  <div className="flex items-center gap-3 mb-2">
-                    <Phone size={18} className="text-[#1D546C]" />
+                  >
+                    <div className="flex items-center gap-3 mb-2">
+                      <Phone size={18} className="text-[#1D546C]" />
 
-                    <span className="text-sm text-gray-500">Company Phone</span>
+                      <span className="text-sm text-gray-500">
+                        Company Phone
+                      </span>
+                    </div>
+
+                    <p className="font-medium dark:text-white">
+                      {settings.companyPhone || "-"}
+                    </p>
                   </div>
 
-                  <p className="font-medium dark:text-white">
-                    {settings.companyPhone || "-"}
-                  </p>
-                </div>
-
-                <div
-                  className="
+                  <div
+                    className="
                   bg-[#F8FAFC]
                   dark:bg-[#1F2937]
                   rounded
                   p-5
                   md:col-span-2
                 "
-                >
-                  <div className="flex items-center gap-3 mb-2">
-                    <MapPin size={18} className="text-[#1D546C]" />
+                  >
+                    <div className="flex items-center gap-3 mb-2">
+                      <MapPin size={18} className="text-[#1D546C]" />
 
-                    <span className="text-sm text-gray-500">
-                      Company Address
-                    </span>
+                      <span className="text-sm text-gray-500">
+                        Company Address
+                      </span>
+                    </div>
+
+                    <p className="font-medium dark:text-white">
+                      {settings.companyAddress || "-"}
+                    </p>
                   </div>
-
-                  <p className="font-medium dark:text-white">
-                    {settings.companyAddress || "-"}
-                  </p>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        {/* Business Information */}
-        <div
-          className="
+          {/* Business Information */}
+          <div
+            className="
             bg-white
             dark:bg-[#111827]
             border
@@ -291,30 +302,30 @@ function Settings() {
             md:p-6
             p-4
           "
-        >
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <Receipt size={24} className="text-[#1D546C] mb-8 md:mb-3" />
+          >
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <Receipt size={24} className="text-[#1D546C] mb-8 md:mb-3" />
 
-              <div>
-                <h2 className="text-2xl font-bold dark:text-white">
-                  Business Settings
-                </h2>
+                <div>
+                  <h2 className="text-2xl font-bold dark:text-white">
+                    Business Settings
+                  </h2>
 
-                <p className="text-gray-500 text-sm">
-                  Organization-wide business configuration
-                </p>
+                  <p className="text-gray-500 text-sm">
+                    Organization-wide business configuration
+                  </p>
+                </div>
               </div>
-            </div>
 
-            {isAdmin && (
-              <>
-                <button
-                  onClick={() => {
-                    setEditSettings({ ...settings });
-                    setShowBusinessModal(true);
-                  }}
-                  className="
+              {isAdmin && (
+                <>
+                  <button
+                    onClick={() => {
+                      setEditSettings({ ...settings });
+                      setShowBusinessModal(true);
+                    }}
+                    className="
                     hidden
                     md:flex
                     bg-[#1D546C]
@@ -327,17 +338,17 @@ function Settings() {
                     gap-2
                     transition
                   "
-                >
-                  <Pencil size={18} />
-                  Edit Business Settings
-                </button>
+                  >
+                    <Pencil size={18} />
+                    Edit Business Settings
+                  </button>
 
-                <button
-                  onClick={() => {
-                    setEditSettings({ ...settings });
-                    setShowBusinessModal(true);
-                  }}
-                  className="
+                  <button
+                    onClick={() => {
+                      setEditSettings({ ...settings });
+                      setShowBusinessModal(true);
+                    }}
+                    className="
                     md:hidden
                     w-11
                     h-11
@@ -348,62 +359,64 @@ function Settings() {
                     items-center
                     justify-center
                   "
-                >
-                  <Pencil size={18} />
-                </button>
-              </>
-            )}
-          </div>
+                  >
+                    <Pencil size={18} />
+                  </button>
+                </>
+              )}
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div
-              className="
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div
+                className="
                 bg-[#F8FAFC]
                 dark:bg-[#1F2937]
                 rounded
                 p-5
               "
-            >
-              <div className="flex items-center gap-3 mb-2">
-                <Wallet size={18} className="text-[#1D546C]" />
+              >
+                <div className="flex items-center gap-3 mb-2">
+                  <Wallet size={18} className="text-[#1D546C]" />
 
-                <span className="text-sm text-gray-500">Default Currency</span>
+                  <span className="text-sm text-gray-500">
+                    Default Currency
+                  </span>
+                </div>
+
+                <p className="font-medium dark:text-white">
+                  {settings.currency === "INR" && "INR (₹)"}
+
+                  {settings.currency === "USD" && "USD ($)"}
+
+                  {settings.currency === "EUR" && "EUR (€)"}
+
+                  {settings.currency === "GBP" && "GBP (£)"}
+                </p>
               </div>
 
-              <p className="font-medium dark:text-white">
-                {settings.currency === "INR" && "INR (₹)"}
-
-                {settings.currency === "USD" && "USD ($)"}
-
-                {settings.currency === "EUR" && "EUR (€)"}
-
-                {settings.currency === "GBP" && "GBP (£)"}
-              </p>
-            </div>
-
-            <div
-              className="
+              <div
+                className="
                 bg-[#F8FAFC]
                 dark:bg-[#1F2937]
                 rounded
                 p-5
               "
-            >
-              <div className="flex items-center gap-3 mb-2">
-                <ClipboardList size={18} className="text-[#1D546C]" />
-                <span className="text-sm text-gray-500">Order Prefix</span>
-              </div>
+              >
+                <div className="flex items-center gap-3 mb-2">
+                  <ClipboardList size={18} className="text-[#1D546C]" />
+                  <span className="text-sm text-gray-500">Order Prefix</span>
+                </div>
 
-              <p className="font-medium dark:text-white">
-                {settings.orderPrefix}
-              </p>
+                <p className="font-medium dark:text-white">
+                  {settings.orderPrefix}
+                </p>
+              </div>
             </div>
           </div>
-        </div>
 
-        {showEditModal && (
-          <div
-            className="
+          {showEditModal && (
+            <div
+              className="
             fixed
             inset-0
             bg-black/50
@@ -413,9 +426,9 @@ function Settings() {
             justify-center
             p-4
           "
-          >
-            <div
-              className="
+            >
+              <div
+                className="
               bg-white
               dark:bg-[#111827]
               rounded-xl
@@ -427,29 +440,29 @@ function Settings() {
               dark:border-gray-700
               z-[9999]
             "
-            >
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold dark:text-white">
-                  Edit Company Information
-                </h2>
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold dark:text-white">
+                    Edit Company Information
+                  </h2>
 
-                <button onClick={() => setShowEditModal(false)}>
-                  <X size={22} />
-                </button>
-              </div>
+                  <button onClick={() => setShowEditModal(false)}>
+                    <X size={22} />
+                  </button>
+                </div>
 
-              <div className="space-y-4">
-                <input
-                  type="text"
-                  placeholder="Company Name"
-                  value={editSettings.companyName}
-                  onChange={(e) =>
-                    setEditSettings({
-                      ...editSettings,
-                      companyName: e.target.value,
-                    })
-                  }
-                  className="
+                <div className="space-y-4">
+                  <input
+                    type="text"
+                    placeholder="Company Name"
+                    value={editSettings.companyName}
+                    onChange={(e) =>
+                      setEditSettings({
+                        ...editSettings,
+                        companyName: e.target.value,
+                      })
+                    }
+                    className="
                   w-full
                   rounded
                   border
@@ -461,19 +474,19 @@ function Settings() {
                   py-3
                   dark:text-white
                 "
-                />
+                  />
 
-                <input
-                  type="email"
-                  placeholder="Company Email"
-                  value={editSettings.companyEmail}
-                  onChange={(e) =>
-                    setEditSettings({
-                      ...editSettings,
-                      companyEmail: e.target.value,
-                    })
-                  }
-                  className="
+                  <input
+                    type="email"
+                    placeholder="Company Email"
+                    value={editSettings.companyEmail}
+                    onChange={(e) =>
+                      setEditSettings({
+                        ...editSettings,
+                        companyEmail: e.target.value,
+                      })
+                    }
+                    className="
                   w-full
                   rounded
                   border
@@ -485,19 +498,19 @@ function Settings() {
                   py-3
                   dark:text-white
                 "
-                />
+                  />
 
-                <input
-                  type="text"
-                  placeholder="Company Phone"
-                  value={editSettings.companyPhone}
-                  onChange={(e) =>
-                    setEditSettings({
-                      ...editSettings,
-                      companyPhone: e.target.value,
-                    })
-                  }
-                  className="
+                  <input
+                    type="text"
+                    placeholder="Company Phone"
+                    value={editSettings.companyPhone}
+                    onChange={(e) =>
+                      setEditSettings({
+                        ...editSettings,
+                        companyPhone: e.target.value,
+                      })
+                    }
+                    className="
                   w-full
                   rounded
                   border
@@ -509,19 +522,19 @@ function Settings() {
                   py-3
                   dark:text-white
                 "
-                />
+                  />
 
-                <textarea
-                  rows="4"
-                  placeholder="Company Address"
-                  value={editSettings.companyAddress}
-                  onChange={(e) =>
-                    setEditSettings({
-                      ...editSettings,
-                      companyAddress: e.target.value,
-                    })
-                  }
-                  className="
+                  <textarea
+                    rows="4"
+                    placeholder="Company Address"
+                    value={editSettings.companyAddress}
+                    onChange={(e) =>
+                      setEditSettings({
+                        ...editSettings,
+                        companyAddress: e.target.value,
+                      })
+                    }
+                    className="
                   w-full
                   rounded
                   border
@@ -533,16 +546,16 @@ function Settings() {
                   py-3
                   dark:text-white
                 "
-                />
-              </div>
+                  />
+                </div>
 
-              <div className="mt-6 flex justify-end gap-3">
+                <div className="mt-6 flex justify-end gap-3">
                   <button
-                  onClick={async () => {
-                    await saveSettings();
-                    setShowEditModal(false);
-                  }}
-                  className="
+                    onClick={async () => {
+                      await saveSettings();
+                      setShowEditModal(false);
+                    }}
+                    className="
                   bg-[#1D546C]
                   hover:bg-[#16485c]
                   text-white
@@ -550,16 +563,16 @@ function Settings() {
                   py-3
                   rounded
                 "
-                >
-                  Save Changes
-                </button>
+                  >
+                    Save Changes
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        )}
-        {showBusinessModal && (
-          <div
-            className="
+          )}
+          {showBusinessModal && (
+            <div
+              className="
               fixed
               inset-0
               bg-black/50
@@ -569,9 +582,9 @@ function Settings() {
               justify-center
               p-4
             "
-          >
-            <div
-              className="
+            >
+              <div
+                className="
                 bg-white
                 dark:bg-[#111827]
                 rounded-xl
@@ -583,35 +596,35 @@ function Settings() {
                 dark:border-gray-700
                 z-[9999]
               "
-            >
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold dark:text-white">
-                  Edit Business Settings
-                </h2>
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold dark:text-white">
+                    Edit Business Settings
+                  </h2>
 
-                <button
-                  onClick={() => {
-                    setEditSettings({ ...settings });
-                    setShowBusinessModal(false);
-                  }}
-                >
-                  <X size={22} />
-                </button>
-              </div>
+                  <button
+                    onClick={() => {
+                      setEditSettings({ ...settings });
+                      setShowBusinessModal(false);
+                    }}
+                  >
+                    <X size={22} />
+                  </button>
+                </div>
 
-              <div className="space-y-5">
-                <div>
-                  <label className="block mb-2 text-sm font-medium text-gray-500">
-                    Default Currency
-                  </label>
+                <div className="space-y-5">
+                  <div>
+                    <label className="block mb-2 text-sm font-medium text-gray-500">
+                      Default Currency
+                    </label>
 
-                  <div className="relative">
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setShowCurrencyDropdown(!showCurrencyDropdown)
-                      }
-                      className="
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setShowCurrencyDropdown(!showCurrencyDropdown)
+                        }
+                        className="
                         w-full
                         border
                         border-gray-300
@@ -625,20 +638,20 @@ function Settings() {
                         dark:text-white
                         transition
                       "
-                    >
-                      <span>
-                        {editSettings.currency === "INR" && "INR (₹)"}
-                        {editSettings.currency === "USD" && "USD ($)"}
-                        {editSettings.currency === "EUR" && "EUR (€)"}
-                        {editSettings.currency === "GBP" && "GBP (£)"}
-                      </span>
+                      >
+                        <span>
+                          {editSettings.currency === "INR" && "INR (₹)"}
+                          {editSettings.currency === "USD" && "USD ($)"}
+                          {editSettings.currency === "EUR" && "EUR (€)"}
+                          {editSettings.currency === "GBP" && "GBP (£)"}
+                        </span>
 
-                      <ChevronDown size={18} />
-                    </button>
+                        <ChevronDown size={18} />
+                      </button>
 
-                    {showCurrencyDropdown && (
-                      <div
-                        className="
+                      {showCurrencyDropdown && (
+                        <div
+                          className="
                           absolute
                           left-0
                           right-0
@@ -653,22 +666,22 @@ function Settings() {
                           shadow-xl
                           overflow-hidden
                         "
-                      >
-                        {currencies.map((currency) => (
-                          <button
-                            key={currency}
-                            type="button"
-                            onClick={() => {
-                              const value = currency.split(" ")[0];
+                        >
+                          {currencies.map((currency) => (
+                            <button
+                              key={currency}
+                              type="button"
+                              onClick={() => {
+                                const value = currency.split(" ")[0];
 
-                              setEditSettings({
-                                ...editSettings,
-                                currency: value,
-                              });
+                                setEditSettings({
+                                  ...editSettings,
+                                  currency: value,
+                                });
 
-                              setShowCurrencyDropdown(false);
-                            }}
-                            className="
+                                setShowCurrencyDropdown(false);
+                              }}
+                              className="
                               w-full
                               text-left
                               px-4
@@ -677,32 +690,32 @@ function Settings() {
                               dark:hover:bg-[#1F2937]
                               transition
                             "
-                          >
-                            {currency}
-                          </button>
-                        ))}
-                      </div>
-                    )}
+                            >
+                              {currency}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
 
-                <div>
-                  <label className="block mb-2 text-sm font-medium text-gray-500">
-                    Order Prefix
-                  </label>
+                  <div>
+                    <label className="block mb-2 text-sm font-medium text-gray-500">
+                      Order Prefix
+                    </label>
 
-                  <input
-                    type="text"
-                    maxLength={8}
-                    value={editSettings.orderPrefix}
-                    onChange={(e) =>
-                      setEditSettings({
-                        ...editSettings,
-                        orderPrefix: e.target.value.toUpperCase(),
-                      })
-                    }
-                    placeholder="ORD"
-                    className="
+                    <input
+                      type="text"
+                      maxLength={8}
+                      value={editSettings.orderPrefix}
+                      onChange={(e) =>
+                        setEditSettings({
+                          ...editSettings,
+                          orderPrefix: e.target.value.toUpperCase(),
+                        })
+                      }
+                      placeholder="ORD"
+                      className="
                       w-full
                       rounded
                       border
@@ -714,22 +727,22 @@ function Settings() {
                       py-3
                       dark:text-white
                     "
-                  />
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <div className="mt-6 flex justify-end gap-3">
-                            <button
-                  onClick={async () => {
-                    if (!editSettings.orderPrefix.trim()) {
-                      return toast.error("Order Prefix is required");
-                    }
+                <div className="mt-6 flex justify-end gap-3">
+                  <button
+                    onClick={async () => {
+                      if (!editSettings.orderPrefix.trim()) {
+                        return toast.error("Order Prefix is required");
+                      }
 
-                    await saveSettings();
+                      await saveSettings();
 
-                    setShowBusinessModal(false);
-                  }}
-                  className="
+                      setShowBusinessModal(false);
+                    }}
+                    className="
                     bg-[#1D546C]
                     hover:bg-[#16485c]
                     text-white
@@ -737,15 +750,16 @@ function Settings() {
                     py-3
                     rounded
                   "
-                >
-                  Save Changes
-                </button>
+                  >
+                    Save Changes
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        )}
-      </div>
-    </DashboardLayout>
+          )}
+        </div>
+      </DashboardLayout>
+    </>
   );
 }
 

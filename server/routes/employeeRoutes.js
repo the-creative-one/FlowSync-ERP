@@ -139,7 +139,6 @@ router.put("/:id/role", protect, managerOrAdmin, async (req, res) => {
     console.log(error);
     res.status(500).json({
       message: "Failed to update role",
-      error: error.message,
     });
   }
 });
@@ -218,7 +217,6 @@ router.put("/:id/permissions", protect, managerOrAdmin, async (req, res) => {
     console.log(error);
     res.status(500).json({
       message: "Failed to update permissions",
-      error: error.message,
     });
   }
 });

@@ -10,6 +10,7 @@ import UserAvatar from "../components/common/UserAvatar";
 import SmartDropdown from "../components/common/SmartDropdown";
 import { useSocket } from "../context/SocketContext";
 import DeleteConfirmModal from "../components/orders/DeleteConfirmModal";
+import PageSEO from "../seo/PageSEO";
 
 function Employees() {
   const { user } = useAuth();
@@ -25,7 +26,7 @@ function Employees() {
   const pendingRequests = requests.filter(
     (request) => request.status === "pending",
   );
-  const isAdmin = user?.role === "admin";
+
   useEffect(() => {
     const handleEmployeeCreated = (employee) => {
       setEmployees((prev) => {
@@ -108,12 +109,6 @@ function Employees() {
         ]
       : []),
   ];
-
-  // OPEN UPWARD FOR LAST ROWS
-  const shouldOpenUpward = (index, total) => {
-    return index >= total - 2;
-  };
-
   // ROLE CONTROL
   const canManageUser = (employee) => {
     if (employee.email === user?.email) {
@@ -272,6 +267,12 @@ function Employees() {
   }, []);
 
   return (
+<>
+<PageSEO
+  title="Employees | FlowSync"
+  description="Manage employees, roles, permissions, and access controls from your FlowSync workspace."
+  keywords="FlowSync employees, employee management, role management, permissions, access control"
+/>
     <DashboardLayout
       title="User & Access Management"
       subtitle="Manage employee roles and permissions"
@@ -716,6 +717,7 @@ function Employees() {
         message="Are you sure you want to delete this user? This action cannot be undone."
       />
     </DashboardLayout>
+    </>
   );
 }
 

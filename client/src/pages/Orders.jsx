@@ -13,6 +13,7 @@ import EditOrderModal from "../components/orders/EditOrderModal";
 import DeleteConfirmModal from "../components/orders/DeleteConfirmModal";
 import EmptyOrdersState from "../components/orders/EmptyOrdersState";
 import OrdersPagination from "../components/orders/OrdersPagination";
+import PageSEO from "../seo/PageSEO";
 
 function Orders() {
   const { user } = useAuth();
@@ -72,7 +73,6 @@ function Orders() {
           dark:bg-yellow-500/15
           dark:text-yellow-300
         `;
-
       case "processing":
         return `
           bg-blue-100
@@ -80,7 +80,6 @@ function Orders() {
           dark:bg-blue-500/15
           dark:text-blue-300
         `;
-
       case "shipped":
         return `
           bg-purple-100
@@ -88,7 +87,6 @@ function Orders() {
           dark:bg-purple-500/15
           dark:text-purple-300
         `;
-
       case "delivered":
         return `
           bg-green-100
@@ -96,7 +94,6 @@ function Orders() {
           dark:bg-green-500/15
           dark:text-green-300
         `;
-
       default:
         return `
           bg-gray-100
@@ -111,26 +108,21 @@ function Orders() {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-
       const token = localStorage.getItem("token");
-
       const response = await api.get("/orders", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-
       setOrders(response.data);
       const settingsResponse = await api.get("/settings", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-
       setCurrency(settingsResponse.data.currency || "INR");
     } catch (error) {
       console.log(error.response?.data);
-
       toast.error("Failed to fetch orders");
     } finally {
       setLoading(false);
@@ -140,7 +132,6 @@ function Orders() {
   // ADDING SOCKET FOR ORDERS
   useEffect(() => {
     fetchOrders();
-
     const handleOrderCreated = (order) => {
       setOrders((prevOrders) => {
         const exists = prevOrders.some(
@@ -152,7 +143,6 @@ function Orders() {
         return [order, ...prevOrders];
       });
     };
-
     const handleOrderUpdated = (updatedOrder) => {
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
@@ -203,7 +193,6 @@ function Orders() {
   const updateOrderStatus = async (orderId, newStatus) => {
     try {
       const token = localStorage.getItem("token");
-
       await api.patch(
         `/orders/${orderId}`,
         {
@@ -215,7 +204,6 @@ function Orders() {
           },
         },
       );
-
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
           order._id === orderId
@@ -226,13 +214,10 @@ function Orders() {
             : order,
         ),
       );
-
       setActiveDropdown(null);
-
       toast.success("Order status updated");
     } catch (error) {
       console.log(error.response?.data);
-
       toast.error("Failed to update status");
     }
   };
@@ -240,14 +225,12 @@ function Orders() {
   // OPEN EDIT MODAL
   const openEditModal = (order) => {
     setEditingOrderId(order._id);
-
     setEditFormData({
       customerName: order.customerName,
       product: order.product,
       quantity: order.quantity,
       amount: order.amount,
     });
-
     setShowEditModal(true);
   };
 
@@ -255,7 +238,6 @@ function Orders() {
   const updateOrder = async () => {
     try {
       const token = localStorage.getItem("token");
-
       const response = await api.patch(
         `/orders/${editingOrderId}`,
         editFormData,
@@ -265,21 +247,16 @@ function Orders() {
           },
         },
       );
-
       setOrders((prev) =>
         prev.map((order) =>
           order._id === editingOrderId ? response.data.order : order,
         ),
       );
-
       setShowEditModal(false);
-
       setEditingOrderId(null);
-
       toast.success("Order updated successfully");
     } catch (error) {
       console.log(error.response?.data);
-
       toast.error("Failed to update order");
     }
   };
@@ -288,25 +265,19 @@ function Orders() {
   const deleteOrder = async () => {
     try {
       const token = localStorage.getItem("token");
-
       await api.delete(`/orders/${selectedOrderId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-
       setOrders((prev) =>
         prev.filter((order) => order._id !== selectedOrderId),
       );
-
       setDeleteModal(false);
-
       setSelectedOrderId(null);
-
       toast.success("Order deleted");
     } catch (error) {
       console.log(error.response?.data);
-
       toast.error("Failed to delete order");
     }
   };
@@ -314,47 +285,31 @@ function Orders() {
   // SORT FUNCTION
   const handleSort = (key) => {
     setSortConfig((prev) => {
-      //
       // NEW SORT
-      //
-
       if (prev.key !== key) {
         return {
           key,
           direction: "asc",
         };
       }
-
-      //
       // ASC -> DESC
-      //
-
       if (prev.direction === "asc") {
         return {
           key,
           direction: "desc",
         };
       }
-
-      //
       // DESC -> RESET
-      //
-
       return {
         key: null,
         direction: null,
       };
     });
   };
-
   // FILTERED ORDERS
   const filteredOrders = useMemo(() => {
     let filtered = [...orders];
-
-    //
     // SEARCH
-    //
-
     if (search.trim()) {
       filtered = filtered.filter((order) =>
         [order.customerName, order.product, order.status]
@@ -363,68 +318,45 @@ function Orders() {
           .includes(search.toLowerCase()),
       );
     }
-
-    //
     // STATUS FILTER
-    //
-
     if (statusFilter !== "all") {
       filtered = filtered.filter((order) => order.status === statusFilter);
     }
-
-    //
     // DEFAULT SORT
-    //
-
     filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-    //
     // CUSTOM SORT
-    //
-
     if (sortConfig.key && sortConfig.direction) {
       filtered.sort((a, b) => {
         let aValue;
         let bValue;
-
         switch (sortConfig.key) {
           case "quantity":
             aValue = a.quantity;
             bValue = b.quantity;
             break;
-
           case "amount":
             aValue = a.amount;
             bValue = b.amount;
             break;
-
           case "createdAt":
             aValue = new Date(a.createdAt);
             bValue = new Date(b.createdAt);
             break;
-
           case "updatedAt":
             aValue = new Date(a.updatedAt || a.createdAt);
-
             bValue = new Date(b.updatedAt || b.createdAt);
-
             break;
-
           default:
             return 0;
         }
-
         if (sortConfig.direction === "asc") {
           return aValue > bValue ? 1 : -1;
         }
-
         return aValue < bValue ? 1 : -1;
       });
     }
-
     return filtered;
   }, [orders, search, statusFilter, sortConfig]);
-
   // PAGINATION
   const totalPages = Math.ceil(filteredOrders.length / ORDERS_PER_PAGE);
   const startIndex = (currentPage - 1) * ORDERS_PER_PAGE;
@@ -432,18 +364,14 @@ function Orders() {
     startIndex,
     startIndex + ORDERS_PER_PAGE,
   );
-
   const getCurrencySymbol = () => {
     switch (currency) {
       case "USD":
         return "$";
-
       case "EUR":
         return "€";
-
       case "GBP":
         return "£";
-
       default:
         return "₹";
     }
@@ -466,27 +394,33 @@ function Orders() {
   }, [search, statusFilter]);
 
   return (
-    <DashboardLayout
-      title="Orders Management"
-      subtitle="Manage and track all customer orders"
-    >
-      <div className="space-y-6" onClick={() => setActiveDropdown(null)}>
-        <OrdersToolbar
-          search={search}
-          setSearch={setSearch}
-          statusFilter={statusFilter}
-          setStatusFilter={setStatusFilter}
-          onExportExcel={() => exportToExcel(getExportRows(), "orders")}
-          onExportCSV={() => exportToCSV(getExportRows(), "orders")}
-          canCreateOrders={canCreateOrders}
-          canExportReports={canExportReports}
-          setShowModal={setShowModal}
-          totalOrders={filteredOrders.length}
-        />
+    <>
+      <PageSEO
+        title="Orders | FlowSync"
+        description="Manage, track, and monitor business orders throughout their complete order lifecycle."
+        keywords="FlowSync orders, order management, order tracking, business orders, order processing"
+      />
+      <DashboardLayout
+        title="Orders Management"
+        subtitle="Manage and track all customer orders"
+      >
+        <div className="space-y-6" onClick={() => setActiveDropdown(null)}>
+          <OrdersToolbar
+            search={search}
+            setSearch={setSearch}
+            statusFilter={statusFilter}
+            setStatusFilter={setStatusFilter}
+            onExportExcel={() => exportToExcel(getExportRows(), "orders")}
+            onExportCSV={() => exportToCSV(getExportRows(), "orders")}
+            canCreateOrders={canCreateOrders}
+            canExportReports={canExportReports}
+            setShowModal={setShowModal}
+            totalOrders={filteredOrders.length}
+          />
 
-        {loading ? (
-          <div
-            className="
+          {loading ? (
+            <div
+              className="
               bg-white
               dark:bg-[#111827]
               rounded
@@ -496,86 +430,87 @@ function Orders() {
               border-gray-100
               dark:border-gray-800
             "
-          >
-            <p className="text-gray-500 dark:text-gray-400">
-              Loading orders...
-            </p>
-          </div>
-        ) : filteredOrders.length === 0 ? (
-          <EmptyOrdersState />
-        ) : (
-          <>
-            <OrdersTable
-              orders={paginatedOrders}
-              canUpdateOrders={canUpdateOrders}
-              currencySymbol={getCurrencySymbol()}
-              canDeleteOrders={canDeleteOrders}
-              activeDropdown={activeDropdown}
-              setActiveDropdown={setActiveDropdown}
-              updateOrderStatus={updateOrderStatus}
-              openEditModal={openEditModal}
-              deleteOrder={(id) => {
-                setSelectedOrderId(id);
-                setDeleteModal(true);
-              }}
-              statusFlow={statusFlow}
-              shouldOpenUpward={shouldOpenUpward}
-              getStatusStyles={getStatusStyles}
-              sortConfig={sortConfig}
-              handleSort={handleSort}
-            />
-
-            <OrdersCards
-              orders={paginatedOrders}
-              currencySymbol={getCurrencySymbol()}
-              canUpdateOrders={canUpdateOrders}
-              canDeleteOrders={canDeleteOrders}
-              activeDropdown={activeDropdown}
-              setActiveDropdown={setActiveDropdown}
-              updateOrderStatus={updateOrderStatus}
-              openEditModal={openEditModal}
-              deleteOrder={(id) => {
-                setSelectedOrderId(id);
-                setDeleteModal(true);
-              }}
-              statusFlow={statusFlow}
-              shouldOpenUpward={shouldOpenUpward}
-              getStatusStyles={getStatusStyles}
-            />
-
-            {totalPages > 1 && (
-              <OrdersPagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                setCurrentPage={setCurrentPage}
+            >
+              <p className="text-gray-500 dark:text-gray-400">
+                Loading orders...
+              </p>
+            </div>
+          ) : filteredOrders.length === 0 ? (
+            <EmptyOrdersState />
+          ) : (
+            <>
+              <OrdersTable
+                orders={paginatedOrders}
+                canUpdateOrders={canUpdateOrders}
+                currencySymbol={getCurrencySymbol()}
+                canDeleteOrders={canDeleteOrders}
+                activeDropdown={activeDropdown}
+                setActiveDropdown={setActiveDropdown}
+                updateOrderStatus={updateOrderStatus}
+                openEditModal={openEditModal}
+                deleteOrder={(id) => {
+                  setSelectedOrderId(id);
+                  setDeleteModal(true);
+                }}
+                statusFlow={statusFlow}
+                shouldOpenUpward={shouldOpenUpward}
+                getStatusStyles={getStatusStyles}
+                sortConfig={sortConfig}
+                handleSort={handleSort}
               />
-            )}
-          </>
-        )}
 
-        <CreateOrderModal
-          showModal={showModal}
-          setShowModal={setShowModal}
-          formData={formData}
-          setFormData={setFormData}
-          createOrder={createOrder}
-        />
+              <OrdersCards
+                orders={paginatedOrders}
+                currencySymbol={getCurrencySymbol()}
+                canUpdateOrders={canUpdateOrders}
+                canDeleteOrders={canDeleteOrders}
+                activeDropdown={activeDropdown}
+                setActiveDropdown={setActiveDropdown}
+                updateOrderStatus={updateOrderStatus}
+                openEditModal={openEditModal}
+                deleteOrder={(id) => {
+                  setSelectedOrderId(id);
+                  setDeleteModal(true);
+                }}
+                statusFlow={statusFlow}
+                shouldOpenUpward={shouldOpenUpward}
+                getStatusStyles={getStatusStyles}
+              />
 
-        <EditOrderModal
-          showEditModal={showEditModal}
-          setShowEditModal={setShowEditModal}
-          editFormData={editFormData}
-          setEditFormData={setEditFormData}
-          updateOrder={updateOrder}
-        />
+              {totalPages > 1 && (
+                <OrdersPagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  setCurrentPage={setCurrentPage}
+                />
+              )}
+            </>
+          )}
 
-        <DeleteConfirmModal
-          deleteModal={deleteModal}
-          setDeleteModal={setDeleteModal}
-          onDelete={deleteOrder}
-        />
-      </div>
-    </DashboardLayout>
+          <CreateOrderModal
+            showModal={showModal}
+            setShowModal={setShowModal}
+            formData={formData}
+            setFormData={setFormData}
+            createOrder={createOrder}
+          />
+
+          <EditOrderModal
+            showEditModal={showEditModal}
+            setShowEditModal={setShowEditModal}
+            editFormData={editFormData}
+            setEditFormData={setEditFormData}
+            updateOrder={updateOrder}
+          />
+
+          <DeleteConfirmModal
+            deleteModal={deleteModal}
+            setDeleteModal={setDeleteModal}
+            onDelete={deleteOrder}
+          />
+        </div>
+      </DashboardLayout>
+    </>
   );
 }
 

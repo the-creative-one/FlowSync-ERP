@@ -23,6 +23,7 @@ import {
   ArrowDown,
   ArrowUp,
 } from "lucide-react";
+import PageSEO from "../seo/PageSEO";
 
 function Analytics() {
   const [stats, setStats] = useState({
@@ -469,15 +470,21 @@ function Analytics() {
   );
 
   return (
-    <DashboardLayout
-      title="Analytics Dashboard"
-      subtitle="Track revenue, order flow and business performance"
-    >
-      <div className="space-y-6">
-        {/* TOP CARDS */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
-          <div
-            className="
+    <>
+      <PageSEO
+        title="Analytics | FlowSync"
+        description="Analyze orders, revenue, performance trends, and business metrics with FlowSync analytics."
+        keywords="FlowSync analytics, business analytics, sales analytics, revenue analytics, order analytics"
+      />
+      <DashboardLayout
+        title="Analytics Dashboard"
+        subtitle="Track revenue, order flow and business performance"
+      >
+        <div className="space-y-6">
+          {/* TOP CARDS */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+            <div
+              className="
               bg-white
               dark:bg-[#111827]
               rounded-sm
@@ -489,18 +496,18 @@ function Analytics() {
               dark:border-gray-800
               transition-colors
             "
-          >
-            <p
-              className="
+            >
+              <p
+                className="
                 text-sm
                 text-gray-500
                 dark:text-gray-400
               "
-            >
-              Total Revenue
-            </p>
-            <h2
-              className="
+              >
+                Total Revenue
+              </p>
+              <h2
+                className="
                 text-2xl
                 md:text-3xl
                 font-bold
@@ -508,14 +515,14 @@ function Analytics() {
                 dark:text-blue-400
                 mt-2
               "
-            >
-              {getCurrencySymbol()}
-              {formatCurrency(filteredRevenue)}
-            </h2>
-          </div>
+              >
+                {getCurrencySymbol()}
+                {formatCurrency(filteredRevenue)}
+              </h2>
+            </div>
 
-          <div
-            className="
+            <div
+              className="
               bg-white
               dark:bg-[#111827]
               rounded-sm
@@ -527,19 +534,19 @@ function Analytics() {
               dark:border-gray-800
               transition-colors
             "
-          >
-            <p
-              className="
+            >
+              <p
+                className="
                 text-sm
                 text-gray-500
                 dark:text-gray-400
               "
-            >
-              Total Orders
-            </p>
+              >
+                Total Orders
+              </p>
 
-            <h2
-              className="
+              <h2
+                className="
                 text-2xl
                 md:text-3xl
                 font-bold
@@ -547,13 +554,13 @@ function Analytics() {
                 dark:text-white
                 mt-2
               "
-            >
-              {filteredOrders.length}
-            </h2>
-          </div>
+              >
+                {filteredOrders.length}
+              </h2>
+            </div>
 
-          <div
-            className="
+            <div
+              className="
               bg-white
               dark:bg-[#111827]
               rounded-sm
@@ -565,19 +572,19 @@ function Analytics() {
               dark:border-gray-800
               transition-colors
             "
-          >
-            <p
-              className="
+            >
+              <p
+                className="
                 text-sm
                 text-gray-500
                 dark:text-gray-400
               "
-            >
-              Delivered Orders
-            </p>
+              >
+                Delivered Orders
+              </p>
 
-            <h2
-              className="
+              <h2
+                className="
                 text-2xl
                 md:text-3xl
                 font-bold
@@ -585,13 +592,13 @@ function Analytics() {
                 dark:text-green-400
                 mt-2
               "
-            >
-              {deliveredCount}
-            </h2>
-          </div>
+              >
+                {deliveredCount}
+              </h2>
+            </div>
 
-          <div
-            className="
+            <div
+              className="
               bg-white
               dark:bg-[#111827]
               rounded-sm
@@ -603,19 +610,19 @@ function Analytics() {
               dark:border-gray-800
               transition-colors
             "
-          >
-            <p
-              className="
+            >
+              <p
+                className="
                 text-sm
                 text-gray-500
                 dark:text-gray-400
               "
-            >
-              Pending Orders
-            </p>
+              >
+                Pending Orders
+              </p>
 
-            <h2
-              className="
+              <h2
+                className="
                 text-2xl
                 md:text-3xl
                 font-bold
@@ -623,19 +630,19 @@ function Analytics() {
                 dark:text-yellow-400
                 mt-2
               "
-            >
-              {pendingCount}
-            </h2>
+              >
+                {pendingCount}
+              </h2>
+            </div>
           </div>
-        </div>
 
-        {/* CHART SECTION */}
+          {/* CHART SECTION */}
 
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-          {/* REVENUE CHART */}
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+            {/* REVENUE CHART */}
 
-          <div
-            className="
+            <div
+              className="
               bg-white
               dark:bg-[#111827]
               rounded-sm
@@ -649,204 +656,204 @@ function Analytics() {
               overflow-hidden
               transition-colors
             "
-          >
-            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-5 mb-8">
-              <div>
-                <h2
-                  className="
+            >
+              <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-5 mb-8">
+                <div>
+                  <h2
+                    className="
                     text-xl
                     md:text-2xl
                     font-bold
                     text-[#0C2B4E]
                     dark:text-white
                   "
-                >
-                  Revenue Timeline
-                </h2>
+                  >
+                    Revenue Timeline
+                  </h2>
 
-                <p
-                  className="
+                  <p
+                    className="
                     text-sm
                     text-gray-500
                     dark:text-gray-400
                     mt-1
                   "
-                >
-                  Revenue insights based on selected timeline
-                </p>
-              </div>
+                  >
+                    Revenue insights based on selected timeline
+                  </p>
+                </div>
 
-              <div className="flex flex-wrap gap-2">
-                {filters.map((filter) => (
-                  <button
-                    key={filter.value}
-                    onClick={() => setActiveFilter(filter.value)}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition whitespace-nowrap
+                <div className="flex flex-wrap gap-2">
+                  {filters.map((filter) => (
+                    <button
+                      key={filter.value}
+                      onClick={() => setActiveFilter(filter.value)}
+                      className={`px-4 py-2 rounded-full text-sm font-medium transition whitespace-nowrap
                     ${
                       activeFilter === filter.value
                         ? "bg-[#0C2B4E] text-white dark:bg-blue-600"
                         : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-[#1F2937] dark:text-gray-300 dark:hover:bg-[#374151]"
                     }
                   `}
-                  >
-                    {filter.label}
-                  </button>
-                ))}
+                    >
+                      {filter.label}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
 
-            {/* DESKTOP CHART */}
+              {/* DESKTOP CHART */}
 
-            <div className="hidden md:block w-full h-[380px]">
-              {revenueData.length ? (
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    data={revenueData}
-                    margin={{
-                      top: 10,
-                      right: 10,
-                      left: 0,
-                      bottom: 10,
-                    }}
-                    barCategoryGap={20}
-                  >
-                    <XAxis
-                      dataKey="month"
-                      tick={{
-                        fontSize: 12,
-                        fill: "#9CA3AF",
+              <div className="hidden md:block w-full h-[380px]">
+                {revenueData.length ? (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={revenueData}
+                      margin={{
+                        top: 10,
+                        right: 10,
+                        left: 0,
+                        bottom: 10,
                       }}
-                      axisLine={false}
-                      tickLine={false}
-                    />
+                      barCategoryGap={20}
+                    >
+                      <XAxis
+                        dataKey="month"
+                        tick={{
+                          fontSize: 12,
+                          fill: "#9CA3AF",
+                        }}
+                        axisLine={false}
+                        tickLine={false}
+                      />
 
-                    <YAxis
-                      tickFormatter={(value) =>
-                        `${getCurrencySymbol()}${(value / 1000).toFixed(0)}k`
-                      }
-                      tick={{
-                        fontSize: 12,
-                        fill: "#9CA3AF",
-                      }}
-                      axisLine={false}
-                      tickLine={false}
-                    />
+                      <YAxis
+                        tickFormatter={(value) =>
+                          `${getCurrencySymbol()}${(value / 1000).toFixed(0)}k`
+                        }
+                        tick={{
+                          fontSize: 12,
+                          fill: "#9CA3AF",
+                        }}
+                        axisLine={false}
+                        tickLine={false}
+                      />
 
-                    <Tooltip
-                      cursor={{
-                        fill: "transparent",
-                      }}
-                      formatter={(value) => [
-                        `${getCurrencySymbol()}${formatCurrency(value)}`,
-                        "Revenue",
-                      ]}
-                    />
+                      <Tooltip
+                        cursor={{
+                          fill: "transparent",
+                        }}
+                        formatter={(value) => [
+                          `${getCurrencySymbol()}${formatCurrency(value)}`,
+                          "Revenue",
+                        ]}
+                      />
 
-                    <Bar
-                      dataKey="revenue"
-                      fill="#1D546C"
-                      radius={[4, 4, 0, 0]}
-                      activeBar={false}
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <p
-                    className="
+                      <Bar
+                        dataKey="revenue"
+                        fill="#1D546C"
+                        radius={[4, 4, 0, 0]}
+                        activeBar={false}
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <p
+                      className="
                       text-gray-400
                       dark:text-gray-500
                       text-lg
                       font-medium
                     "
-                  >
-                    No revenue data available
-                  </p>
-                </div>
-              )}
-            </div>
+                    >
+                      No revenue data available
+                    </p>
+                  </div>
+                )}
+              </div>
 
-            {/* MOBILE CHART */}
+              {/* MOBILE CHART */}
 
-            <div className="md:hidden w-full h-[420px]">
-              {revenueData.length ? (
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    layout="vertical"
-                    data={revenueData}
-                    margin={{
-                      top: 10,
-                      right: 20,
-                      left: 10,
-                      bottom: 10,
-                    }}
-                    barCategoryGap={18}
-                  >
-                    <XAxis
-                      type="number"
-                      tickFormatter={(value) =>
-                        `${getCurrencySymbol()}${(value / 1000).toFixed(0)}k`
-                      }
-                      tick={{
-                        fontSize: 11,
-                        fill: "#9CA3AF",
+              <div className="md:hidden w-full h-[420px]">
+                {revenueData.length ? (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      layout="vertical"
+                      data={revenueData}
+                      margin={{
+                        top: 10,
+                        right: 20,
+                        left: 10,
+                        bottom: 10,
                       }}
-                      axisLine={false}
-                      tickLine={false}
-                    />
+                      barCategoryGap={18}
+                    >
+                      <XAxis
+                        type="number"
+                        tickFormatter={(value) =>
+                          `${getCurrencySymbol()}${(value / 1000).toFixed(0)}k`
+                        }
+                        tick={{
+                          fontSize: 11,
+                          fill: "#9CA3AF",
+                        }}
+                        axisLine={false}
+                        tickLine={false}
+                      />
 
-                    <YAxis
-                      type="category"
-                      dataKey="month"
-                      tick={{
-                        fontSize: 11,
-                        fill: "#9CA3AF",
-                      }}
-                      axisLine={false}
-                      tickLine={false}
-                      width={40}
-                    />
+                      <YAxis
+                        type="category"
+                        dataKey="month"
+                        tick={{
+                          fontSize: 11,
+                          fill: "#9CA3AF",
+                        }}
+                        axisLine={false}
+                        tickLine={false}
+                        width={40}
+                      />
 
-                    <Tooltip
-                      cursor={{
-                        fill: "transparent",
-                      }}
-                      formatter={(value) => [
-                        `${getCurrencySymbol()}${formatCurrency(value)}`,
-                        "Revenue",
-                      ]}
-                    />
+                      <Tooltip
+                        cursor={{
+                          fill: "transparent",
+                        }}
+                        formatter={(value) => [
+                          `${getCurrencySymbol()}${formatCurrency(value)}`,
+                          "Revenue",
+                        ]}
+                      />
 
-                    <Bar
-                      dataKey="revenue"
-                      fill="#1D546C"
-                      radius={[0, 12, 12, 0]}
-                      activeBar={false}
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <p
-                    className="
+                      <Bar
+                        dataKey="revenue"
+                        fill="#1D546C"
+                        radius={[0, 12, 12, 0]}
+                        activeBar={false}
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <p
+                      className="
                       text-gray-400
                       dark:text-gray-500
                       text-base
                       font-medium
                       text-center
                     "
-                  >
-                    No revenue data available
-                  </p>
-                </div>
-              )}
+                    >
+                      No revenue data available
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
 
-          {/* PIE CHART */}
+            {/* PIE CHART */}
 
-          <div
-            className="
+            <div
+              className="
               bg-white
               dark:bg-[#111827]
               rounded-sm
@@ -858,102 +865,102 @@ function Analytics() {
               dark:border-gray-800
               transition-colors
             "
-          >
-            <div className="mb-6">
-              <h2
-                className="
+            >
+              <div className="mb-6">
+                <h2
+                  className="
                   text-xl
                   md:text-2xl
                   font-bold
                   text-[#0C2B4E]
                   dark:text-white
                 "
-              >
-                Order Status
-              </h2>
+                >
+                  Order Status
+                </h2>
 
-              <p
-                className="
+                <p
+                  className="
                   text-sm
                   text-gray-500
                   dark:text-gray-400
                   mt-1
                 "
-              >
-                Distribution based on selected filter
-              </p>
-            </div>
+                >
+                  Distribution based on selected filter
+                </p>
+              </div>
 
-            <div className="w-full h-[280px] sm:h-[320px]">
-              {filteredOrders.length > 0 ? (
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={orderStatusData}
-                      dataKey="value"
-                      nameKey="name"
-                      outerRadius={100}
-                      innerRadius={60}
-                      paddingAngle={4}
-                      activeShape={false}
-                      stroke="none"
-                    >
-                      {orderStatusData.map((entry, index) => (
-                        <Cell key={index} fill={entry.color} stroke="none" />
-                      ))}
-                    </Pie>
+              <div className="w-full h-[280px] sm:h-[320px]">
+                {filteredOrders.length > 0 ? (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={orderStatusData}
+                        dataKey="value"
+                        nameKey="name"
+                        outerRadius={100}
+                        innerRadius={60}
+                        paddingAngle={4}
+                        activeShape={false}
+                        stroke="none"
+                      >
+                        {orderStatusData.map((entry, index) => (
+                          <Cell key={index} fill={entry.color} stroke="none" />
+                        ))}
+                      </Pie>
 
-                    <Tooltip formatter={(value, name) => [value, name]} />
-                  </PieChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <p
-                    className="
+                      <Tooltip formatter={(value, name) => [value, name]} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <p
+                      className="
                       text-gray-400
                       dark:text-gray-500
                       text-lg
                       font-medium
                       text-center
                     "
-                  >
-                    No order data available
-                  </p>
-                </div>
-              )}
-            </div>
+                    >
+                      No order data available
+                    </p>
+                  </div>
+                )}
+              </div>
 
-            {filteredOrders.length > 0 && (
-              <div className="grid grid-cols-2 gap-4 mt-4">
-                {orderStatusData.map((item) => (
-                  <div key={item.name} className="flex items-center gap-2">
-                    <div
-                      className="w-3 h-3 rounded-full"
-                      style={{
-                        backgroundColor: item.color,
-                      }}
-                    />
+              {filteredOrders.length > 0 && (
+                <div className="grid grid-cols-2 gap-4 mt-4">
+                  {orderStatusData.map((item) => (
+                    <div key={item.name} className="flex items-center gap-2">
+                      <div
+                        className="w-3 h-3 rounded-full"
+                        style={{
+                          backgroundColor: item.color,
+                        }}
+                      />
 
-                    <p
-                      className="
+                      <p
+                        className="
                           text-sm
                           text-gray-600
                           dark:text-gray-300
                         "
-                    >
-                      {item.name}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            )}
+                      >
+                        {item.name}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
 
-        {/* RECENT ORDERS */}
+          {/* RECENT ORDERS */}
 
-        <div
-          className="
+          <div
+            className="
             bg-white
             dark:bg-[#111827]
             rounded-sm
@@ -964,9 +971,9 @@ function Analytics() {
             overflow-hidden
             transition-colors
           "
-        >
-          <div
-            className="
+          >
+            <div
+              className="
               p-5
               md:p-6
               border-b
@@ -979,38 +986,38 @@ function Analytics() {
               lg:justify-between
               gap-4
             "
-          >
-            {/* LEFT */}
+            >
+              {/* LEFT */}
 
-            <div>
-              <h2
-                className="
+              <div>
+                <h2
+                  className="
         text-xl
         md:text-2xl
         font-bold
         text-[#0C2B4E]
         dark:text-white
       "
-              >
-                Recent Orders
-              </h2>
+                >
+                  Recent Orders
+                </h2>
 
-              <p
-                className="
+                <p
+                  className="
         text-sm
         text-gray-500
         dark:text-gray-400
         mt-1
       "
-              >
-                Search and analyze recent order activity
-              </p>
-            </div>
+                >
+                  Search and analyze recent order activity
+                </p>
+              </div>
 
-            {/* RIGHT */}
+              {/* RIGHT */}
 
-            <div
-              className="
+              <div
+                className="
       flex
       flex-col
       sm:flex-row
@@ -1018,27 +1025,27 @@ function Analytics() {
       w-full
       lg:w-auto
     "
-            >
-              {/* SEARCH */}
+              >
+                {/* SEARCH */}
 
-              <div className="relative w-full sm:w-[320px]">
-                <Search
-                  size={18}
-                  className="
+                <div className="relative w-full sm:w-[320px]">
+                  <Search
+                    size={18}
+                    className="
           absolute
           left-4
           top-1/2
           -translate-y-1/2
           text-gray-400
         "
-                />
+                  />
 
-                <input
-                  type="text"
-                  placeholder="Search customer, product or status..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="
+                  <input
+                    type="text"
+                    placeholder="Search customer, product or status..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="
           w-full
           h-11
           rounded-sm
@@ -1057,12 +1064,12 @@ function Analytics() {
           transition
           focus:border-[#2563EB]
         "
-                />
+                  />
 
-                {search && (
-                  <button
-                    onClick={() => setSearch("")}
-                    className="
+                  {search && (
+                    <button
+                      onClick={() => setSearch("")}
+                      className="
             absolute
             right-3
             top-1/2
@@ -1077,73 +1084,75 @@ function Analytics() {
             justify-center
             transition
           "
-                  >
-                    <X
-                      size={14}
-                      className="
+                    >
+                      <X
+                        size={14}
+                        className="
               text-gray-600
               dark:text-gray-300
             "
-                    />
-                  </button>
+                      />
+                    </button>
+                  )}
+                </div>
+
+                {/* EXPORT */}
+
+                {canExportReports && (
+                  <ExportDropdown
+                    fullWidth
+                    onExcel={() =>
+                      exportToExcel(getExportRows(), "analytics-report")
+                    }
+                    onCSV={() =>
+                      exportToCSV(getExportRows(), "analytics-report")
+                    }
+                  />
                 )}
               </div>
-
-              {/* EXPORT */}
-
-              {canExportReports && (
-                <ExportDropdown
-                  fullWidth
-                  onExcel={() =>
-                    exportToExcel(getExportRows(), "analytics-report")
-                  }
-                  onCSV={() => exportToCSV(getExportRows(), "analytics-report")}
-                />
-              )}
             </div>
-          </div>
 
-          {/* DESKTOP TABLE */}
+            {/* DESKTOP TABLE */}
 
-          <div className="hidden lg:block overflow-x-auto">
-            <table className="w-full">
-              <thead
-                className="
+            <div className="hidden lg:block overflow-x-auto">
+              <table className="w-full">
+                <thead
+                  className="
                   bg-[#0C2B4E]
                   dark:bg-[#020617]
                   text-white
                 "
-              >
-                <tr>
-                  <th className="p-5 text-left">Order ID</th>
-                  <th className="p-5 text-left">Customer</th>
+                >
+                  <tr>
+                    <th className="p-5 text-left">Order ID</th>
+                    <th className="p-5 text-left">Customer</th>
 
-                  <th className="p-5 text-left">Product</th>
+                    <th className="p-5 text-left">Product</th>
 
-                  <th className="p-5 text-left">
-                    <SortableHeader label="Amount" sortKey="amount" />
-                  </th>
+                    <th className="p-5 text-left">
+                      <SortableHeader label="Amount" sortKey="amount" />
+                    </th>
 
-                  <th className="p-5 text-left">
-                    <SortableHeader label="Status" sortKey="status" />
-                  </th>
+                    <th className="p-5 text-left">
+                      <SortableHeader label="Status" sortKey="status" />
+                    </th>
 
-                  <th className="p-5 text-left">
-                    <SortableHeader label="Ordered" sortKey="createdAt" />
-                  </th>
+                    <th className="p-5 text-left">
+                      <SortableHeader label="Ordered" sortKey="createdAt" />
+                    </th>
 
-                  <th className="p-5 text-left">
-                    <SortableHeader label="Updated" sortKey="updatedAt" />
-                  </th>
-                </tr>
-              </thead>
+                    <th className="p-5 text-left">
+                      <SortableHeader label="Updated" sortKey="updatedAt" />
+                    </th>
+                  </tr>
+                </thead>
 
-              <tbody>
-                {paginatedOrders.length ? (
-                  paginatedOrders.map((order) => (
-                    <tr
-                      key={order._id}
-                      className="
+                <tbody>
+                  {paginatedOrders.length ? (
+                    paginatedOrders.map((order) => (
+                      <tr
+                        key={order._id}
+                        className="
                         border-b
                         border-gray-100
                         dark:border-gray-800
@@ -1151,50 +1160,50 @@ function Analytics() {
                         dark:hover:bg-[#1A2438]
                         transition
                       "
-                    >
-                      <td
-                        className="
+                      >
+                        <td
+                          className="
                         p-5
                         font-semibold
                         text-[#1D546C]
                         dark:text-blue-400
                         whitespace-nowrap
                       "
-                      >
-                        {order.orderNumber}
-                      </td>
-                      <td
-                        className="
+                        >
+                          {order.orderNumber}
+                        </td>
+                        <td
+                          className="
                           p-5
                           dark:text-white
                         "
-                      >
-                        {order.customerName}
-                      </td>
+                        >
+                          {order.customerName}
+                        </td>
 
-                      <td
-                        className="
+                        <td
+                          className="
                           p-5
                           dark:text-gray-300
                         "
-                      >
-                        {order.product}
-                      </td>
+                        >
+                          {order.product}
+                        </td>
 
-                      <td
-                        className="
+                        <td
+                          className="
                           p-5
                           font-medium
                           dark:text-blue-400
                         "
-                      >
-                        {getCurrencySymbol()}
-                        {formatCurrency(order.amount)}
-                      </td>
+                        >
+                          {getCurrencySymbol()}
+                          {formatCurrency(order.amount)}
+                        </td>
 
-                      <td className="p-5">
-                        <span
-                          className={`px-4 py-2 rounded-full text-sm font-medium capitalize
+                        <td className="p-5">
+                          <span
+                            className={`px-4 py-2 rounded-full text-sm font-medium capitalize
                           ${
                             order.status === "pending"
                               ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-500/15 dark:text-yellow-300"
@@ -1205,59 +1214,59 @@ function Analytics() {
                                   : "bg-green-100 text-green-700 dark:bg-green-500/15 dark:text-green-300"
                           }
                         `}
+                          >
+                            {order.status}
+                          </span>
+                        </td>
+
+                        <td
+                          className="
+                          p-5
+                          text-gray-600
+                          dark:text-gray-400
+                        "
                         >
-                          {order.status}
-                        </span>
-                      </td>
+                          {formatDate(order.createdAt)}
+                        </td>
 
-                      <td
-                        className="
+                        <td
+                          className="
                           p-5
                           text-gray-600
                           dark:text-gray-400
                         "
-                      >
-                        {formatDate(order.createdAt)}
-                      </td>
-
+                        >
+                          {formatDate(order.updatedAt)}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
                       <td
+                        colSpan={7}
                         className="
-                          p-5
-                          text-gray-600
-                          dark:text-gray-400
-                        "
-                      >
-                        {formatDate(order.updatedAt)}
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td
-                      colSpan={7}
-                      className="
                         p-10
                         text-center
                         text-gray-500
                         dark:text-gray-400
                       "
-                    >
-                      No matching orders found.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+                      >
+                        No matching orders found.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
 
-          {/* MOBILE */}
+            {/* MOBILE */}
 
-          <div className="lg:hidden p-4 space-y-4">
-            {paginatedOrders.length ? (
-              paginatedOrders.map((order) => (
-                <div
-                  key={order._id}
-                  className="
+            <div className="lg:hidden p-4 space-y-4">
+              {paginatedOrders.length ? (
+                paginatedOrders.map((order) => (
+                  <div
+                    key={order._id}
+                    className="
                     border
                     border-gray-200
                     dark:border-gray-800
@@ -1265,10 +1274,10 @@ function Analytics() {
                     p-4
                     dark:bg-[#0F172A]
                   "
-                >
-                  <div className="space-y-4">
-                    <div
-                      className="
+                  >
+                    <div className="space-y-4">
+                      <div
+                        className="
                         inline-flex
                         items-center
                         px-3
@@ -1282,76 +1291,76 @@ function Analytics() {
                         font-semibold
                         tracking-wide
                       "
-                    >
-                      {order.orderNumber}
-                    </div>
-                    <div>
-                      <p
-                        className="
+                      >
+                        {order.orderNumber}
+                      </div>
+                      <div>
+                        <p
+                          className="
                           text-sm
                           text-gray-500
                           dark:text-gray-400
                         "
-                      >
-                        Customer
-                      </p>
+                        >
+                          Customer
+                        </p>
 
-                      <p
-                        className="
+                        <p
+                          className="
                           font-semibold
                           mt-1
                           dark:text-white
                         "
-                      >
-                        {order.customerName}
-                      </p>
-                    </div>
+                        >
+                          {order.customerName}
+                        </p>
+                      </div>
 
-                    <div>
-                      <p
-                        className="
+                      <div>
+                        <p
+                          className="
                           text-sm
                           text-gray-500
                           dark:text-gray-400
                         "
-                      >
-                        Product
-                      </p>
+                        >
+                          Product
+                        </p>
 
-                      <p
-                        className="
-                          dark:text-gray-300
-                        "
-                      >
-                        {order.product}
-                      </p>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <div>
                         <p
                           className="
+                          dark:text-gray-300
+                        "
+                        >
+                          {order.product}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p
+                            className="
                             text-sm
                             text-gray-500
                             dark:text-gray-400
                           "
-                        >
-                          Amount
-                        </p>
+                          >
+                            Amount
+                          </p>
 
-                        <p
-                          className="
+                          <p
+                            className="
                             font-medium
                             dark:text-blue-400
                           "
-                        >
-                          {getCurrencySymbol()}
-                          {formatCurrency(order.amount)}
-                        </p>
-                      </div>
+                          >
+                            {getCurrencySymbol()}
+                            {formatCurrency(order.amount)}
+                          </p>
+                        </div>
 
-                      <span
-                        className={`px-5 md:px-4 py-2 rounded-full text-sm font-medium capitalize
+                        <span
+                          className={`px-5 md:px-4 py-2 rounded-full text-sm font-medium capitalize
                         ${
                           order.status === "pending"
                             ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-500/15 dark:text-yellow-300"
@@ -1362,16 +1371,16 @@ function Analytics() {
                                 : "bg-green-100 text-green-700 dark:bg-green-500/15 dark:text-green-300"
                         }
                       `}
-                      >
-                        {order.status}
-                      </span>
+                        >
+                          {order.status}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))
-            ) : (
-              <div
-                className="
+                ))
+              ) : (
+                <div
+                  className="
       bg-white
       dark:bg-[#111827]
       border
@@ -1381,19 +1390,19 @@ function Analytics() {
       p-10
       text-center
     "
-              >
-                <p className="text-gray-500 dark:text-gray-400">
-                  No matching orders found.
-                </p>
-              </div>
-            )}
-          </div>
+                >
+                  <p className="text-gray-500 dark:text-gray-400">
+                    No matching orders found.
+                  </p>
+                </div>
+              )}
+            </div>
 
-          {/* PAGINATION */}
+            {/* PAGINATION */}
 
-          {totalPages > 1 && (
-            <div
-              className="
+            {totalPages > 1 && (
+              <div
+                className="
                 flex
                 items-center
                 justify-center
@@ -1403,11 +1412,11 @@ function Analytics() {
                 border-gray-100
                 dark:border-gray-800
               "
-            >
-              <button
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage((prev) => prev - 1)}
-                className="
+              >
+                <button
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage((prev) => prev - 1)}
+                  className="
                   w-8
                   h-8
                   rounded-2xl
@@ -1422,25 +1431,25 @@ function Analytics() {
                   dark:hover:bg-[#374151]
                   transition
                 "
-              >
-                <ChevronLeft size={20} />
-              </button>
+                >
+                  <ChevronLeft size={20} />
+                </button>
 
-              <p
-                className="
+                <p
+                  className="
                   text-sm
                   md:text-base
                   font-semibold
                   dark:text-white
                 "
-              >
-                Page {currentPage} of {totalPages}
-              </p>
+                >
+                  Page {currentPage} of {totalPages}
+                </p>
 
-              <button
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage((prev) => prev + 1)}
-                className="
+                <button
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage((prev) => prev + 1)}
+                  className="
                   w-8
                   h-8
                   rounded-2xl
@@ -1455,14 +1464,15 @@ function Analytics() {
                   dark:hover:bg-[#374151]
                   transition
                 "
-              >
-                <ChevronRight size={20} />
-              </button>
-            </div>
-          )}
+                >
+                  <ChevronRight size={20} />
+                </button>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    </DashboardLayout>
+      </DashboardLayout>
+    </>
   );
 }
 

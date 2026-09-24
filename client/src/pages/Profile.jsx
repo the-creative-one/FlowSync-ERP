@@ -26,6 +26,7 @@ import {
   SquarePen,
 } from "lucide-react";
 import { useSocket } from "../context/SocketContext";
+import PageSEO from "../seo/PageSEO";
 
 function Profile() {
   const { user, fetchUser, setUser } = useAuth();
@@ -448,6 +449,11 @@ function Profile() {
   }, [socket, user?._id]);
   return (
     <>
+      <PageSEO
+        title="Profile | FlowSync"
+        description="Manage your personal information, profile details, and account preferences in FlowSync."
+        keywords="FlowSync profile, user profile, account settings, personal information"
+      />
       <DashboardLayout
         title="My Profile"
         subtitle="Manage your account and permissions"

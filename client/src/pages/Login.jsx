@@ -15,6 +15,7 @@ import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 import ThemeToggle from "../components/ThemeToggle";
 import { useTheme } from "next-themes";
+import PageSEO from "../seo/PageSEO";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -64,8 +65,14 @@ function Login() {
     resolvedTheme === "dark" ? "/White-Logo.png" : "/Color-Logo.png";
 
   return (
-    <div
-      className="
+    <>
+      <PageSEO
+        title="Login | FlowSync"
+        description="Log in to FlowSync to manage orders, employees, analytics, and business operations."
+        keywords="FlowSync login, ERP login, business management system, ERP software"
+      />
+      <div
+        className="
         min-h-screen
         flex
         bg-[#F4F7FA]
@@ -73,17 +80,17 @@ function Login() {
         transition-colors
         duration-300
       "
-    >
-      {/* THEME TOGGLE */}
+      >
+        {/* THEME TOGGLE */}
 
-      <div className="fixed top-5 right-5 z-50">
-        <ThemeToggle />
-      </div>
+        <div className="fixed top-5 right-5 z-50">
+          <ThemeToggle />
+        </div>
 
-      {/* LEFT PANEL */}
+        {/* LEFT PANEL */}
 
-      <div
-        className="
+        <div
+          className="
           hidden
           lg:flex
           w-1/2
@@ -98,61 +105,38 @@ function Login() {
           transition-colors
           duration-300
         "
-      >
-        {/* GLOW */}
+        >
+          {/* GLOW */}
 
-        <div className="absolute top-0 left-0 w-72 h-72 bg-[#1D546C]/20 rounded-full blur-3xl" />
+          <div className="absolute top-0 left-0 w-72 h-72 bg-[#1D546C]/20 rounded-full blur-3xl" />
 
-        <div className="relative z-10">
-          {/* LOGO */}
+          <div className="relative z-10">
+            {/* LOGO */}
 
-          <div className="flex justify-center lg:justify-start mb-4">
-            <Link to="/">
-              <img
-                src="/White-Logo.png"
-                alt="FlowSync Logo"
-                className="h-20 object-contain"
-              />
-            </Link>
-          </div>
-
-          {/* TEXT */}
-
-          <p className="text-lg text-gray-300 leading-relaxed max-w-lg">
-            Manage orders, operations, analytics and business workflows
-            seamlessly in one powerful ERP platform.
-          </p>
-
-          {/* FEATURES */}
-
-          <div className="mt-10 space-y-4">
-            {/* ORDER MANAGEMENT */}
-
-            <div
-              className="
-                bg-white/10
-                backdrop-blur-md
-                border
-                border-white/10
-                rounded
-                p-5
-                flex
-                items-center
-                gap-3
-                hover:translate-x-2
-                transition
-                duration-300
-              "
-            >
-              <Package size={21} className="text-orange-400 shrink-0" />
-
-              <span>Order Management</span>
+            <div className="flex justify-center lg:justify-start mb-4">
+              <Link to="/">
+                <img
+                  src="/White-Logo.png"
+                  alt="FlowSync Logo"
+                  className="h-20 object-contain"
+                />
+              </Link>
             </div>
 
-            {/* ANALYTICS */}
+            {/* TEXT */}
 
-            <div
-              className="
+            <p className="text-lg text-gray-300 leading-relaxed max-w-lg">
+              Manage orders, operations, analytics and business workflows
+              seamlessly in one powerful ERP platform.
+            </p>
+
+            {/* FEATURES */}
+
+            <div className="mt-10 space-y-4">
+              {/* ORDER MANAGEMENT */}
+
+              <div
+                className="
                 bg-white/10
                 backdrop-blur-md
                 border
@@ -166,16 +150,16 @@ function Login() {
                 transition
                 duration-300
               "
-            >
-              <BarChart3 size={21} className="text-purple-400 shrink-0" />
+              >
+                <Package size={21} className="text-orange-400 shrink-0" />
 
-              <span>Analytics & Reporting</span>
-            </div>
+                <span>Order Management</span>
+              </div>
 
-            {/* ROLE-BASED ACCESS */}
+              {/* ANALYTICS */}
 
-            <div
-              className="
+              <div
+                className="
                 bg-white/10
                 backdrop-blur-md
                 border
@@ -189,19 +173,42 @@ function Login() {
                 transition
                 duration-300
               "
-            >
-              <ShieldCheck size={21} className="text-emerald-400 shrink-0" />
+              >
+                <BarChart3 size={21} className="text-purple-400 shrink-0" />
 
-              <span>Role-Based Access</span>
+                <span>Analytics & Reporting</span>
+              </div>
+
+              {/* ROLE-BASED ACCESS */}
+
+              <div
+                className="
+                bg-white/10
+                backdrop-blur-md
+                border
+                border-white/10
+                rounded
+                p-5
+                flex
+                items-center
+                gap-3
+                hover:translate-x-2
+                transition
+                duration-300
+              "
+              >
+                <ShieldCheck size={21} className="text-emerald-400 shrink-0" />
+
+                <span>Role-Based Access</span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* RIGHT SECTION */}
+        {/* RIGHT SECTION */}
 
-      <div
-        className="
+        <div
+          className="
           flex-1
           flex
           justify-center
@@ -215,23 +222,23 @@ function Login() {
           relative
           overflow-y-auto
         "
-      >
-        {/* MOBILE LOGO */}
+        >
+          {/* MOBILE LOGO */}
 
-        <div className="lg:hidden fixed top-5 left-5 z-20">
-          <Link to="/">
-            <img
-               src={logoSrc}
-              alt="FlowSync"
-              className="w-40 h-10 object-contain opacity-90"
-            />
-          </Link>
-        </div>
+          <div className="lg:hidden fixed top-5 left-5 z-20">
+            <Link to="/">
+              <img
+                src={logoSrc}
+                alt="FlowSync"
+                className="w-40 h-10 object-contain opacity-90"
+              />
+            </Link>
+          </div>
 
-        {/* LOGIN CARD */}
+          {/* LOGIN CARD */}
 
-        <div
-          className="
+          <div
+            className="
             w-full
             max-w-md
             bg-white
@@ -247,65 +254,65 @@ function Login() {
             transition-colors
             duration-300
           "
-        >
-          {/* HEADER */}
+          >
+            {/* HEADER */}
 
-          <div className="mb-8">
-            <h2
-              className="
+            <div className="mb-8">
+              <h2
+                className="
                 text-3xl
                 font-bold
                 text-[#0C2B4E]
                 dark:text-white
                 text-center
               "
-            >
-              Welcome Back
-            </h2>
+              >
+                Welcome Back
+              </h2>
 
-            <p
-              className="
+              <p
+                className="
                 text-gray-500
                 dark:text-gray-400
                 mt-2
                 text-center
               "
-            >
-              Login to continue managing your ERP system.
-            </p>
-          </div>
+              >
+                Login to continue managing your ERP system.
+              </p>
+            </div>
 
-          {/* FORM */}
+            {/* FORM */}
 
-          <form onSubmit={handleLogin} className="space-y-4">
-            {/* EMAIL */}
+            <form onSubmit={handleLogin} className="space-y-4">
+              {/* EMAIL */}
 
-            <div>
-              <div className="relative">
-                <Mail
-                  size={18}
-                  className="
+              <div>
+                <div className="relative">
+                  <Mail
+                    size={18}
+                    className="
                     absolute
                     left-4
                     top-1/2
                     -translate-y-1/2
                     text-gray-400
                   "
-                />
+                  />
 
-                <input
-                  type="email"
-                  placeholder="Enter email"
-                  value={email}
-                  onChange={(e) => {
-                    setEmail(e.target.value);
+                  <input
+                    type="email"
+                    placeholder="Enter email"
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
 
-                    setErrors((prev) => ({
-                      ...prev,
-                      email: "",
-                    }));
-                  }}
-                  className={`
+                      setErrors((prev) => ({
+                        ...prev,
+                        email: "",
+                      }));
+                    }}
+                    className={`
                     w-full
                     border
                     rounded
@@ -331,42 +338,44 @@ function Login() {
                         `
                     }
                   `}
-                />
+                  />
+                </div>
+
+                {errors.email && (
+                  <p className="text-red-500 text-sm mt-2 ml-1">
+                    {errors.email}
+                  </p>
+                )}
               </div>
 
-              {errors.email && (
-                <p className="text-red-500 text-sm mt-2 ml-1">{errors.email}</p>
-              )}
-            </div>
+              {/* PASSWORD */}
 
-            {/* PASSWORD */}
-
-            <div>
-              <div className="relative">
-                <Lock
-                  size={18}
-                  className="
+              <div>
+                <div className="relative">
+                  <Lock
+                    size={18}
+                    className="
                     absolute
                     left-4
                     top-1/2
                     -translate-y-1/2
                     text-gray-400
                   "
-                />
+                  />
 
-                <input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Enter password"
-                  value={password}
-                  onChange={(e) => {
-                    setPassword(e.target.value);
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter password"
+                    value={password}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
 
-                    setErrors((prev) => ({
-                      ...prev,
-                      password: "",
-                    }));
-                  }}
-                  className={`
+                      setErrors((prev) => ({
+                        ...prev,
+                        password: "",
+                      }));
+                    }}
+                    className={`
                     w-full
                     border
                     rounded
@@ -392,12 +401,12 @@ function Login() {
                         `
                     }
                   `}
-                />
+                  />
 
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="
                     absolute
                     right-4
                     top-1/2
@@ -407,39 +416,39 @@ function Login() {
                     dark:hover:text-white
                     transition
                   "
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+
+                {errors.password && (
+                  <p className="text-red-500 text-sm mt-2 ml-1">
+                    {errors.password}
+                  </p>
+                )}
               </div>
 
-              {errors.password && (
-                <p className="text-red-500 text-sm mt-2 ml-1">
-                  {errors.password}
-                </p>
-              )}
-            </div>
+              {/* FORGOT PASSWORD */}
 
-            {/* FORGOT PASSWORD */}
-
-            <div className="flex justify-end">
-              <Link
-                to="/forgot-password"
-                className="
+              <div className="flex justify-end">
+                <Link
+                  to="/forgot-password"
+                  className="
                   text-sm
                   text-[#1D546C]
                   dark:text-blue-400
                   hover:underline
                 "
-              >
-                Forgot Password?
-              </Link>
-            </div>
+                >
+                  Forgot Password?
+                </Link>
+              </div>
 
-            {/* LOGIN BUTTON */}
+              {/* LOGIN BUTTON */}
 
-            <button
-              type="submit"
-              className="
+              <button
+                type="submit"
+                className="
                 w-full
                 bg-[#1D546C]
                 hover:bg-[#16485c]
@@ -458,38 +467,39 @@ function Login() {
                 hover:scale-[1.02]
                 active:scale-95
               "
-            >
-              Login
-              <ArrowRight size={18} />
-            </button>
-          </form>
+              >
+                Login
+                <ArrowRight size={18} />
+              </button>
+            </form>
 
-          {/* REGISTER */}
+            {/* REGISTER */}
 
-          <p
-            className="
+            <p
+              className="
               text-center
               text-gray-500
               dark:text-gray-400
               mt-8
             "
-          >
-            Don&apos;t have an account?{" "}
-            <Link
-              to="/register"
-              className="
+            >
+              Don&apos;t have an account?{" "}
+              <Link
+                to="/register"
+                className="
                 text-[#1D546C]
                 dark:text-blue-400
                 font-semibold
                 hover:underline
               "
-            >
-              Register
-            </Link>
-          </p>
+              >
+                Register
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

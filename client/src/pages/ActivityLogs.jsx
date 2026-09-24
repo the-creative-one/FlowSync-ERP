@@ -2,6 +2,7 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import { useEffect, useState } from "react";
 import api from "../api/axios";
 import { ChevronDown, Search } from "lucide-react";
+import PageSEO from "../seo/PageSEO";
 
 function ActivityLogs() {
   const [logs, setLogs] = useState([]);
@@ -97,46 +98,52 @@ function ActivityLogs() {
   };
 
   return (
-    <DashboardLayout
-      title="Activity Logs"
-      subtitle="Track system activity and user actions"
-    >
-      {loading ? (
-        <p className="text-gray-500 flex items-center justify-center py-12">
-          Loading logs...
-        </p>
-      ) : logs.length === 0 ? (
-        <div
-          className="
+    <>
+      <PageSEO
+        title="Activity Logs | FlowSync"
+        description="Review user activity, system actions, and important changes across your FlowSync workspace."
+        keywords="FlowSync activity logs, audit logs, user activity, system activity, audit trail"
+      />
+      <DashboardLayout
+        title="Activity Logs"
+        subtitle="Track system activity and user actions"
+      >
+        {loading ? (
+          <p className="text-gray-500 flex items-center justify-center py-12">
+            Loading logs...
+          </p>
+        ) : logs.length === 0 ? (
+          <div
+            className="
               text-center
               py-12
               text-gray-500
               dark:text-gray-400
             "
-        >
-          No activity logs found.
-        </div>
-      ) : (
-        <>
-          <div className="mb-6 flex gap-3 sm:flex-row sm:items-center">
-            <div className="relative flex-1">
-              <Search
-                size={18}
-                className="
+          >
+            No activity logs found.
+          </div>
+        ) : (
+          <>
+            <div className="mb-6 flex gap-3 sm:flex-row sm:items-center">
+              <div className="relative flex-1">
+                <Search
+                  size={18}
+                  className="
         absolute
         left-4
         top-1/2
         -translate-y-1/2
         text-gray-400
       "
-              />
+                />
 
-              <input
-                type="text"
-                placeholder="Search for user activities..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="
+                <input
+                  type="text"
+                  placeholder="Search for user activities..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="
         w-full
         rounded
         border
@@ -153,18 +160,18 @@ function ActivityLogs() {
         focus:border-[#2563EB]
         transition
       "
-              />
-            </div>
+                />
+              </div>
 
-            <div className="flex items-center gap-2 text-md text-gray-500 dark:text-gray-400 shrink-0">
-              <div className="relative">
-                <select
-                  value={logsPerPage}
-                  onChange={(e) => {
-                    setLogsPerPage(Number(e.target.value));
-                    setCurrentPage(1);
-                  }}
-                  className="
+              <div className="flex items-center gap-2 text-md text-gray-500 dark:text-gray-400 shrink-0">
+                <div className="relative">
+                  <select
+                    value={logsPerPage}
+                    onChange={(e) => {
+                      setLogsPerPage(Number(e.target.value));
+                      setCurrentPage(1);
+                    }}
+                    className="
                     appearance-none
                     rounded
                     border
@@ -181,16 +188,16 @@ function ActivityLogs() {
                     focus:border-[#2563EB]
                     cursor-pointer
                   "
-                >
-                  <option value={10}>10</option>
-                  <option value={25}>25</option>
-                  <option value={50}>50</option>
-                  <option value={100}>100</option>
-                </select>
+                  >
+                    <option value={10}>10</option>
+                    <option value={25}>25</option>
+                    <option value={50}>50</option>
+                    <option value={100}>100</option>
+                  </select>
 
-                <ChevronDown
-                  size={15}
-                  className="
+                  <ChevronDown
+                    size={15}
+                    className="
                     pointer-events-none
                     absolute
                     right-2.5
@@ -199,36 +206,36 @@ function ActivityLogs() {
                     text-gray-500
                     dark:text-gray-300
                   "
-                />
+                  />
+                </div>
               </div>
             </div>
-          </div>
-          <div className="hidden lg:block overflow-x-auto">
-            <table className="w-full dark:bg-[#111827] bg-white">
-              <thead
-                className="
+            <div className="hidden lg:block overflow-x-auto">
+              <table className="w-full dark:bg-[#111827] bg-white">
+                <thead
+                  className="
                   bg-[#0C2B4E]
                   text-white
                 "
-              >
-                <tr>
-                  <th className="p-5 text-left">User</th>
+                >
+                  <tr>
+                    <th className="p-5 text-left">User</th>
 
-                  <th className="p-5 text-left">Action</th>
+                    <th className="p-5 text-left">Action</th>
 
-                  <th className="p-5 text-left">Module</th>
+                    <th className="p-5 text-left">Module</th>
 
-                  <th className="p-5 text-left">Details</th>
+                    <th className="p-5 text-left">Details</th>
 
-                  <th className="p-5 text-left">Date & Time</th>
-                </tr>
-              </thead>
+                    <th className="p-5 text-left">Date & Time</th>
+                  </tr>
+                </thead>
 
-              <tbody>
-                {filteredLogs.map((log) => (
-                  <tr
-                    key={log._id}
-                    className="
+                <tbody>
+                  {filteredLogs.map((log) => (
+                    <tr
+                      key={log._id}
+                      className="
                           border-b
                           border-gray-100
                           dark:border-gray-800
@@ -236,12 +243,12 @@ function ActivityLogs() {
                           dark:hover:bg-[#1A2438]
                           transition
                         "
-                  >
-                    <td className="p-5 dark:text-white">{log.userName}</td>
+                    >
+                      <td className="p-5 dark:text-white">{log.userName}</td>
 
-                    <td className="p-5">
-                      <span
-                        className={`
+                      <td className="p-5">
+                        <span
+                          className={`
                           px-3
                           py-1
                           rounded-full
@@ -249,14 +256,14 @@ function ActivityLogs() {
                           font-medium
                           ${getActionStyles(log.action)}
                         `}
-                      >
-                        {log.action}
-                      </span>
-                    </td>
+                        >
+                          {log.action}
+                        </span>
+                      </td>
 
-                    <td className="p-5">
-                      <span
-                        className={`
+                      <td className="p-5">
+                        <span
+                          className={`
                           px-3
                           py-1
                           rounded-full
@@ -264,51 +271,51 @@ function ActivityLogs() {
                           font-medium
                           ${getModuleStyles(log.module)}
                         `}
-                      >
-                        {log.module}
-                      </span>
-                    </td>
+                        >
+                          {log.module}
+                        </span>
+                      </td>
 
-                    <td
-                      className="
+                      <td
+                        className="
                           p-5
                           font-medium
                           text-[#1D546C]
                           dark:text-blue-400
                         "
-                    >
-                      {log.details}
-                    </td>
+                      >
+                        {log.details}
+                      </td>
 
-                    <td className="p-5 whitespace-nowrap">
-                      <div>
-                        <p className="dark:text-white">
-                          {formatDate(log.createdAt)}
-                        </p>
+                      <td className="p-5 whitespace-nowrap">
+                        <div>
+                          <p className="dark:text-white">
+                            {formatDate(log.createdAt)}
+                          </p>
 
-                        <p
-                          className="
+                          <p
+                            className="
                               text-sm
                               text-gray-500
                               dark:text-gray-400
                             "
-                        >
-                          {formatTime(log.createdAt)}
-                        </p>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                          >
+                            {formatTime(log.createdAt)}
+                          </p>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-          {/* Mobile Cards Layout */}
-          <div className="lg:hidden space-y-4">
-            {filteredLogs.map((log) => (
-              <div
-                key={log._id}
-                className="
+            {/* Mobile Cards Layout */}
+            <div className="lg:hidden space-y-4">
+              {filteredLogs.map((log) => (
+                <div
+                  key={log._id}
+                  className="
                       border
                       border-gray-100
                       dark:border-gray-800
@@ -316,11 +323,11 @@ function ActivityLogs() {
                       p-4
                       dark:bg-[#0F172A]
                     "
-              >
-                <div className="space-y-4">
-                  <div className="flex flex-wrap gap-2">
-                    <span
-                      className={`
+                >
+                  <div className="space-y-4">
+                    <div className="flex flex-wrap gap-2">
+                      <span
+                        className={`
                           px-3
                           py-1
                           rounded-full
@@ -328,12 +335,12 @@ function ActivityLogs() {
                           font-medium
                           ${getActionStyles(log.action)}
                         `}
-                    >
-                      {log.action}
-                    </span>
+                      >
+                        {log.action}
+                      </span>
 
-                    <span
-                      className={`
+                      <span
+                        className={`
                           px-3
                           py-1
                           rounded-full
@@ -341,58 +348,58 @@ function ActivityLogs() {
                           font-medium
                           ${getModuleStyles(log.module)}
                         `}
-                    >
-                      {log.module}
-                    </span>
-                  </div>
+                      >
+                        {log.module}
+                      </span>
+                    </div>
 
-                  <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      User
-                    </p>
-
-                    <p className="mt-1 font-semibold dark:text-white">
-                      {log.userName}
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Details
-                    </p>
-
-                    <p className="mt-1 text-[#1D546C] dark:text-blue-400 font-medium">
-                      {log.details}
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Date & Time
-                    </p>
-
-                    <div className="mt-1">
-                      <p className="dark:text-white">
-                        {formatDate(log.createdAt)}
+                    <div>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        User
                       </p>
 
-                      <p className="text-sm text-gray-400">
-                        {formatTime(log.createdAt)}
+                      <p className="mt-1 font-semibold dark:text-white">
+                        {log.userName}
                       </p>
+                    </div>
+
+                    <div>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Details
+                      </p>
+
+                      <p className="mt-1 text-[#1D546C] dark:text-blue-400 font-medium">
+                        {log.details}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Date & Time
+                      </p>
+
+                      <div className="mt-1">
+                        <p className="dark:text-white">
+                          {formatDate(log.createdAt)}
+                        </p>
+
+                        <p className="text-sm text-gray-400">
+                          {formatTime(log.createdAt)}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-          <div className="mt-6 flex flex-col justify-center items-center gap-3">
-            {/* Pagination */}
+              ))}
+            </div>
+            <div className="mt-6 flex flex-col justify-center items-center gap-3">
+              {/* Pagination */}
 
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setCurrentPage((prev) => prev - 1)}
-                disabled={currentPage === 1}
-                className="
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setCurrentPage((prev) => prev - 1)}
+                  disabled={currentPage === 1}
+                  className="
         px-4
         py-2
         rounded
@@ -408,12 +415,12 @@ function ActivityLogs() {
         dark:hover:bg-[#1A2438]
         transition
       "
-              >
-                Previous
-              </button>
+                >
+                  Previous
+                </button>
 
-              <span
-                className="
+                <span
+                  className="
         px-4
         py-2
         rounded
@@ -422,14 +429,14 @@ function ActivityLogs() {
         text-sm
         font-medium
       "
-              >
-                {currentPage} / {totalPages}
-              </span>
+                >
+                  {currentPage} / {totalPages}
+                </span>
 
-              <button
-                onClick={() => setCurrentPage((prev) => prev + 1)}
-                disabled={currentPage === totalPages}
-                className="
+                <button
+                  onClick={() => setCurrentPage((prev) => prev + 1)}
+                  disabled={currentPage === totalPages}
+                  className="
         px-4
         py-2
         rounded
@@ -445,27 +452,27 @@ function ActivityLogs() {
         dark:hover:bg-[#1A2438]
         transition
       "
-              >
-                Next
-              </button>
+                >
+                  Next
+                </button>
+              </div>
+
+              {/* Result Count */}
+
+              <p className="sm:hidden text-sm text-gray-500 dark:text-gray-400">
+                Result{" "}
+                {totalLogs === 0
+                  ? "0 logs"
+                  : `${(currentPage - 1) * logsPerPage + 1}-${Math.min(
+                      currentPage * logsPerPage,
+                      totalLogs,
+                    )} of ${totalLogs}`}
+              </p>
             </div>
-
-            {/* Result Count */}
-
-            <p className="sm:hidden text-sm text-gray-500 dark:text-gray-400">
-              Result{" "}
-              {totalLogs === 0
-                ? "0 logs"
-                : `${(currentPage - 1) * logsPerPage + 1}-${Math.min(
-                    currentPage * logsPerPage,
-                    totalLogs,
-                  )} of ${totalLogs}`}
-            </p>
-
-          </div>
-        </>
-      )}
-    </DashboardLayout>
+          </>
+        )}
+      </DashboardLayout>
+    </>
   );
 }
 

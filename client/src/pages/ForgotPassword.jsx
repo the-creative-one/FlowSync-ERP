@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Mail, ArrowRight } from "lucide-react";
 import toast from "react-hot-toast";
-
+import PageSEO from "../seo/PageSEO";
 import api from "../api/axios";
 import ThemeToggle from "../components/ThemeToggle";
 
@@ -29,8 +29,7 @@ function ForgotPassword() {
       setEmail("");
     } catch (error) {
       toast.error(
-        error.response?.data?.message ||
-          "Failed to send reset email",
+        error.response?.data?.message || "Failed to send reset email",
       );
     } finally {
       setLoading(false);
@@ -38,8 +37,14 @@ function ForgotPassword() {
   };
 
   return (
-    <div
-      className="
+    <>
+      <PageSEO
+        title="Forgot Password | FlowSync"
+        description="Reset your FlowSync account password securely and regain access to your account."
+        keywords="FlowSync, forgot password, password reset, account recovery"
+      />
+      <div
+        className="
         min-h-screen
         flex
         items-center
@@ -48,13 +53,13 @@ function ForgotPassword() {
         dark:bg-[#020817]
         px-4
       "
-    >
-      <div className="fixed top-5 right-5">
-        <ThemeToggle />
-      </div>
+      >
+        <div className="fixed top-5 right-5">
+          <ThemeToggle />
+        </div>
 
-      <div
-        className="
+        <div
+          className="
           w-full
           max-w-md
           bg-white
@@ -66,54 +71,49 @@ function ForgotPassword() {
           dark:border-gray-800
           p-8
         "
-      >
-        <h1
-          className="
+        >
+          <h1
+            className="
             text-3xl
             font-bold
             text-center
             text-[#0C2B4E]
             dark:text-white
           "
-        >
-          Forgot Password
-        </h1>
+          >
+            Forgot Password
+          </h1>
 
-        <p
-          className="
+          <p
+            className="
             text-center
             mt-2
             text-gray-500
             dark:text-gray-400
           "
-        >
-          Enter your email to receive a reset link.
-        </p>
+          >
+            Enter your email to receive a reset link.
+          </p>
 
-        <form
-          onSubmit={handleSubmit}
-          className="mt-8 space-y-4"
-        >
-          <div className="relative">
-            <Mail
-              size={18}
-              className="
+          <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+            <div className="relative">
+              <Mail
+                size={18}
+                className="
                 absolute
                 left-4
                 top-1/2
                 -translate-y-1/2
                 text-gray-400
               "
-            />
+              />
 
-            <input
-              type="email"
-              placeholder="Enter email"
-              value={email}
-              onChange={(e) =>
-                setEmail(e.target.value)
-              }
-              className="
+              <input
+                type="email"
+                placeholder="Enter email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="
                 w-full
                 border
                 border-gray-300
@@ -128,13 +128,13 @@ function ForgotPassword() {
                 outline-none
                 focus:border-[#1D546C]
               "
-            />
-          </div>
+              />
+            </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="
+            <button
+              type="submit"
+              disabled={loading}
+              className="
               w-full
               bg-[#1D546C]
               hover:bg-[#16485c]
@@ -148,36 +148,37 @@ function ForgotPassword() {
               gap-2
               transition
             "
-          >
-            {loading ? "Sending..." : "Send Reset Link"}
+            >
+              {loading ? "Sending..." : "Send Reset Link"}
 
-            <ArrowRight size={18} />
-          </button>
-        </form>
+              <ArrowRight size={18} />
+            </button>
+          </form>
 
-        <p
-          className="
+          <p
+            className="
             text-center
             mt-6
             text-gray-500
             dark:text-gray-400
           "
-        >
-          Remember your password?{" "}
-          <Link
-            to="/login"
-            className="
+          >
+            Remember your password?{" "}
+            <Link
+              to="/login"
+              className="
               text-[#1D546C]
               dark:text-blue-400
               font-semibold
               hover:underline
             "
-          >
-            Login
-          </Link>
-        </p>
+            >
+              Login
+            </Link>
+          </p>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
