@@ -182,7 +182,7 @@ function PermissionRequests({ isOpen, onClose, requests, fetchRequests }) {
                   className="
                   p-4
                   mb-3
-                  rounded-2xl
+                  rounded
                   border
                   border-gray-200
                   dark:border-gray-700
