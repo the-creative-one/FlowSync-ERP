@@ -277,7 +277,7 @@ function Chatbot() {
               </div>
             </button>
 
-            <div className="absolute -bottom-2 right-7 w-4 h-4 bg-white dark:bg-[#111827] border-r border-b border-gray-200 dark:border-gray-700 rotate-45" />
+            <div className="absolute -bottom-2 right-7 w-4 h-4 bg-white dark:bg-[#111827] rotate-45" />
           </div>
         </div>
       )}

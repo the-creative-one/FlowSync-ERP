@@ -350,7 +350,7 @@ function Profile() {
       console.log(response.data.message);
     } catch (error) {
       console.log(error.response?.data);
-      toast.error("Failed to upload avatar");
+      toast.error(error.response?.data?.message || "Failed to upload avatar");
     }
   };
 

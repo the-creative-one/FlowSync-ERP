@@ -20,13 +20,16 @@ import {
 } from "lucide-react";
 import ThemeToggle from "../components/ThemeToggle";
 import { useAuth } from "../context/AuthContext";
+import { useTheme } from "next-themes";
 
 function Register() {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { resolvedTheme } = useTheme();
 
+  const logoSrc =
+    resolvedTheme === "dark" ? "/White-Logo.png" : "/Color-Logo.png";
   // Register state
-
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState({});
@@ -82,23 +85,19 @@ function Register() {
 
   const validateForm = () => {
     const newErrors = {};
-
     if (!formData.name.trim()) {
       newErrors.name = "Name is required";
     }
-
     if (!formData.email.trim()) {
       newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Enter valid email";
     }
-
     if (!formData.password.trim()) {
       newErrors.password = "Password is required";
     } else if (!isPasswordValid) {
       newErrors.password = "Password does not meet the required criteria";
     }
-
     if (!formData.confirmPassword.trim()) {
       newErrors.confirmPassword = "Confirm password is required";
     } else if (formData.password !== formData.confirmPassword) {
@@ -321,7 +320,7 @@ function Register() {
           <div className="flex justify-center lg:justify-start mb-8">
             <Link to="/">
               <img
-                src="/White-Logo.png"
+               src="/White-Logo.png"
                 alt="FlowSync Logo"
                 className="h-20 object-contain"
               />
@@ -331,8 +330,8 @@ function Register() {
           {/* Text */}
 
           <p className="text-lg text-gray-300 leading-relaxed max-w-lg">
-            Create your FlowSync account and bring orders, teams, analytics
-            and everyday operations together in one place.
+            Create your FlowSync account and bring orders, teams, analytics and
+            everyday operations together in one place.
           </p>
 
           {/* Features */}
@@ -446,7 +445,7 @@ function Register() {
         <div className="lg:hidden fixed top-5 left-5 z-20">
           <Link to="/">
             <img
-              src="/White-Logo.png"
+              src={logoSrc}
               alt="FlowSync"
               className="w-40 h-10 object-contain opacity-90"
             />
@@ -534,9 +533,7 @@ function Register() {
                       onChange={handleChange}
                       autoComplete="name"
                       aria-invalid={!!errors.name}
-                      aria-describedby={
-                        errors.name ? "name-error" : undefined
-                      }
+                      aria-describedby={errors.name ? "name-error" : undefined}
                       className={`
                         w-full
                         border
@@ -776,15 +773,11 @@ function Register() {
                         One lowercase letter
                       </PasswordRequirement>
 
-                      <PasswordRequirement
-                        valid={passwordRequirements.number}
-                      >
+                      <PasswordRequirement valid={passwordRequirements.number}>
                         One number
                       </PasswordRequirement>
 
-                      <PasswordRequirement
-                        valid={passwordRequirements.special}
-                      >
+                      <PasswordRequirement valid={passwordRequirements.special}>
                         One special character
                       </PasswordRequirement>
                     </div>
@@ -1104,10 +1097,7 @@ function Register() {
                   )}
 
                   {!verificationError && (
-                    <p
-                      id="verification-help"
-                      className="sr-only"
-                    >
+                    <p id="verification-help" className="sr-only">
                       Enter the 6-digit verification code sent to your email
                       address.
                     </p>
@@ -1160,9 +1150,7 @@ function Register() {
                 >
                   {verifying ? "Verifying..." : "Verify Email"}
 
-                  {!verifying && (
-                    <ArrowRight size={18} aria-hidden="true" />
-                  )}
+                  {!verifying && <ArrowRight size={18} aria-hidden="true" />}
                 </button>
 
                 {/* Resend verification code */}

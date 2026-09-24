@@ -54,7 +54,7 @@ const createOrder = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
-      message: error.message,
+      message: "Failed to create order",
     });
   }
 };
@@ -68,7 +68,7 @@ const getOrders = async (req, res) => {
     res.status(200).json(orders);
   } catch (error) {
     res.status(500).json({
-      message: error.message,
+      message: "Failed to fetch orders",
     });
   }
 };
@@ -134,7 +134,7 @@ const updateOrder = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
-      message: error.message,
+      message: "Failed to update order",
     });
   }
 };
@@ -168,7 +168,7 @@ const deleteOrder = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
-      message: error.message,
+      message: "Failed to delete order",
     });
   }
 };

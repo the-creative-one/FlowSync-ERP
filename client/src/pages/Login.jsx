@@ -109,7 +109,7 @@ function Login() {
           <div className="flex justify-center lg:justify-start mb-4">
             <Link to="/">
               <img
-                src={logoSrc}
+                src="/White-Logo.png"
                 alt="FlowSync Logo"
                 className="h-20 object-contain"
               />
