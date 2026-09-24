@@ -109,9 +109,20 @@ router.post(
   "/avatar",
   protect,
   (req, res, next) => {
-    next();
+    uploadAvatar.single("avatar")(req, res, (error) => {
+      if (error) {
+        if (error.code === "LIMIT_FILE_SIZE") {
+          return res.status(400).json({
+            message: "Avatar image must be 2 MB or smaller",
+          });
+        }
+        return res.status(400).json({
+          message: error.message || "Invalid avatar upload",
+        });
+      }
+      next();
+    });
   },
-  uploadAvatar.single("avatar"),
   async (req, res) => {
     try {
       const user = await User.findById(req.user._id);

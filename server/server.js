@@ -25,7 +25,6 @@ const app = express();
 // Connect to MongoDB
 connectDB();
 // Configure CORS
-
 app.use(
   cors({
     origin: process.env.CLIENT_URL,
@@ -35,8 +34,6 @@ app.use(
 // Configure middleware
 app.use(express.json());
 app.use(morgan("dev"));
-
-// Limiters
 
 // Basic API route
 app.get("/", (req, res) => {
@@ -106,9 +103,22 @@ io.on("connection", async (socket) => {
   }
 });
 
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error(err);
+  if (res.headersSent) {
+    return next(err);
+  }
+  res.status(err.status || 500).json({
+    message:
+      err.status && err.status < 500
+        ? err.message
+        : "Something went wrong on the server. Please try again later.",
+  });
+});
+
 // Start server
 const PORT = process.env.PORT || 5000;
-
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
