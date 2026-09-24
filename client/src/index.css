@@ -1,21 +1,14 @@
 @import "tailwindcss";
-
 /* TAILWIND V4 DARK MODE CONFIG */
-
 @custom-variant dark (&:where(.dark, .dark *));
-
 /* REMOVE RECHARTS OUTLINES */
-
 .recharts-wrapper *:focus {
   outline: none;
 }
-
 .recharts-wrapper *:focus-visible {
   outline: none;
 }
-
 /* SHAKE ANIMATION */
-
 @keyframes shake {
   0% {
     transform: translateX(0);
@@ -43,13 +36,11 @@
 }
 
 /* FADE IN */
-
 @keyframes fadeIn {
   from {
     opacity: 0;
     transform: translateY(15px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -61,7 +52,6 @@
 }
 
 /* WAVE ANIMATION */
-
 @keyframes wave {
   0% {
     transform: rotate(0deg);
@@ -102,7 +92,6 @@
 }
 
 /* GLOBAL BODY COLORS */
-
 body {
   @apply bg-[#F4F7FA] text-gray-900 transition-colors duration-300;
 }
@@ -111,14 +100,11 @@ body {
   @apply bg-[#0B1120] text-white;
 }
 
-/* ----------------------------- */
 /* Smart Dropdown */
-/* ----------------------------- */
-
 @keyframes dropdownAnimation {
   from {
     opacity: 0;
-    transform: scale(.96);
+    transform: scale(0.96);
   }
 
   to {
@@ -128,5 +114,10 @@ body {
 }
 
 .animate-dropdown {
-  animation: dropdownAnimation .18s ease;
+  animation: dropdownAnimation 0.18s ease;
+}
+
+/* For Netlify AI */
+iframe#nl-badge-frame {
+  display: none !important;
 }
