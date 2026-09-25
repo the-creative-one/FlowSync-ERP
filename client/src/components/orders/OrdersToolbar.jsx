@@ -92,7 +92,7 @@ function OrdersToolbar({
                 className="
                   h-12
                   w-12
-                  rounded-full
+                  rounded
                   bg-[#1D546C]
                   hover:bg-[#16485c]
                   text-white

@@ -24,12 +24,14 @@ import {
   Eye,
   EyeOff,
   SquarePen,
+  LogOut,
 } from "lucide-react";
 import { useSocket } from "../context/SocketContext";
 import PageSEO from "../seo/PageSEO";
+import { useNavigate } from "react-router-dom";
 
 function Profile() {
-  const { user, fetchUser, setUser } = useAuth();
+  const { user, logout, fetchUser, setUser } = useAuth();
   const { socket } = useSocket();
   const [requests, setRequests] = useState([]);
   const [editingName, setEditingName] = useState(false);
@@ -447,6 +449,13 @@ function Profile() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket, user?._id]);
+
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
+
   return (
     <>
       <PageSEO
@@ -464,6 +473,7 @@ function Profile() {
           <div className="flex justify-center">
             <div
               className="
+              relative
               w-full
               max-w-2xl
               bg-white
@@ -477,6 +487,36 @@ function Profile() {
               shadow-sm
             "
             >
+              {/* MOBILE LOGOUT */}
+              <button
+                type="button"
+                onClick={handleLogout}
+                aria-label="Logout"
+                title="Logout"
+                className="
+                  absolute
+                  top-4
+                  right-4
+                  flex
+                  items-center
+                  justify-center
+                  w-9
+                  h-9
+                  rounded-full
+                  bg-gray-100
+                  text-gray-500
+                  hover:bg-red-50
+                  hover:text-red-500
+                  dark:bg-gray-800
+                  dark:text-gray-400
+                  dark:hover:bg-red-900/20
+                  dark:hover:text-red-400
+                  transition
+                  md:hidden
+                "
+              >
+                <LogOut size={16} />
+              </button>
               <div ref={avatarMenuRef} className="relative w-24 h-24 mx-auto">
                 <div
                   className="

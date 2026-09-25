@@ -82,7 +82,7 @@ function DashboardLayout({ children, title, subtitle }) {
             className="
               w-12
               h-12
-              rounded-2xl
+              rounded
               bg-[#0C2B4E]
               dark:bg-[#111827]
               text-white
