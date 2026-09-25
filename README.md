@@ -2,7 +2,7 @@
 
 FlowSync is a full-stack business management platform built with the MERN stack.
 
-I built it to go beyond a basic CRUD application and understand how different parts of a real-world application work together — authentication, permissions, APIs, real-time updates, analytics, AI, third-party services, security, and deployment.
+I built it to go beyond a basic CRUD application and understand how different parts of a real-world application work together - authentication, permissions, APIs, real-time updates, analytics, AI, third-party services, security, and deployment.
 
 **Live:** https://flowsync-erp.netlify.app/
 
@@ -134,10 +134,10 @@ Pending → Processing → Shipped → Delivered
 
 ### Deployment
 
-`Netlify` — Frontend  
-`Render` — Backend  
-`MongoDB Atlas` — Database  
-`Cloudinary` — Image Storage
+`Netlify` - Frontend  
+`Render` - Backend  
+`MongoDB Atlas` - Database  
+`Cloudinary` - Image Storage
 
 ---
 
