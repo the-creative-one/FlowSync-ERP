@@ -8,6 +8,20 @@ I built it to go beyond a basic CRUD application and understand how different pa
 
 ---
 
+## ◈ Screenshots
+
+### Desktop
+
+![FlowSync desktop showcase](./screenshots/flowsync-desktop.png)
+
+### Responsive Mobile Experience
+
+<p align="center">
+  <img src="./screenshots/flowsync-mobile.png" width="500" alt="FlowSync mobile showcase">
+</p>
+
+---
+
 ## ◈ What FlowSync Does
 
 FlowSync is designed around everyday business operations.
