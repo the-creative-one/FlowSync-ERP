@@ -1,309 +1,263 @@
 # FlowSync
 
-A modern full-stack ERP (Enterprise Resource Planning) system built using the MERN stack with Role-Based Access Control (RBAC), employee management, analytics permissions, responsive dashboard UI, and secure authentication workflows.
+FlowSync is a full-stack business management platform built with the MERN stack.
+
+I built it to go beyond a basic CRUD application and understand how different parts of a real-world application work together — authentication, permissions, APIs, real-time updates, analytics, AI, third-party services, security, and deployment.
+
+**Live:** https://flowsync-erp.netlify.app/
 
 ---
 
-# 🚀 Tech Stack
+## ◈ What FlowSync Does
 
-## Frontend
+FlowSync is designed around everyday business operations.
 
-* React
-* React Router DOM
-* Axios
-* Tailwind CSS
-* Vite
-* Lucide React
-* React Hot Toast
+Users can:
 
-## Backend
+- Manage and track orders
+- Manage employees and their access
+- Assign roles and granular permissions
+- Request, approve, and reject permissions
+- Monitor business analytics and revenue
+- Export data
+- Track activity and administrative changes
+- Manage their profile and avatar
+- Use an AI assistant for application-related help
+- Receive real-time updates
 
-* Node.js
-* Express.js
-* MongoDB
-* Mongoose
-* JWT Authentication
-* bcryptjs
+The application currently supports:
 
----
+```text
+Admin · Manager · Operations · Analyst · Employee
+```
 
-# ✨ Features Implemented
-
-## Authentication & Security
-
-* User Registration
-* User Login
-* JWT Authentication
-* Protected Routes
-* Role-Based Authorization (RBAC)
-* Permission-Based Access Control
-* Secure Password Hashing
-* Auth Context Management
+Roles define the user's baseline access, while individual permissions control what they can actually do.
 
 ---
 
-# 👥 Role-Based Access System
+## ◈ Key Features
 
-## Roles
+### Authentication & Security
 
-* Admin
-* Manager
-* Operations
-* Analyst
-* Employee
+- JWT authentication
+- Email verification
+- Forgot/reset password
+- Protected routes and APIs
+- bcrypt password hashing
+- Role-based access control
+- Granular permissions
+- API rate limiting
+- Chatbot rate limiting
+- File upload validation and size limits
+- Production-safe error handling
 
-## Admin Access
+### Order Management
 
-* Full system access
-* Manage all employees
-* Assign all roles
-* Grant/revoke permissions
-* Settings access
-* Full analytics access
-* Delete orders
-* Export reports
+- Create, update and delete orders
+- Search, sorting and pagination
+- Order status workflow:
 
-## Manager Access
+```text
+Pending → Processing → Shipped → Delivered
+```
 
-* Manage Operations / Analyst / Employee roles
-* Update employee permissions
-* Create / Update / Delete orders
-* Export analytics reports
-* Advanced analytics access
-* Cannot assign Admin/Manager roles
-* Cannot grant Settings access
+- Duplicate order prevention
+- Order and revenue tracking
 
-## Operations Access
+### Analytics
 
-* Create Orders
-* Update Orders
-* Limited dashboard access
-* Order workflow handling
+- Revenue and order statistics
+- Status breakdowns
+- Revenue timelines
+- Date-based filtering
+- Recent and highest-value orders
+- XLSX data export
+- Recharts visualizations
 
-## Analyst Access
+### Employee & Permission Management
 
-* Analytics viewing
-* Report exports
-* Sales insights access
+- Employee management
+- Role updates
+- Individual permission management
+- Permission requests
+- Approval/rejection workflow
+- Audit tracking
 
-## Employee Access
+### Real-Time & AI
 
-* Dashboard access
-* Orders viewing access
-* Limited operational visibility
+- Real-time updates with Socket.IO
+- Google Gemini-powered AI assistant
+- Role and permission-aware AI context
+- Conversation history for authenticated users
+- Rate-limited AI requests
 
----
+### Profile & UI
 
-# 📦 Orders Module
-
-## Features
-
-* Create Orders
-* Fetch Orders
-* Update Order Status
-* Delete Orders
-* Permission-Based Order Controls
-* Dynamic Status Workflow
-* Interactive Status Dropdown
-* Responsive Orders Table
-* Mobile Orders Cards
-
-## Order Status Flow
-
-* Pending
-* Processing
-* Shipped
-* Delivered
+- Profile management
+- Password change
+- Image upload
+- DiceBear avatar generation
+- Cloudinary image storage
+- Light/dark mode
+- Responsive desktop, tablet and mobile UI
+- Toast notifications and animated interactions
 
 ---
 
-# 📊 Dashboard & Analytics
+## ◈ Tech Stack
 
-## Dashboard Features
+### Frontend
 
-* Total Orders
-* Pending Orders
-* Delivered Orders
-* Revenue Analytics
-* Dynamic Dashboard Cards
+`React` · `Vite` · `React Router` · `Tailwind CSS` · `Framer Motion` · `Axios` · `Recharts` · `Socket.IO Client` · `Lucide React` · `React Icons` · `React Markdown` · `React Hot Toast` · `Next Themes` · `XLSX` · `React Helmet Async`
 
-## Analytics Features
+### Backend
 
-* Role-Based Analytics Access
-* Advanced Analytics Permissions
-* Export Reports Access
-* CSV Export Planning
-* Sales Insights
+`Node.js` · `Express.js` · `MongoDB` · `Mongoose` · `JWT` · `bcryptjs` · `Socket.IO` · `Multer`
 
----
+### Services
 
-# 👨‍💼 Employee Management System
+`Google Gemini` · `Cloudinary` · `DiceBear` · `Brevo` · `Web3Forms` · `MongoDB Atlas`
 
-## Features
+### Deployment
 
-* Employee Listing
-* Role Assignment
-* Permission Management
-* Dynamic Role Dropdowns
-* Manager Restrictions
-* Admin Restrictions
-* Responsive Employee Management UI
-
-## Permissions System
-
-* Create Orders
-* Update Orders
-* Delete Orders
-* View Advanced Analytics
-* Export Reports
-* Access Settings
-* Manage Employees
+`Netlify` — Frontend  
+`Render` — Backend  
+`MongoDB Atlas` — Database  
+`Cloudinary` — Image Storage
 
 ---
 
-# 🎨 Frontend Features
+## ◈ Project Structure
 
-## UI/UX
-
-* Modern ERP UI Design
-* Fully Responsive Layout
-* Mobile Drawer Sidebar
-* Collapsible Sidebar
-* Sticky Sidebar Layout
-* Responsive Tables & Cards
-* Interactive Dropdowns
-* Animated Buttons & Transitions
-* Toast Notifications
-* Dynamic Layout System
-
-## Pages
-
-* Login Page
-* Register Page
-* Dashboard
-* Orders Management
-* Employee Management
-* Analytics
-* Settings
-
----
-
-# 📱 Responsive Design
-
-* Mobile Responsive Layout
-* Tablet Responsive UI
-* Desktop Optimized Dashboard
-* Adaptive Orders View
-* Adaptive Employee Cards
-* Responsive Sidebar Navigation
-* Mobile Overlay Navigation
-* Dynamic Dropdown Positioning
-
----
-
-# 📁 Project Structure
-
-## Client
-
-```bash
-client/
-├── src/
-│   ├── api/
-│   ├── components/
-│   ├── context/
-│   ├── layouts/
-│   ├── pages/
+```text
+FlowSync/
+│
+├── client/
+│   └── src/
+│       ├── api/
+│       ├── components/
+│       ├── context/
+│       ├── layouts/
+│       ├── pages/
+│       ├── routes/
+│       ├── services/
+│       ├── seo/
+│       └── utils/
+│
+├── server/
+│   ├── config/
+│   ├── controllers/
+│   ├── middleware/
+│   ├── models/
 │   ├── routes/
-│   ├── App.jsx
-│   └── main.jsx
+│   ├── utils/
+│   └── server.js
+│
+└── README.md
 ```
 
-## Server
+---
+
+## ◈ Deployment
+
+The application is split into independent frontend and backend services:
+
+```text
+User
+  │
+  ▼
+Netlify
+  │
+  │ REST API / Socket.IO
+  ▼
+Render
+  │
+  ├── MongoDB Atlas
+  ├── Cloudinary
+  ├── Google Gemini
+  └── Brevo / Web3Forms
+```
+
+This setup also gave me practical experience with production environment variables, CORS, SPA routing, API configuration, cloud services and deployment troubleshooting.
+
+---
+
+## ◈ Run Locally
+
+### Requirements
+
+`Node.js 22+` · `npm` · `MongoDB` · `Git`
+
+### Clone
 
 ```bash
-server/
-├── config/
-├── controllers/
-├── middleware/
-├── models/
-├── routes/
-├── utils/
-├── server.js
+git clone YOUR_GITHUB_REPOSITORY_URL
+cd FlowSync-ERP
 ```
 
----
-
-# ⚙️ Environment Variables
-
-Create a `.env` file inside `server/`
-
-```env
-PORT=5000
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_secret_key
-```
-
----
-
-# ▶️ Run Project
-
-## Frontend
+### Install dependencies
 
 ```bash
 cd client
 npm install
-npm run dev
+
+cd ../server
+npm install
 ```
 
-## Backend
+### Environment variables
+
+Create `server/.env` and `client/.env` using the provided `.env.example` files.
+
+Never commit credentials or API keys to the repository.
+
+### Start backend
 
 ```bash
 cd server
-npm install
+npm start
+```
+
+### Start frontend
+
+```bash
+cd client
 npm run dev
 ```
 
 ---
 
-# 🔐 Protected Routes
+## ◈ What I Learned Building It
 
-## Frontend Protected Routes
+The biggest value of FlowSync for me was connecting technologies together instead of learning them in isolation.
 
-* Dashboard
-* Orders
-* Analytics
-* Employees
-* Settings
+While building it, I worked hands-on with:
 
-## Backend Protected APIs
+- Designing a React + Node.js full-stack architecture
+- REST API development with Express
+- MongoDB schema and query design with Mongoose
+- JWT authentication and server-side authorization
+- RBAC and granular permission systems
+- Real-time communication with Socket.IO
+- Integrating external APIs and cloud services
+- Adding AI functionality with Gemini
+- Handling uploads with Multer and Cloudinary
+- Data visualization and reporting
+- API protection and production security
+- Environment configuration and CORS
+- Deploying a frontend and backend separately
+- Production troubleshooting and hardening
+- SEO basics with page metadata, canonical URLs, sitemap and `robots.txt`
 
-* JWT Middleware Protection
-* Permission-Based APIs
-* Admin/Manager Middleware
-* Role Validation
-
----
-
-# 🧠 Future Plans
-
-* Inventory Management
-* Vendor Management
-* Profile Management
-* Task Assignment System
-* Access Request Workflow
-* Email Verification with OTP
-* Real-Time Notifications
-* Advanced Charts & Analytics
-* AI Assistant Integration
-* CSV & Excel Export System
-* WebSocket Real-Time Updates
-* Dark / Light Theme
-* Audit Logs
-* CI/CD Pipeline
-* Cloud Deployment
+One of the most useful lessons was realizing that building a feature is only one part of development. Making sure it behaves correctly, handles errors, protects the API, works on different screen sizes, and survives deployment is a completely different part of the job.
 
 ---
 
-# 👨‍💻 Developer
+## ◈ Explore the Project
 
-Built by Shruti Dubey
+If you find the project interesting, feel free to visit the live application, explore the repository, fork it, or share feedback.
+
+**Portfolio:** https://shrutidubey.netlify.app/  
+**Email:** shruti.kashyap.dubey@gmail.com
+
+Thanks for taking the time to look through FlowSync.
