@@ -2,27 +2,27 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
   <url>
-    <loc>https://YOUR-DOMAIN.com/</loc>
+    <loc>https://flowsync-erp.netlify.app/</loc>
   </url>
 
   <url>
-    <loc>https://YOUR-DOMAIN.com/about</loc>
+    <loc>https://flowsync-erp.netlify.app/about</loc>
   </url>
 
   <url>
-    <loc>https://YOUR-DOMAIN.com/features</loc>
+    <loc>https://flowsync-erp.netlify.app/features</loc>
   </url>
 
   <url>
-    <loc>https://YOUR-DOMAIN.com/contact</loc>
+    <loc>https://flowsync-erp.netlify.app/contact</loc>
   </url>
 
   <url>
-    <loc>https://YOUR-DOMAIN.com/privacy-policy</loc>
+    <loc>https://flowsync-erp.netlify.app/privacy-policy</loc>
   </url>
 
   <url>
-    <loc>https://YOUR-DOMAIN.com/terms-and-conditions</loc>
+    <loc>https://flowsync-erp.netlify.app/terms-and-conditions</loc>
   </url>
 
 </urlset>
