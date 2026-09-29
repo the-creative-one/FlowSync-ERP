@@ -22,6 +22,23 @@ I built it to go beyond a basic CRUD application and understand how different pa
 
 ---
 
+## ◈ First-Time User Experience
+
+New users are guided through a short onboarding tour when they first enter FlowSync.
+
+The tour explains:
+
+- How FlowSync's role-based access system works
+- Why new users initially have limited access
+- Where to find their Profile
+- How to request additional permissions
+- How manager/admin approval unlocks additional features
+- How the application's navigation updates when access is granted
+
+Users can complete, skip, or close the tour and continue using FlowSync.
+
+---
+
 ## ◈ What FlowSync Does
 
 FlowSync is designed around everyday business operations.
@@ -95,6 +112,7 @@ Pending → Processing → Shipped → Delivered
 - Individual permission management
 - Permission requests
 - Approval/rejection workflow
+- Admin email notifications for new permission requests
 - Audit tracking
 
 ### Real-Time & AI

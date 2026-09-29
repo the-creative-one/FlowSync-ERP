@@ -192,7 +192,7 @@ function PermissionRequests({ isOpen, onClose, requests, fetchRequests }) {
                 >
                   <div className="flex justify-between items-start">
                     <div className="flex items-center gap-3">
-                      <UserAvatar user={request.employeeId} size="sm" />
+                      <UserAvatar user={request.employeeId} size="sm" iconClassName="text-[#0C2B4E] dark:text-white"/>
 
                       <div>
                         <h3 className="font-semibold text-lg">

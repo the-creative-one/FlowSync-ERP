@@ -307,7 +307,8 @@ function OrdersToolbar({
                   onClick={() => setShowModal(true)}
                   className="
                     h-12
-                    w-12                   
+                    w-12   
+                    rounded                
                     bg-[#1D546C]
                     hover:bg-[#16485c]
                     text-white
