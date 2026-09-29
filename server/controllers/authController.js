@@ -688,9 +688,8 @@ const registerUser = async (req, res) => {
       password: await bcrypt.hash(password, 10),
       role: defaultRole,
       permissions: defaultPermissions,
-
+      hasCompletedOnboarding: false,
       isEmailVerified: false,
-
       emailVerificationCode: hashedVerificationCode,
       emailVerificationExpire: verificationExpire,
       emailVerificationLastSentAt: new Date(),
@@ -803,6 +802,7 @@ const verifyEmail = async (req, res) => {
       avatar: user.avatar,
       avatarType: user.avatarType,
       avatarSeed: user.avatarSeed,
+      hasCompletedOnboarding: user.hasCompletedOnboarding,
     };
 
     return res.status(200).json({
@@ -814,7 +814,7 @@ const verifyEmail = async (req, res) => {
     console.error("Email Verification Error:", error);
 
     return res.status(500).json({
-      message:"Unable to verify email",
+      message: "Unable to verify email",
     });
   }
 };
@@ -970,7 +970,7 @@ const loginUser = async (req, res) => {
       email: user.email,
       role: user.role,
       permissions: user.permissions,
-
+      hasCompletedOnboarding: user.hasCompletedOnboarding,
       avatar: user.avatar,
       avatarType: user.avatarType,
       avatarSeed: user.avatarSeed,
@@ -1116,6 +1116,29 @@ const getMe = async (req, res) => {
   }
 };
 
+// Mark the user's onboarding as completed.
+const completeOnboarding = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+    user.hasCompletedOnboarding = true;
+    await user.save();
+    return res.status(200).json({
+      message: "Onboarding completed",
+      hasCompletedOnboarding: true,
+    });
+  } catch (error) {
+    console.error("Complete Onboarding Error:", error);
+    return res.status(500).json({
+      message: "Unable to complete onboarding",
+    });
+  }
+};
+
 // Export authentication controllers.
 module.exports = {
   registerUser,
@@ -1123,6 +1146,7 @@ module.exports = {
   resendVerificationCode,
   loginUser,
   getMe,
+  completeOnboarding,
   forgotPassword,
   resetPassword,
 };

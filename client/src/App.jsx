@@ -20,8 +20,11 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsConditions from "./pages/TermsConditions";
 import NotFound from "./pages/NotFound";
 import Chatbot from "./components/common/Chatbot";
+import { useOnboarding } from "./context/OnboardingContext";
+import OnboardingTour from "./components/onboarding/OnboardingTour";
 
 function App() {
+  const { isOnboardingActive } = useOnboarding();
   return (
     <BrowserRouter>
       <ScrollToTop />
@@ -106,6 +109,7 @@ function App() {
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Chatbot />
+      {isOnboardingActive && <OnboardingTour />}
     </BrowserRouter>
   );
 }

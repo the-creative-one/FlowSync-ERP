@@ -7,47 +7,50 @@ import ThemeProvider from "./providers/ThemeProvider";
 import "./index.css";
 import App from "./App.jsx";
 import { HelmetProvider } from "react-helmet-async";
+import { OnboardingProvider } from "./context/OnboardingContext";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <ThemeProvider>
       <AuthProvider>
-        <SocketProvider>
-          <Toaster
-            position="top-center"
-            toastOptions={{
-              duration: 3000,
-              style: {
-                borderRadius: "14px",
-                padding: "14px 16px",
-                fontSize: "14px",
-              },
-              success: {
+        <OnboardingProvider>
+          <SocketProvider>
+            <Toaster
+              position="top-center"
+              toastOptions={{
+                duration: 3000,
                 style: {
-                  background: "#16A34A",
-                  color: "#ffffff",
+                  borderRadius: "14px",
+                  padding: "14px 16px",
+                  fontSize: "14px",
                 },
-                iconTheme: {
-                  primary: "#ffffff",
-                  secondary: "#16A34A",
+                success: {
+                  style: {
+                    background: "#16A34A",
+                    color: "#ffffff",
+                  },
+                  iconTheme: {
+                    primary: "#ffffff",
+                    secondary: "#16A34A",
+                  },
                 },
-              },
-              error: {
-                style: {
-                  background: "#DC2626",
-                  color: "#ffffff",
+                error: {
+                  style: {
+                    background: "#DC2626",
+                    color: "#ffffff",
+                  },
+                  iconTheme: {
+                    primary: "#ffffff",
+                    secondary: "#DC2626",
+                  },
                 },
-                iconTheme: {
-                  primary: "#ffffff",
-                  secondary: "#DC2626",
-                },
-              },
-            }}
-          />
-          <HelmetProvider>
-            <App />
-          </HelmetProvider>
-        </SocketProvider>
+              }}
+            />
+            <HelmetProvider>
+              <App />
+            </HelmetProvider>
+          </SocketProvider>
+        </OnboardingProvider>
       </AuthProvider>
     </ThemeProvider>
   </StrictMode>,

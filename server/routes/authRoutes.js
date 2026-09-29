@@ -10,6 +10,7 @@ const {
   forgotPassword,
   resetPassword,
   getMe,
+  completeOnboarding,
 } = require("../controllers/authController");
 
 const { protect, adminOnly } = require("../middleware/authMiddleware");
@@ -88,6 +89,7 @@ router.post("/reset-password/:token", resetPasswordLimiter, resetPassword);
 
 // PROTECTED ROUTES
 router.get("/me", protect, getMe);
+router.patch("/onboarding", protect, completeOnboarding);
 router.get("/profile", protect, (req, res) => {
   res.json({
     message: "Protected profile route",

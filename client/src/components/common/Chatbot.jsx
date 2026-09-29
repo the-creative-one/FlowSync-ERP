@@ -334,10 +334,10 @@ function Chatbot() {
                   <div className="space-y-3 mb-5">
                     <div className="grid sm:grid-cols-2 gap-2">
                       {[
+                        "Get started with FlowSync.",
                         "What can I do in FlowSync?",
                         "What can an employee access?",
                         "How do I create an order?",
-                        "How to get monthly orders data?",
                       ].map((question) => (
                         <button
                           key={question}

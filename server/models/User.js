@@ -110,7 +110,6 @@ const userSchema = new mongoose.Schema(
       enum: ["admin", "manager", "employee", "operations", "analyst"],
       default: "employee",
     },
-
     // User permissions.
     permissions: {
       type: permissionSchema,
@@ -125,7 +124,10 @@ const userSchema = new mongoose.Schema(
         canAccessSettings: false,
       }),
     },
-
+    hasCompletedOnboarding: {
+      type: Boolean,
+      default: false,
+    },
     // User avatar information.
     avatar: {
       type: String,

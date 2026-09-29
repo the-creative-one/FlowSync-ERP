@@ -29,9 +29,11 @@ import {
 import { useSocket } from "../context/SocketContext";
 import PageSEO from "../seo/PageSEO";
 import { useNavigate } from "react-router-dom";
+import { useOnboarding } from "../context/OnboardingContext";
 
 function Profile() {
   const { user, logout, fetchUser, setUser } = useAuth();
+  const { isOnboardingActive, currentStep } = useOnboarding();
   const { socket } = useSocket();
   const [requests, setRequests] = useState([]);
   const [editingName, setEditingName] = useState(false);
@@ -791,6 +793,7 @@ function Profile() {
 
           {hasPermissionToRequestAccess && (
             <div
+              id="onboarding-permission-section"
               className="
         bg-white
         dark:bg-[#111827]
