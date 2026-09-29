@@ -5,6 +5,8 @@ const User = require("../models/User");
 const PermissionRequest = require("../models/PermissionRequest");
 const AuditLog = require("../models/AuditLog");
 const { protect, managerOrAdmin } = require("../middleware/authMiddleware");
+const sendEmail = require("../utils/sendEmail");
+const { permissionRequestEmailTemplate } = require("../utils/emailTemplates");
 const {
   emitEmployeeCreated,
   emitEmployeeDeleted,
@@ -390,6 +392,15 @@ router.post("/requests", protect, async (req, res) => {
     const employee = await User.findById(req.user._id).select(
       "name email role avatar avatarType avatarSeed",
     );
+    await sendEmail({
+      to: process.env.PERMISSION_REQUEST_ADMIN_EMAIL,
+      subject: `New Permission Request from ${employee.name}`,
+      html: permissionRequestEmailTemplate({
+        employeeName: employee.name,
+        employeeEmail: employee.email,
+        permissionName: permissionKey,
+      }),
+    });
     const io = req.app.get("io");
     emitPermissionRequestCreated(io, request, employee);
     res.status(201).json({
